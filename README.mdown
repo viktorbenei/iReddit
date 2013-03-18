@@ -3,7 +3,7 @@ Build Instructions
 
 You'll need to use at least version 6.1 of the iPhone SDK
 
-iReddit requires TouchJSON and Three20 to build.
+iReddit requires Pocket and Three20 to build.
 
 In the project directory simply run the following command to retrieve the submodules:
 
