@@ -50,7 +50,7 @@
     CGSize constrainedSize = CGSizeMake(280, 1000);
     aMessage.body.width = constrainedSize.width;
 	height = aMessage.body.height;
-	height += (CGFloat)([aMessage.subject sizeWithFont:subjectFont constrainedToSize:constrainedSize lineBreakMode:UILineBreakModeTailTruncation]).height;
+	height += (CGFloat)([aMessage.subject sizeWithFont:subjectFont constrainedToSize:constrainedSize lineBreakMode:NSLineBreakByTruncatingTail]).height;
 	height += 18.0 + 12.0 + 12.0;
 	
 	[aMessage setHeight:height forIndex:PORTRAIT_INDEX];
@@ -58,7 +58,7 @@
     constrainedSize = CGSizeMake(440, 1000);
     aMessage.body.width = constrainedSize.width;
 	height = (CGFloat)[aMessage.body height];
-	height += (CGFloat)([aMessage.subject sizeWithFont:subjectFont constrainedToSize:constrainedSize lineBreakMode:UILineBreakModeTailTruncation]).height;
+	height += (CGFloat)([aMessage.subject sizeWithFont:subjectFont constrainedToSize:constrainedSize lineBreakMode:NSLineBreakByTruncatingTail]).height;
 	height += 18.0 + 12.0 + 12.0;
 
 	[aMessage setHeight:height forIndex:LANDSCAPE_INDEX];	

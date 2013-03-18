@@ -30,7 +30,7 @@
 		[fromLabel setFont:[UIFont boldSystemFontOfSize:14]];
 		[fromLabel setTextColor:[UIColor grayColor]];
 		
-		[fromLabel setLineBreakMode:UILineBreakModeTailTruncation];
+		[fromLabel setLineBreakMode:NSLineBreakByTruncatingTail];
 		[fromLabel setNumberOfLines:1];
 		
 		
@@ -40,7 +40,7 @@
 		[subjectLabel setFont:[UIFont boldSystemFontOfSize:14]];
 		[subjectLabel setTextColor:[UIColor blueColor]];
 		
-		[subjectLabel setLineBreakMode:UILineBreakModeTailTruncation];
+		[subjectLabel setLineBreakMode:NSLineBreakByTruncatingTail];
 		[subjectLabel setNumberOfLines:0];
 		
 		
@@ -56,7 +56,7 @@
 		[dateLabel setFont:[UIFont systemFontOfSize:14]];
 		[dateLabel setTextColor:[UIColor grayColor]];
 		
-		[dateLabel setLineBreakMode:UILineBreakModeTailTruncation];
+		[dateLabel setLineBreakMode:NSLineBreakByTruncatingTail];
 		[dateLabel setNumberOfLines:1];
 				
 		[[self contentView] addSubview:fromLabel];

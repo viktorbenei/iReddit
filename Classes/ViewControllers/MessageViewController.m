@@ -75,7 +75,7 @@
 	UINavigationController* navController = [[[UINavigationController alloc] init] autorelease];
     [navController pushViewController:controller animated:NO];
 	
-	[self presentModalViewController:navController animated:YES];
+    [self presentViewController:navController animated:YES completion:nil];
 }
 
 - (void)didSelectObject:(TTTableItem*)object atIndexPath:(NSIndexPath*)indexPath
@@ -118,7 +118,7 @@
 			UINavigationController* navController = [[[UINavigationController alloc] init] autorelease];
 			[navController pushViewController:controller animated:NO];
 
-			[self presentModalViewController:navController animated:YES];
+            [self presentViewController:navController animated:YES completion:nil];
 		}
 	}
 
@@ -153,7 +153,7 @@
 
 	[activeRequest send];
 
-	[controller dismissModalViewControllerAnimated:YES];
+    [controller dismissViewControllerAnimated:YES completion:nil];
 }
 
 // for the message composer!

@@ -79,16 +79,16 @@ NSMutableDictionary *storyDictionary;
 	CGSize screenSize = [UIScreen mainScreen].bounds.size;
 	CGFloat height;
 	
-	height = (CGFloat)([aStory.title sizeWithFont:storyFont constrainedToSize:CGSizeMake(screenSize.width - 54.0, 1000.0) lineBreakMode:UILineBreakModeTailTruncation]).height;
+	height = (CGFloat)([aStory.title sizeWithFont:storyFont constrainedToSize:CGSizeMake(screenSize.width - 54.0, 1000.0) lineBreakMode:NSLineBreakByTruncatingTail]).height;
 	[aStory setHeight:height forIndex:PORTRAIT_INDEX];
 	
-	height = (CGFloat)([aStory.title sizeWithFont:storyFont constrainedToSize:CGSizeMake(screenSize.width - (54.0+68.0), 1000.0) lineBreakMode:UILineBreakModeTailTruncation]).height;
+	height = (CGFloat)([aStory.title sizeWithFont:storyFont constrainedToSize:CGSizeMake(screenSize.width - (54.0+68.0), 1000.0) lineBreakMode:NSLineBreakByTruncatingTail]).height;
 	[aStory setHeight:height forIndex:PORTRAIT_THUMBNAIL_INDEX];
 	
-	height = (CGFloat)[aStory.title sizeWithFont:storyFont constrainedToSize:CGSizeMake(screenSize.height - 52.0, 1000.0) lineBreakMode:UILineBreakModeTailTruncation].height;
+	height = (CGFloat)[aStory.title sizeWithFont:storyFont constrainedToSize:CGSizeMake(screenSize.height - 52.0, 1000.0) lineBreakMode:NSLineBreakByTruncatingTail].height;
 	[aStory setHeight:height forIndex:LANDSCAPE_INDEX];
 
-	height = (CGFloat)[aStory.title sizeWithFont:storyFont constrainedToSize:CGSizeMake(screenSize.height - (52.0+68.0), 1000.0) lineBreakMode:UILineBreakModeTailTruncation].height;
+	height = (CGFloat)[aStory.title sizeWithFont:storyFont constrainedToSize:CGSizeMake(screenSize.height - (52.0+68.0), 1000.0) lineBreakMode:NSLineBreakByTruncatingTail].height;
 	[aStory setHeight:height forIndex:LANDSCAPE_THUMBNAIL_INDEX];
 
 	[storyDictionary setObject:aStory forKey:aStory.identifier];

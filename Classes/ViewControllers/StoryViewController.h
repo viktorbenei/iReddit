@@ -50,6 +50,7 @@
 - (IBAction)segmentAction:(id)sender;
 - (void)saveCurrentStory:(id)sender;
 - (void)saveOnInstapaper:(id)sender;
+- (void)saveOnPocket:(id)sender;
 - (void)hideCurrentStory:(id)sender;
 
 - (void)setScore:(int)score;

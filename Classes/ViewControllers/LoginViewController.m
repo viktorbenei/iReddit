@@ -26,7 +26,7 @@
 	[[NSNotificationCenter defaultCenter] addObserver:controller selector:@selector(loginDidStart:) name:RedditDidBeginLoggingInNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:controller selector:@selector(loginDidEnd:) name:RedditDidFinishLoggingInNotification object:nil];
 	
-	[[iRedditAppDelegate sharedAppDelegate].navController presentModalViewController:controller animated:YES];
+	[[iRedditAppDelegate sharedAppDelegate].navController presentViewController:controller animated:YES completion:nil];
 }
 
 - (void)dealloc
@@ -67,7 +67,7 @@
 	
 	statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0, 145.0, CGRectGetWidth(self.view.frame) - 20.0, 24.0)];
 	
-	statusLabel.textAlignment = UITextAlignmentCenter;
+	statusLabel.textAlignment = NSTextAlignmentCenter;
 	statusLabel.opaque = NO;
 	statusLabel.backgroundColor = [UIColor clearColor];
 	statusLabel.textColor = [UIColor darkTextColor];
@@ -96,7 +96,7 @@
 	if ([(id)self.delegate respondsToSelector:@selector(loginViewController:didFinishWithContext:)])
 		[self.delegate loginViewController:self didFinishWithContext:self.context];
 
-	[[iRedditAppDelegate sharedAppDelegate].navController dismissModalViewControllerAnimated:YES];
+	[[iRedditAppDelegate sharedAppDelegate].navController dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)createModel 

@@ -173,7 +173,8 @@
 {
 	[self.dataSource cancel];
 	[self.dataSource invalidate:YES];
-    self.dataSource.model.newsModeIndex = selectedIndex;
+    
+    ((SubredditDataModel *)((SubredditDataSource *)self.dataSource).model).newsModeIndex = selectedIndex;
     [self reload];
 	//[self reloadContent];
 }

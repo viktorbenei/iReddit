@@ -208,7 +208,7 @@
 
 - (void)add:(id)sender
 {
-	[self presentModalViewController:[[[AddRedditViewController alloc] init] autorelease] animated:YES];
+	[self presentViewController:[[[AddRedditViewController alloc] init] autorelease] animated:YES completion:nil];
 }
 
 - (void)edit:(id)sender
@@ -537,7 +537,7 @@
 	}
 	else if ([object.URL isEqual:@"/other"])
 	{
-		[self presentModalViewController:[[[AddRedditViewController alloc] initForViewing] autorelease] animated:YES];
+        [self presentViewController:[[AddRedditViewController alloc] initForViewing] animated:YES completion:nil];
 	}
 	else
 	{

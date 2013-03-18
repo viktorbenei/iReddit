@@ -36,7 +36,7 @@ iRedditAppDelegate *sharedAppDelegate;
 - (void)applicationDidFinishLaunching:(UIApplication *)application 
 {    	    
 	sharedAppDelegate = self;
-	
+	[[PocketAPI sharedAPI] setConsumerKey:@"12494-5c5d662193512e29902989da"];
 	//register defaults
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	
@@ -47,6 +47,7 @@ iRedditAppDelegate *sharedAppDelegate;
               [NSNumber numberWithBool:YES], playSoundOnShakeKey,
               [NSNumber numberWithBool:YES], useCustomRedditListKey,
               [NSNumber numberWithBool:YES], showLoadingAlienKey,
+              [NSNumber numberWithBool:NO], usePocket,
               [NSArray array], visitedStoriesKey,
               [NSArray array], redditSortOrderKey,
               redditSoundLightsaber, shakingSoundKey,
@@ -104,6 +105,12 @@ iRedditAppDelegate *sharedAppDelegate;
 #endif
 }
 
+-(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    if ([[PocketAPI sharedAPI] handleOpenURL:url]) {
+        return YES;
+    }
+    return YES;
+}
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     // save the last timestamp

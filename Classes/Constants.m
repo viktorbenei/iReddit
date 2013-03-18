@@ -40,6 +40,7 @@ NSString *const instapaperPasswordKey		 = @"instapaperPasswordKey";
 NSString *const shakingSoundKey				 = @"shakingSoundKey";
 NSString *const redditSortOrderKey			 = @"redditSortOrderKey";
 NSString *const allowLandscapeOrientationKey = @"allowLandscapeOrientationKey";
+NSString *const usePocket                    = @"usePocket";
 
 NSString *const initialRedditURLKey			 = @"initialRedditURLKey";
 NSString *const initialRedditTitleKey		 = @"initialRedditTitleKey";

@@ -38,6 +38,7 @@ NSString *const instapaperPasswordKey;
 NSString *const shakingSoundKey;
 NSString *const redditSortOrderKey;
 NSString *const allowLandscapeOrientationKey;
+NSString *const usePocket;
 
 NSString *const LastStorySortMethodKey;
 

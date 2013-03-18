@@ -78,11 +78,8 @@
 	canLoadMore = NO;
 		
     TTURLDataResponse *response = request.response;
-    NSString *responseBody = [[NSString alloc] initWithData:response.data encoding:NSUTF8StringEncoding];
-
     // parse the JSON data that we retrieved from the server
-    NSDictionary *json = [NSDictionary dictionaryWithJSONString:responseBody error:nil];
-    [responseBody release];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:response.data options:NSJSONReadingMutableContainers error:nil];
         
     // drill down into the JSON object to get the part 
     // that we're actually interested in.

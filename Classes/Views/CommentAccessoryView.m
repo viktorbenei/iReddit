@@ -24,7 +24,7 @@
 		
 		self.titleEdgeInsets = UIEdgeInsetsMake(0.0, 1.0, 6.0, 0.0);
 		self.titleLabel.font = [UIFont boldSystemFontOfSize:11.0];
-        self.titleLabel.textAlignment = UITextAlignmentCenter;
+        self.titleLabel.textAlignment = NSTextAlignmentCenter;
         self.titleLabel.textColor = [UIColor whiteColor];
 		[self setTitleShadowColor:[UIColor colorWithWhite:0.0 alpha:0.75] forState:UIControlStateNormal];
 		self.titleLabel.shadowOffset = CGSizeMake(0.0, -0.5);

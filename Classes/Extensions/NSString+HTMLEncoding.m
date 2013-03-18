@@ -34,44 +34,44 @@
 	if (interval <= 1.0)
 		return @"1 second";
 	
-	if (interval <= 60.0)
+	if (interval <= 60.0){
 		if (interval >= 30.0)
 			return @"half a minute";
 		else
 			return [NSString stringWithFormat:@"%d seconds", (int)floorf(interval)];
-	
+	}
 	int time = (int)floorf(interval / 60.0);
 	
-	if (time < 60)
+	if (time < 60){
 		if (time == 1)
 			return @"1 minute";
 		else
 			return [NSString stringWithFormat:@"%d minutes", time];
-	
+	}
 	time = (int)floorf(interval / (60.0 * 60.0));
 	
-	if (time < 24)
+	if (time < 24){
 		if (time == 1)
 			return @"1 hour";
 		else
 			return [NSString stringWithFormat:@"%d hours", time];
-	
+	}
 	time = (int)floorf(interval / (60.0 * 60.0 * 24.0));
 	
-	if (time < 30)
+	if (time < 30){
 		if (time == 1)
 			return @"1 day";
 		else 
 			return [NSString stringWithFormat:@"%d days", time];
-	
+	}
 	time = (int)floorf(interval / (60.0 * 60.0 * 24.0 * 30.0));
 	
-	if (time < 12)
+	if (time < 12){
 		if (time == 1)
 			return @"1 month";
 		else 
 			return [NSString stringWithFormat:@"%d months", time];
-
+    }
 	time = (int)floorf(interval / (60.0 * 60.0 * 24.0 * 30.0 * 12.0));
 	
 	if (time == 1)

@@ -111,6 +111,10 @@ static void settingsSoundPlayedCallback(SystemSoundID  mySSID, void* myself)
 			@"Instapaper Account Information",
 			[SettingsControlItem textFieldControlWithTitle:@"Username" text:[defaults stringForKey:instapaperUsernameKey] placeholder:@"splashy" key:instapaperUsernameKey secure:NO],
 			[SettingsControlItem textFieldControlWithTitle:@"Password" text:[defaults stringForKey:instapaperPasswordKey] placeholder:@"optional" key:instapaperPasswordKey secure:YES],
+                       
+                       @"Pocket",
+                       [SettingsControlItem switchControlWithTitle:@"Pocket" on:[defaults boolForKey:usePocket] key:usePocket],
+                       
 
 			@"Customized reddits",
 			[SettingsControlItem switchControlWithTitle:@"Use Account Settings" on:[defaults boolForKey:useCustomRedditListKey] key:useCustomRedditListKey],

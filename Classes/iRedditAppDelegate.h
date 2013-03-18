@@ -12,6 +12,7 @@
 #import "SubredditDataSource.h"
 #import "StoryViewController.h"
 #import "MessageDataSource.h"
+#import "PocketAPI.h"
 
 @interface iRedditAppDelegate : NSObject <UIApplicationDelegate> 
 {

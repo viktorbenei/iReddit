@@ -19,14 +19,14 @@
 
 - (IBAction)cancel:(id)sender
 {
-	[self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)save:(id)sender
 {
 	NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
 	TTTableControlCell *cell = (TTTableControlCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-	UITextField *textField = cell.control;
+	UITextField *textField = (UITextField *)cell.control;
 	if (textField)
 	{
 		[self loadReddit:textField.text];
@@ -187,7 +187,7 @@
 	
 	NSDictionary *firstStory = [[children objectAtIndex:0] objectForKey:@"data"];
 	NSMutableDictionary *completeRedditInfo = [NSMutableDictionary dictionaryWithDictionary:firstStory];
-	
+    
 	NSString *url = [request.URL substringFromIndex:NSMaxRange([request.URL rangeOfString:RedditBaseURLString])];
 	url = [url stringByReplacingOccurrencesOfString:@".json" withString:@""];
 	
