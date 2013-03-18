@@ -4,3 +4,6 @@
 [submodule "three20"]
 	path = three20
 	url = https://github.com/facebook/three20.git
+[submodule "Pocket-ObjC-SDK"]
+	path = Pocket-ObjC-SDK
+	url = git://github.com/Pocket/Pocket-ObjC-SDK.git
