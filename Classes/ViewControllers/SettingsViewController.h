@@ -7,22 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Three20/Three20.h>
 
-@interface SettingsTableViewDataSource : TTSectionedDataSource
+
+@interface SettingsViewController : UITableViewController <UITableViewDataSource,
+    UITextFieldDelegate>
 {
+   
 }
-
-@end
-
-@interface SettingsTableViewDelegate : TTTableViewVarHeightDelegate
-{
-}
-
-@end
-
-@interface SettingsViewController : TTTableViewController 
-{
-}
-
 @end

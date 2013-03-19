@@ -522,25 +522,7 @@
                 }
             }];
         } else {
-        [[PocketAPI sharedAPI] loginWithHandler: ^(PocketAPI *API, NSError *error){
-            if (error != nil)
-            {
-                // There was an error when authorizing the user.
-                // The most common error is that the user denied access to your application.
-                // The error object will contain a human readable error message that you
-                // should display to the user. Ex: Show an UIAlertView with the message
-                // from error.localizedDescription
-                NSLog(@"%@",error);
-            }
-            else
-            {
-                // The user logged in successfully, your app can now make requests.
-                // [API username] will return the logged-in user’s username
-                // and API.loggedIn will == YES
-                [self saveOnPocket:nil];
-            }
-        }];
-        
+                
         }
     }
 }
