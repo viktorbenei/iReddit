@@ -8,12 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import <Three20/Three20.h>
+#import "iRedditAppDelegate.h"
+#import "SubredditViewController.h"
+#import "SettingsViewController.h"
+#import "LoginController.h"
+#import "Constants.h"
+#import "MessageViewController.h"
+#import "Three20Extensions.h"
+#import "AddRedditViewController.h"
 
-@interface RootViewController : TTTableViewController
-{
-	NSArray *customSubreddits;
-	TTURLRequest *activeRequest;
-}
+@interface RootViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate, NSURLConnectionDataDelegate>
 
 - (NSArray *)topItems;
 - (NSArray *)subreddits;

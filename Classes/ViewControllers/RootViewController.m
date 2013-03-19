@@ -7,17 +7,6 @@
 //
 
 #import "RootViewController.h"
-#import "iRedditAppDelegate.h"
-#import "SubredditViewController.h"
-#import "SettingsViewController.h"
-#import "NSDictionary+JSON.h"
-#import "NSString+HTMLEncoding.h"
-#import "LoginController.h"
-#import "Constants.h"
-#import "MessageViewController.h"
-#import "Three20Extensions.h"
-#import "AddRedditViewController.h"
-#import "Three20/Three20.h"
 
 @interface SubredditTableItem : TTTableTextItem
 {
@@ -36,7 +25,7 @@
 {
 	SubredditTableItem *item = [self itemWithText:aString URL:aURL];
 	item.tag = aTag;
-
+    
 	return item;
 }
 
@@ -48,117 +37,33 @@
 
 @end
 
-
-@interface SubredditDelegate : TTTableViewDelegate
-{
+@interface RootViewController () {
+	NSArray *customSubreddits;
+    
+    NSMutableData *receivedData;
 }
+@property (retain) NSURLConnection *connection;
+@property (retain) NSMutableArray *dataSource;
+@property (retain) NSArray *sections;
 
 @end
-
-@implementation SubredditDelegate
-
-- (NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath
-{
-	if (sourceIndexPath.section != proposedDestinationIndexPath.section) 
-	{
-		NSInteger row = 0;
-		if (sourceIndexPath.section < proposedDestinationIndexPath.section) 
-			row = [self.controller.dataSource tableView:tableView numberOfRowsInSection:sourceIndexPath.section] - 1;
-
-		return [NSIndexPath indexPathForRow:row inSection:sourceIndexPath.section];     
-	}
-	
-	return proposedDestinationIndexPath;
-}
-
-- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath 
-{
-	if ([indexPath section] == 1 && [[LoginController sharedLoginController] isLoggedIn] && [[NSUserDefaults standardUserDefaults] boolForKey:useCustomRedditListKey])
-		return UITableViewCellEditingStyleDelete;
-	else
-		return UITableViewCellEditingStyleNone;
-}
-
-- (BOOL)tableView:(UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath
-{
-	return [indexPath section] == 1 && [self tableView:tableView editingStyleForRowAtIndexPath:indexPath] != UITableViewCellEditingStyleNone;
-}
-
-@end
-
-@interface SubredditSectionedDataSource : TTSectionedDataSource
-{
-}
-
-@end
-
-@implementation SubredditSectionedDataSource
-
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-	return [indexPath section] == 1;
-}
-
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-	NSMutableArray *items = [self itemsInSection:1];
-	id item = [[items objectAtIndex:fromIndexPath.row] retain];
-	
-	[items removeObjectAtIndex:fromIndexPath.row];
-	[items insertObject:item atIndex:toIndexPath.row];
-
-	[item release];
-}
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-	if (editingStyle == UITableViewCellEditingStyleDelete)
-	{
-		NSMutableArray *items = [self itemsInSection:1];
-
-		SubredditTableItem *item = [[items objectAtIndex:indexPath.row] retain];
-
-		[items removeObjectAtIndex:indexPath.row];
-		[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-
-		if (item.tag)
-		{
-			TTURLRequest *request = [TTURLRequest requestWithURL:[NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditSubscribeAPIString] delegate:nil];
-			request.cachePolicy = TTURLRequestCachePolicyNoCache;
-			request.cacheExpirationAge = 0;
-            request.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
-			request.contentType = @"application/x-www-form-urlencoded";
-			request.httpMethod = @"POST";
-			request.httpBody = [[NSString stringWithFormat:@"uh=%@&sr=%@&action=unsub",
-								 [[LoginController sharedLoginController] modhash], item.tag]
-								dataUsingEncoding:NSASCIIStringEncoding];
-
-			[request send];
-		}
-
-		[item release];
-	}
-}
-
-@end
-
 @implementation RootViewController
 
 - (id)init
 {
-	if (self = [super init])
+	if (self = [super initWithStyle:UITableViewStyleGrouped])
 	{
+        _connection = nil;
 		self.title = @"Home";
-		self.navigationBarTintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+        self.navigationController.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
 		self.hidesBottomBarWhenPushed = YES;
-        self.tableViewStyle = UITableViewStyleGrouped;
 		
 		NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 		[center addObserver:self selector:@selector(messageCountChanged:) name:MessageCountDidChangeNotification object:nil];
 		[center addObserver:self selector:@selector(didEndLogin:) name:RedditDidFinishLoggingInNotification object:nil];
 		[center addObserver:self selector:@selector(didAddReddit:) name:RedditWasAddedNotification object:nil];
 	}
-
+    
 	return self;
 }
 
@@ -167,7 +72,11 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[customSubreddits release];
-	[activeRequest cancel];
+    if (_connection) {
+        [_connection cancel];
+        [_connection release];
+        _connection = nil;
+    }
 	
 	[super dealloc];
 }
@@ -181,25 +90,26 @@
 	[mainTitleImage release];
 	
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(edit:)] autorelease];
-
-	[self.view addSubview:self.tableView];
+    
 }
 
 - (void)viewDidLoad {
-
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    self.navigationBarTintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+    // self.navigationBarTintColor = [iRedditAppDelegate redditNavigationBarTintColor];
 	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
 		self.tableView.backgroundColor = [UIColor colorWithRed:229.0/255.0 green:238.0/255.0 blue:1 alpha:1];
 	}
 	self.tableView.allowsSelectionDuringEditing = NO;
 	self.tableView.editing = NO;
-
+    
 	if ([[LoginController sharedLoginController] isLoggedIn] && [[NSUserDefaults standardUserDefaults] boolForKey:useCustomRedditListKey])
-		self.navigationItem.leftBarButtonItem =  [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(add:)] autorelease];
+		self.navigationItem.leftBarButtonItem =  [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+                                                                                                target:self
+                                                                                                action:@selector(add:)] autorelease];
 	else
 		self.navigationItem.leftBarButtonItem = nil;
 	
@@ -214,8 +124,8 @@
 - (void)edit:(id)sender
 {
 	shouldDetectDeviceShake = NO;
-
-	self.tableView.editing = YES;
+    
+	[self.tableView setEditing:YES animated:YES];
 	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(stopEditing:)] autorelease];
 }
 
@@ -223,25 +133,24 @@
 {
 	self.tableView.editing = NO;
 	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(edit:)] autorelease];
-
-	NSMutableArray *order = [NSMutableArray array];
-	
-	TTSectionedDataSource *ds = (TTSectionedDataSource *)self.dataSource;
-	NSArray *items = [ds itemsInSection:1];
-	
-	for (SubredditTableItem *item in items)
-	{
-		[order addObject:item.URL];
-	}
-
-	[[NSUserDefaults standardUserDefaults] setObject:order forKey:redditSortOrderKey];
-	[[NSUserDefaults standardUserDefaults] synchronize];
-
-	shouldDetectDeviceShake = YES;
+    
+    NSMutableArray *order = [NSMutableArray array];
+    
+    NSArray *ds = self.dataSource;
+    NSArray *items = [ds objectAtIndex:1];
+    
+    for (NSDictionary *item in items)
+    {
+        [order addObject:item[@"url"]];
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:order forKey:redditSortOrderKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    shouldDetectDeviceShake = YES;
 }
 
-- (void)messageCountChanged:(NSNotification *)note
-{
+- (void)messageCountChanged:(NSNotification *)note {
 	unsigned int count = [[iRedditAppDelegate sharedAppDelegate].messageDataSource unreadMessageCount];
     
 	if (count > 0)
@@ -250,70 +159,61 @@
 		self.title = @"Home";
     
     [self createModel];
-	[self reload];
+    [self.tableView reloadData];
 }
 
-- (void)didEndLogin:(NSNotification *)note
-{	
-    
+- (void)didEndLogin:(NSNotification *)note {
 	[customSubreddits release];
 	customSubreddits = nil;
-	[activeRequest cancel];
-	activeRequest = nil;
-    
+    if (_connection) {
+        _connection = nil;
+    }
 	if ([[LoginController sharedLoginController] isLoggedIn]  && [[NSUserDefaults standardUserDefaults] boolForKey:useCustomRedditListKey])
 		self.navigationItem.leftBarButtonItem =  [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(add:)] autorelease];
 	else
 		self.navigationItem.leftBarButtonItem = nil;
-
+    
     [self.tableView setContentOffset:CGPointZero animated:NO];
     
 	if (![[LoginController sharedLoginController] isLoggedIn] || ![[NSUserDefaults standardUserDefaults] boolForKey:useCustomRedditListKey])
     {
         if([[LoginController sharedLoginController] isLoggedIn])
         {
-        		self.title = @"Home";
+            self.title = @"Home";
         }
         [self createModel];
-        [self reload];
+        [self.tableView reloadData];
 		return;
     }
-
+    
     NSString *url = [NSString stringWithFormat:@"%@%@?limit=500", RedditBaseURLString, CustomRedditsAPIString];
-
-	activeRequest = [TTURLRequest requestWithURL:url delegate:(id <TTURLRequestDelegate>)self];
-	activeRequest.response = [[[TTURLDataResponse alloc] init] autorelease];
-	activeRequest.cacheExpirationAge = 0;
-	activeRequest.cachePolicy = TTURLRequestCachePolicyNoCache;
-    activeRequest.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
-
-	[activeRequest send];
-	
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+    [request setHTTPShouldHandleCookies:[[LoginController sharedLoginController] isLoggedIn] ? YES : NO];
+    _connection = [NSURLConnection connectionWithRequest:request delegate:self];
+    [_connection start];
     [self createModel];
-	[self reload];
+    [self.tableView reloadData];
 }
 
-- (void)requestDidFinishLoad:(TTURLRequest*)request
-{
-	activeRequest = nil;
 
-    TTURLDataResponse *response = request.response;
-    NSString *responseBody = [[NSString alloc] initWithData:response.data encoding:NSUTF8StringEncoding];
-	
-    // parse the JSON data that we retrieved from the server
-    NSDictionary *json = [NSDictionary dictionaryWithJSONString:responseBody error:nil];
-    [responseBody release];
-        
-    // drill down into the JSON object to get the part 
-    // that we're actually interested in.
-	
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    receivedData = [[NSMutableData alloc] init];
+}
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    [receivedData appendData:data];
+}
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection {
+   
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:receivedData options:NSJSONReadingMutableContainers error:nil];
+    
 	if (![json isKindOfClass:[NSDictionary class]] || ![json objectForKey:@"data"])
 	{
         [self createModel];
-		[self reload];
+        [self.tableView reloadData];
 		return;
 	}
-
+    
 	NSDictionary *data = [json objectForKey:@"data"];
 	NSMutableArray *loadedReddits = [NSMutableArray array];
 	NSArray *children = [data objectForKey:@"children"];
@@ -321,28 +221,24 @@
 	for (int i=0, count=[children count]; i<count; i++)
 	{
 		NSDictionary *thisReddit = [[children objectAtIndex:i] objectForKey:@"data"];
-		[loadedReddits addObject:[SubredditTableItem itemWithText:[[thisReddit objectForKey:@"title"] stringByDecodingHTMLEncodedCharacters]
-															  URL:[thisReddit objectForKey:@"url"]
-															  tag:[thisReddit objectForKey:@"name"]]];
-	}	
-
+        [loadedReddits addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                  [thisReddit objectForKey:@"title"], @"title",
+                                  [thisReddit objectForKey:@"url"], @"url",
+                                  [thisReddit objectForKey:@"name"], @"tag",
+                                  nil]];
+	}
+    
 	customSubreddits = [loadedReddits copy];
     [self createModel];
-	[self reload];
+    [self.tableView reloadData];
+    _connection = nil;
 }
-
-- (void)request:(TTURLRequest*)request didFailLoadWithError:(NSError*)error
-{
-    activeRequest = nil;
+-(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    
+    
     [self createModel];
-	[self reload];
-}
-
-- (void)requestDidCancelLoad:(TTURLRequest*)request
-{
-    activeRequest = nil;
-    [self createModel];
-	[self reload];
+    [self.tableView reloadData];
+    _connection = nil;
 }
 
 - (void)didAddReddit:(NSNotification *)note
@@ -351,24 +247,23 @@
 	{
 		NSDictionary *redditInfo = (NSDictionary *)[note userInfo];
 		SubredditViewController *controller = [[[SubredditViewController alloc] initWithField:
-													[TTTableTextItem itemWithText:[redditInfo objectForKey:@"subreddit"] 
-																			  URL:[redditInfo objectForKey:@"subreddit_url"]]] 
+                                                [TTTableTextItem itemWithText:[redditInfo objectForKey:@"subreddit"]
+                                                                          URL:[redditInfo objectForKey:@"subreddit_url"]]]
 											   autorelease];
-
+        
 		[[self navigationController] pushViewController:controller animated:YES];
 	}
-	else
-	{
+	else {
 		NSDictionary *redditInfo = (NSDictionary *)[note userInfo];
-
+        
 		if (!customSubreddits)
 			return;
-
+        
 		for (int i=0, count = [customSubreddits count]; i<count; i++)
 		{
-			SubredditTableItem *item = [customSubreddits objectAtIndex:i];
+			NSDictionary *item = [customSubreddits objectAtIndex:i];
 			
-			if ([item.URL isEqual:[redditInfo objectForKey:@"subreddit_url"]])
+			if ([item[@"URL"] isEqual:[redditInfo objectForKey:@"subreddit_url"]])
 			{
 				NSMutableArray *items = [customSubreddits mutableCopy];
 				
@@ -376,12 +271,12 @@
 				
 				[items removeObjectAtIndex:i];
 				[items insertObject:item atIndex:0];
-
+                
 				[item release];
 				
 				[customSubreddits release];
 				customSubreddits = items;
-
+                
 				NSArray *sortOrder = [[NSUserDefaults standardUserDefaults] objectForKey:redditSortOrderKey];
 				NSMutableArray *newSortOrder = [NSMutableArray arrayWithArray:sortOrder];
 				
@@ -389,51 +284,52 @@
 				
 				if (currentIndex != NSNotFound)
 					[newSortOrder removeObjectAtIndex:currentIndex];
-
+                
 				[newSortOrder insertObject:[redditInfo objectForKey:@"subreddit_url"] atIndex:0];
 				
 				[[NSUserDefaults standardUserDefaults] setObject:newSortOrder forKey:redditSortOrderKey];
 				[[NSUserDefaults standardUserDefaults] synchronize];
-
+                
                 [self createModel];
-				[self reload];
-		
+                [self.tableView reloadData];
+                
 				return;
 			}
 		}
-
-		TTURLRequest *request = [TTURLRequest requestWithURL:[NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditSubscribeAPIString] delegate:nil];
-		request.cachePolicy = TTURLRequestCachePolicyNoCache;
-		request.cacheExpirationAge = 0;
-        request.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
-		request.contentType = @"application/x-www-form-urlencoded";
-		request.httpMethod = @"POST";
-		request.httpBody = [[NSString stringWithFormat:@"uh=%@&sr=%@&action=sub", 
-							 [[LoginController sharedLoginController] modhash], [redditInfo objectForKey:@"subreddit_id"]]
-							dataUsingEncoding:NSASCIIStringEncoding];
-
-		[request send];
-
-		SubredditTableItem *newRedditField = [SubredditTableItem itemWithText:[redditInfo objectForKey:@"subreddit"]
-																		  URL:[redditInfo objectForKey:@"subreddit_url"]
-																		  tag:[redditInfo objectForKey:@"subreddit_id"]];
-
+        NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditSubscribeAPIString];
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+        [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+        [request setHTTPShouldHandleCookies:[[LoginController sharedLoginController] isLoggedIn] ? YES : NO];
+        [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+        [request setHTTPMethod:@"POST"];
+        [request setHTTPBody:[[NSString stringWithFormat:@"uh=%@&sr=%@&action=sub",
+                              [[LoginController sharedLoginController] modhash], [redditInfo objectForKey:@"subreddit_id"]]
+                              dataUsingEncoding:NSASCIIStringEncoding]];
+        NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:nil];
+        [connection start];
+        
+		NSDictionary *newRedditField = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        [redditInfo objectForKey:@"subreddit"],@"title",
+                                        [redditInfo objectForKey:@"subreddit_url"],@"url",
+                                        [redditInfo objectForKey:@"subreddit_id"],@"tag",
+                                        nil];
+        
 		NSMutableArray *newRedditList = [customSubreddits mutableCopy];
 		[newRedditList insertObject:newRedditField atIndex:0];
-
+        
 		[customSubreddits release];
 		customSubreddits = newRedditList;
-
+        
 		NSArray *sortOrder = [[NSUserDefaults standardUserDefaults] objectForKey:redditSortOrderKey];
 		NSMutableArray *newSortOrder = [NSMutableArray arrayWithArray:sortOrder];
-
+        
 		[newSortOrder insertObject:[redditInfo objectForKey:@"subreddit_url"] atIndex:0];
-
+        
 		[[NSUserDefaults standardUserDefaults] setObject:newSortOrder forKey:redditSortOrderKey];
 		[[NSUserDefaults standardUserDefaults] synchronize];
-
+        
         [self createModel];
-		[self reload];
+        [self.tableView reloadData];
 	}
 }
 
@@ -442,143 +338,205 @@
 	BOOL useCustomReddits = [[NSUserDefaults standardUserDefaults] boolForKey:useCustomRedditListKey];
 	
 	NSMutableArray *result = [NSMutableArray array];
-	
-	//TTActivityTableField
-	if (customSubreddits && useCustomReddits)
-	{
+    
+	if (customSubreddits && useCustomReddits) {
 		[result addObjectsFromArray:customSubreddits];
 	}
-	else if (useCustomReddits && ([[LoginController sharedLoginController] isLoggingIn] || activeRequest))
-	{
-		[result addObject:[TTTableActivityItem itemWithText:@"Loading custom reddits..."]];
-	}
-	else
-	{
-		[result addObjectsFromArray:
-			[NSArray arrayWithObjects:	
-					[TTTableTextItem itemWithText:@"reddit.com" URL:@"/r/reddit.com/"],
-					[TTTableTextItem itemWithText:@"programming" URL:@"/r/programming/"],
-					[TTTableTextItem itemWithText:@"pics" URL:@"/r/pics/"],
-					[TTTableTextItem itemWithText:@"politics" URL:@"/r/politics/"],
-					[TTTableTextItem itemWithText:@"technology" URL:@"/r/technology/"],
-					[TTTableTextItem itemWithText:@"world news" URL:@"/r/worldnews/"],
-					[TTTableTextItem itemWithText:@"best of reddit" URL:@"/r/bestof/"],
-				nil]
-		 ];
-	}
-	
-	[result sortUsingSelector:@selector(sortForRedditOrder:)];
-	
+	else{
+        if (useCustomReddits && ([[LoginController sharedLoginController] isLoggingIn] || _connection)) {
+            [result addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Loading custom reddits...", @"title", @"", @"url", nil]];
+        } else {
+            [result addObjectsFromArray:
+             [NSArray arrayWithObjects:
+              [NSDictionary dictionaryWithObjectsAndKeys:@"reddit",           @"title", @"/r/reddit.com/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"programming",      @"title", @"/r/programming/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"pics",             @"title", @"/r/pics/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"politics",         @"title", @"/r/politics/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"technology",       @"title", @"/r/technology/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"world news",       @"title", @"/r/worldnews/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"best of reddit",   @"title", @"/r/bestof/", @"url", nil],
+              nil]
+             ];
+        }
+    }
+    [result sortUsingComparator:^NSComparisonResult(NSDictionary *id1, NSDictionary *id2){
+        NSArray *sortedURLs = (NSArray *)[[NSUserDefaults standardUserDefaults] objectForKey:redditSortOrderKey];
+        
+        int index = [sortedURLs indexOfObject:id1[@"url"]];
+        int otherIndex = [sortedURLs indexOfObject:id2[@"url"]];
+        
+        if (index > otherIndex)
+            return NSOrderedDescending;
+        else if (index < otherIndex)
+            return NSOrderedAscending;
+        else
+            return NSOrderedSame;
+    }];
 	return result;
 }
 
-- (NSArray *)extraItems
-{
+- (NSArray *)extraItems{
 	return [NSArray arrayWithObjects:
-				[TTTableTextItem itemWithText:@"All reddits combined" URL:@"/r/all/"], 
-				[TTTableTextItem itemWithText:@"Other reddit..." URL:@"/other"], 
+            [NSDictionary dictionaryWithObjectsAndKeys:@"All reddits combined",   @"title", @"/r/all/", @"url", nil],
+            [NSDictionary dictionaryWithObjectsAndKeys:@"Other reddit...",   @"title", @"/other/", @"url", nil],
 			nil];
-
+    
 }
 
-- (NSArray *)topItems
-{
-	TTTableItem *homeField = [TTTableTextItem itemWithText:@"reddit Front Page" URL:@"/"];
-
-	if ([[LoginController sharedLoginController] isLoggedIn])
-	{
+- (NSArray *)topItems{
+    NSDictionary *homeField = [NSDictionary dictionaryWithObjectsAndKeys:@"reddit Front Page",   @"title", @"/", @"url", nil];
+	if ([[LoginController sharedLoginController] isLoggedIn]) {
 		unsigned int count = [[iRedditAppDelegate sharedAppDelegate].messageDataSource unreadMessageCount];
 		NSString *mailboxString = count > 0 ? [NSString stringWithFormat:@"Inbox (%u)", count] : @"Inbox";
-
-		TTTableItem *saved = [TTTableTextItem itemWithText:@"Saved" URL:@"/saved/"];
-		TTTableItem *mailboxField = [TTTableTextItem itemWithText:mailboxString URL:@"/messages/"];
-	
+        NSDictionary *saved = [NSDictionary dictionaryWithObjectsAndKeys:@"Saved",   @"title", @"/saved/", @"url", nil];
+        NSDictionary *mailboxField = [NSDictionary dictionaryWithObjectsAndKeys:mailboxString,   @"title", @"/messages/", @"url", nil];
+        
 		return [NSArray arrayWithObjects:homeField, mailboxField, saved, nil];
 	}
-	else 
+	else
     {
         return [NSArray arrayWithObject:homeField];
     }
 }
 
-- (id<UITableViewDelegate>)createDelegate 
-{
-	return [[[SubredditDelegate alloc] initWithController:self] autorelease];
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return [self.sections count];
+}
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    return [self.sections objectAtIndex:section];
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [[_dataSource objectAtIndex:section] count];
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSString *identifier = @"root";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+    }
+    NSDictionary *item = [[self.dataSource objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    [[cell textLabel] setText:item[@"title"]];
+    [cell setShowsReorderControl:YES];
+    return  cell;
 }
 
--(void)createModel 
+-(void)createModel{
+	NSArray *topItems   = [[self topItems] retain];
+	NSArray *subreddits = [[self subreddits] retain];
+	NSArray *extra      = [[self extraItems] retain];
+	NSArray *settingsItems = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Settings",   @"title", @"/settings/", @"url", nil]];
+    _sections = [[NSArray arrayWithObjects:@"",@"reddits",@"",@"", nil] retain];
+	_dataSource = [[NSMutableArray arrayWithObjects:topItems,subreddits,extra,settingsItems, nil] retain];
+    [self.tableView reloadData];
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSDictionary *cell = [[_dataSource objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    id controller = nil;
+    switch (indexPath.section) {
+        case 0:
+            if ([cell[@"url"] isEqualToString:@"/messages/"]) {
+                controller = [[[MessageViewController alloc] init] autorelease];
+            } else {
+                controller = [[[SubredditViewController alloc] initWithField:[TTTableTextItem itemWithText:cell[@"title"] URL:cell[@"url"]]] autorelease];
+            }
+            break;
+        case 2:
+            if ([cell[@"url"] isEqualToString:@"/other/"]) {
+                [self presentViewController:[[AddRedditViewController alloc] initForViewing] animated:YES completion:nil];
+            } else {
+                controller = [[[SubredditViewController alloc] initWithField:[TTTableTextItem itemWithText:cell[@"title"] URL:cell[@"url"]]] autorelease];
+            }
+            break;
+        case 3:
+            controller = [[[SettingsViewController alloc] init] autorelease];
+            break;
+        default:
+            controller = [[[SubredditViewController alloc] initWithField:[TTTableTextItem itemWithText:cell[@"title"] URL:cell[@"url"]]] autorelease];
+            break;
+    }
+    [[self navigationController] pushViewController:controller animated:YES];
+}
+-(NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath {
+    if (sourceIndexPath.section != proposedDestinationIndexPath.section) {
+        NSInteger row = 0;
+        if (sourceIndexPath.section < proposedDestinationIndexPath.section) {
+            row = [tableView numberOfRowsInSection:sourceIndexPath.section] - 1;
+        }
+        return [NSIndexPath indexPathForRow:row inSection:sourceIndexPath.section];
+    }
+    
+    return proposedDestinationIndexPath;
+}
+-(BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 1) {
+        return YES;
+    }
+    return NO;
+}
+-(void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+    if (destinationIndexPath.section == 1 && sourceIndexPath.section == 1) {
+        NSMutableArray *data = [_dataSource objectAtIndex:1];
+        NSDictionary *temp = [[data objectAtIndex:sourceIndexPath.row] retain];
+        [data removeObjectAtIndex:sourceIndexPath.row];
+        [data insertObject:temp atIndex:destinationIndexPath.row];
+        [_dataSource setObject:data atIndexedSubscript:1];
+        customSubreddits = data;
+    }
+}
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-	NSArray *topItems   = [self topItems];
-	NSArray *subreddits = [self subreddits];
-	NSArray *extra      = [self extraItems];
-	NSArray *settingsItems = [NSArray arrayWithObjects:[TTTableTextItem itemWithText:@"Settings" URL:@"/settings/"], nil];
-	
-	self.dataSource = [SubredditSectionedDataSource dataSourceWithArrays:@"", topItems, @"reddits", subreddits, @"", extra, @"", settingsItems, nil];
-    [self reload];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : UIInterfaceOrientationIsPortrait(interfaceOrientation) ;
 }
 
-- (void)didSelectObject:(TTTableLinkedItem *)object atIndexPath:(NSIndexPath*)indexPath
+
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath
 {
-	[super didSelectObject:object atIndexPath:indexPath];
-	
-	if ([object.URL isEqual:@"/messages/"])
-	{
-		MessageViewController *controller = [[[MessageViewController alloc] init] autorelease];
-		[[self navigationController] pushViewController:controller animated:YES];
-	}
-	else if ([object isKindOfClass:[TTTableActivityItem class]])
-	{
-		//do it
-	}
-	else if ([object.URL isEqual:@"/settings/"])
-	{
-		SettingsViewController *controller = [[[SettingsViewController alloc] init] autorelease];
-		[[self navigationController] pushViewController:controller animated:YES];
-	}
-	else if ([object.URL isEqual:@"/other"])
-	{
-        [self presentViewController:[[AddRedditViewController alloc] initForViewing] animated:YES completion:nil];
-	}
+	if ([indexPath section] == 1 && [[LoginController sharedLoginController] isLoggedIn] && [[NSUserDefaults standardUserDefaults] boolForKey:useCustomRedditListKey])
+		return UITableViewCellEditingStyleDelete;
 	else
+		return UITableViewCellEditingStyleNone;
+}
+
+- (BOOL)tableView:(UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	return [indexPath section] == 1 && [self tableView:tableView editingStyleForRowAtIndexPath:indexPath] != UITableViewCellEditingStyleNone;
+}
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if (editingStyle == UITableViewCellEditingStyleDelete)
 	{
-		SubredditViewController *controller = [[[SubredditViewController alloc] initWithField:(TTTableTextItem *)object] autorelease];
-		[[self navigationController] pushViewController:controller animated:YES];
+		NSMutableArray *items = [[_dataSource objectAtIndex:1] mutableCopy];
+        
+		NSDictionary *item = [[items objectAtIndex:indexPath.row] retain];
+        
+		[items removeObjectAtIndex:indexPath.row];
+        
+        [_dataSource setObject:items atIndexedSubscript:1];
+        customSubreddits = items;
+		[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        
+		if (item[@"tag"])
+		{
+            NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditSubscribeAPIString];
+            NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+            [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+            [request setHTTPShouldHandleCookies:[[LoginController sharedLoginController] isLoggedIn] ? YES : NO];
+            [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+            [request setHTTPMethod:@"POST"];
+            [request setHTTPBody:[[NSString stringWithFormat:@"uh=%@&sr=%@&action=unsub",
+                                   [[LoginController sharedLoginController] modhash], item[@"tag"]]
+                                  dataUsingEncoding:NSASCIIStringEncoding]];
+            NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:nil];
+            [connection start];
+        }
+        
+		[item release];
 	}
-
-	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : UIInterfaceOrientationIsPortrait(interfaceOrientation) ; 
-}
-
-@end
-
-@implementation TTTableItem (RedditSorting)
-
-- (int)sortForRedditOrder:(SubredditTableItem *)otherField
-{
-	return NSOrderedSame;
-}
-
-@end
-
-@implementation SubredditTableItem (RedditSorting)
-
-- (int)sortForRedditOrder:(SubredditTableItem *)otherField
-{
-	NSArray *sortedURLs = (NSArray *)[[NSUserDefaults standardUserDefaults] objectForKey:redditSortOrderKey];
-	
-	int index = [sortedURLs indexOfObject:self.URL];
-	int otherIndex = [sortedURLs indexOfObject:otherField.URL];
-	
-	if (index > otherIndex)
-		return NSOrderedDescending;
-	else if (index < otherIndex)
-		return NSOrderedAscending;
-	else
-		return NSOrderedSame;
 }
 
 @end
