@@ -47,7 +47,6 @@
 		ADFB53800FEAC3EA0067CEC1 /* MessageDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = ADFB53480FEAC3EA0067CEC1 /* MessageDataSource.m */; };
 		ADFB53810FEAC3EA0067CEC1 /* Story.m in Sources */ = {isa = PBXBuildFile; fileRef = ADFB534A0FEAC3EA0067CEC1 /* Story.m */; };
 		ADFB53820FEAC3EA0067CEC1 /* SubredditDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = ADFB534C0FEAC3EA0067CEC1 /* SubredditDataSource.m */; };
-		ADFB53830FEAC3EA0067CEC1 /* NSString+HTMLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = ADFB53580FEAC3EA0067CEC1 /* NSString+HTMLEncoding.m */; };
 		ADFB53840FEAC3EA0067CEC1 /* iRedditAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ADFB535A0FEAC3EA0067CEC1 /* iRedditAppDelegate.m */; };
 		ADFB53850FEAC3EA0067CEC1 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADFB535D0FEAC3EA0067CEC1 /* LoginViewController.m */; };
 		ADFB53860FEAC3EA0067CEC1 /* MessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADFB535F0FEAC3EA0067CEC1 /* MessageViewController.m */; };
@@ -108,6 +107,7 @@
 		BE27743916F7CF59009D445C /* PocketAPIOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27741D16F7CF59009D445C /* PocketAPIOperation.m */; };
 		BE27743A16F7CF59009D445C /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27742016F7CF59009D445C /* SFHFKeychainUtils.m */; };
 		BE27744316F7CF99009D445C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE27744216F7CF99009D445C /* Security.framework */; };
+		BECC89F416F864E200CF00A4 /* GIDAAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = BECC89F316F864E200CF00A4 /* GIDAAlertView.m */; };
 		E58C0EFA12B48A9B004D2070 /* Three20.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E58C0EF912B48A9B004D2070 /* Three20.bundle */; };
 		E58C100E12B49244004D2070 /* SubredditDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E58C100D12B49244004D2070 /* SubredditDataModel.m */; };
 		E58C109812B4A0DD004D2070 /* RedditWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = E58C109712B4A0DD004D2070 /* RedditWindow.m */; };
@@ -266,17 +266,6 @@
 		ADFB534A0FEAC3EA0067CEC1 /* Story.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Story.m; sourceTree = "<group>"; };
 		ADFB534B0FEAC3EA0067CEC1 /* SubredditDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubredditDataSource.h; sourceTree = "<group>"; };
 		ADFB534C0FEAC3EA0067CEC1 /* SubredditDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubredditDataSource.m; sourceTree = "<group>"; };
-		ADFB534E0FEAC3EA0067CEC1 /* CDataScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDataScanner.h; sourceTree = "<group>"; };
-		ADFB534F0FEAC3EA0067CEC1 /* CDataScanner_Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDataScanner_Extensions.h; sourceTree = "<group>"; };
-		ADFB53500FEAC3EA0067CEC1 /* CJSONDeserializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJSONDeserializer.h; sourceTree = "<group>"; };
-		ADFB53510FEAC3EA0067CEC1 /* CJSONScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJSONScanner.h; sourceTree = "<group>"; };
-		ADFB53520FEAC3EA0067CEC1 /* CJSONSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJSONSerializer.h; sourceTree = "<group>"; };
-		ADFB53530FEAC3EA0067CEC1 /* NSCharacterSet_Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSCharacterSet_Extensions.h; sourceTree = "<group>"; };
-		ADFB53540FEAC3EA0067CEC1 /* NSDictionary+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+JSON.h"; sourceTree = "<group>"; };
-		ADFB53550FEAC3EA0067CEC1 /* NSDictionary_JSONExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDictionary_JSONExtensions.h; sourceTree = "<group>"; };
-		ADFB53560FEAC3EA0067CEC1 /* NSScanner_Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScanner_Extensions.h; sourceTree = "<group>"; };
-		ADFB53570FEAC3EA0067CEC1 /* NSString+HTMLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HTMLEncoding.h"; sourceTree = "<group>"; };
-		ADFB53580FEAC3EA0067CEC1 /* NSString+HTMLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HTMLEncoding.m"; sourceTree = "<group>"; };
 		ADFB53590FEAC3EA0067CEC1 /* iRedditAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iRedditAppDelegate.h; sourceTree = "<group>"; };
 		ADFB535A0FEAC3EA0067CEC1 /* iRedditAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iRedditAppDelegate.m; sourceTree = "<group>"; };
 		ADFB535C0FEAC3EA0067CEC1 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
@@ -337,7 +326,6 @@
 		ADFB54A60FEAC8A60067CEC1 /* Three20Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Three20Extensions.h; sourceTree = "<group>"; };
 		ADFB54A70FEAC8A60067CEC1 /* Three20Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Three20Extensions.m; sourceTree = "<group>"; };
 		ADFB556B0FEACC5C0067CEC1 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = SOURCE_ROOT; };
-		ADFB556D0FEACC7A0067CEC1 /* NSDictionary+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+JSON.m"; path = "Classes/Extensions/NSDictionary+JSON.m"; sourceTree = SOURCE_ROOT; };
 		BE0910EF16F7C47900EE6296 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		BE27741716F7CF59009D445C /* PocketAPI+NSOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PocketAPI+NSOperation.h"; sourceTree = "<group>"; };
 		BE27741816F7CF59009D445C /* PocketAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PocketAPI.h; sourceTree = "<group>"; };
@@ -350,6 +338,8 @@
 		BE27741F16F7CF59009D445C /* SFHFKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFHFKeychainUtils.h; sourceTree = "<group>"; };
 		BE27742016F7CF59009D445C /* SFHFKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFHFKeychainUtils.m; sourceTree = "<group>"; };
 		BE27744216F7CF99009D445C /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		BECC89F216F864E200CF00A4 /* GIDAAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GIDAAlertView.h; sourceTree = "<group>"; };
+		BECC89F316F864E200CF00A4 /* GIDAAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GIDAAlertView.m; sourceTree = "<group>"; };
 		E566C63412BEF9FC00E3E04E /* iReddit-Free-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iReddit-Free-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		E58C0EF912B48A9B004D2070 /* Three20.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Three20.bundle; path = three20/src/Three20.bundle; sourceTree = SOURCE_ROOT; };
 		E58C0EFB12B48AA5004D2070 /* Three20.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Three20.xcodeproj; path = three20/src/Three20/Three20.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -410,6 +400,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				BECC89F216F864E200CF00A4 /* GIDAAlertView.h */,
+				BECC89F316F864E200CF00A4 /* GIDAAlertView.m */,
 				BE2773E516F7CF59009D445C /* Pocket-ObjC-SDK */,
 				BE0910EF16F7C47900EE6296 /* Default-568h@2x.png */,
 				E58C0FDE12B48B70004D2070 /* Three20 */,
@@ -527,18 +519,6 @@
 		ADFB534D0FEAC3EA0067CEC1 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				ADFB534E0FEAC3EA0067CEC1 /* CDataScanner.h */,
-				ADFB534F0FEAC3EA0067CEC1 /* CDataScanner_Extensions.h */,
-				ADFB53500FEAC3EA0067CEC1 /* CJSONDeserializer.h */,
-				ADFB53510FEAC3EA0067CEC1 /* CJSONScanner.h */,
-				ADFB53520FEAC3EA0067CEC1 /* CJSONSerializer.h */,
-				ADFB53530FEAC3EA0067CEC1 /* NSCharacterSet_Extensions.h */,
-				ADFB53540FEAC3EA0067CEC1 /* NSDictionary+JSON.h */,
-				ADFB556D0FEACC7A0067CEC1 /* NSDictionary+JSON.m */,
-				ADFB53550FEAC3EA0067CEC1 /* NSDictionary_JSONExtensions.h */,
-				ADFB53560FEAC3EA0067CEC1 /* NSScanner_Extensions.h */,
-				ADFB53570FEAC3EA0067CEC1 /* NSString+HTMLEncoding.h */,
-				ADFB53580FEAC3EA0067CEC1 /* NSString+HTMLEncoding.m */,
 				ADFB54A60FEAC8A60067CEC1 /* Three20Extensions.h */,
 				ADFB54A70FEAC8A60067CEC1 /* Three20Extensions.m */,
 			);
@@ -1018,7 +998,6 @@
 				ADFB53800FEAC3EA0067CEC1 /* MessageDataSource.m in Sources */,
 				ADFB53810FEAC3EA0067CEC1 /* Story.m in Sources */,
 				ADFB53820FEAC3EA0067CEC1 /* SubredditDataSource.m in Sources */,
-				ADFB53830FEAC3EA0067CEC1 /* NSString+HTMLEncoding.m in Sources */,
 				ADFB53840FEAC3EA0067CEC1 /* iRedditAppDelegate.m in Sources */,
 				ADFB53850FEAC3EA0067CEC1 /* LoginViewController.m in Sources */,
 				ADFB53860FEAC3EA0067CEC1 /* MessageViewController.m in Sources */,
@@ -1040,6 +1019,7 @@
 				BE27743816F7CF59009D445C /* PocketAPILogin.m in Sources */,
 				BE27743916F7CF59009D445C /* PocketAPIOperation.m in Sources */,
 				BE27743A16F7CF59009D445C /* SFHFKeychainUtils.m in Sources */,
+				BECC89F416F864E200CF00A4 /* GIDAAlertView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

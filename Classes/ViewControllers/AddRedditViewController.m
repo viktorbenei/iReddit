@@ -10,7 +10,6 @@
 #import "iRedditAppDelegate.h"
 #import "Constants.h"
 #import "Three20Extensions.h"
-#import "NSDictionary+JSON.h"
 #import "LoginController.h"
 
 @implementation AddRedditViewController
@@ -161,12 +160,10 @@
 	activeRequest = nil;
 	
     TTURLDataResponse *response = request.response;
-    NSString *responseBody = [[NSString alloc] initWithData:response.data encoding:NSUTF8StringEncoding];
 	
 	NSError *error = nil;
     // parse the JSON data that we retrieved from the server
-    NSDictionary *json = [NSDictionary dictionaryWithJSONString:responseBody error:&error];
-    [responseBody release];
+    	NSDictionary *json = [NSJSONSerialization JSONObjectWithData:response.data options:NSJSONReadingMutableContainers error:&error];
     
 	if (error != nil || ![json isKindOfClass:[NSDictionary class]] || ![json objectForKey:@"data"])
 	{
@@ -188,7 +185,7 @@
 	NSDictionary *firstStory = [[children objectAtIndex:0] objectForKey:@"data"];
 	NSMutableDictionary *completeRedditInfo = [NSMutableDictionary dictionaryWithDictionary:firstStory];
     
-	NSString *url = [request.URL substringFromIndex:NSMaxRange([request.URL rangeOfString:RedditBaseURLString])];
+	NSString *url = [request.urlPath substringFromIndex:NSMaxRange([request.urlPath rangeOfString:RedditBaseURLString])];
 	url = [url stringByReplacingOccurrencesOfString:@".json" withString:@""];
 	
 	[completeRedditInfo setObject:url forKey:@"subreddit_url"]; 

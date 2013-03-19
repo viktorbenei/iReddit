@@ -7,8 +7,7 @@
 //
 
 #import "Story.h"
-//#import "SettingsViewController.h"
-#import "NSString+HTMLEncoding.h"
+#import "SettingsViewController.h"
 #import "SubredditDataSource.h"
 #import "Constants.h"
 
@@ -41,12 +40,12 @@ NSMutableDictionary *storyDictionary;
 {			
 	Story *aStory = [[[Story alloc] init] autorelease];
 		
-	aStory.title = [(NSString *)[dict objectForKey:@"title"] stringByDecodingHTMLEncodedCharacters];
+	aStory.title = (NSString *)[dict objectForKey:@"title"];
 	aStory.author = (NSString *)[dict objectForKey:@"author"];
 	aStory.domain = (NSString *)[dict objectForKey:@"domain"];
 	aStory.identifier = (NSString *)[dict objectForKey:@"id"];
 	aStory.name = (NSString *)[dict objectForKey:@"name"];
-    aStory.URL = [(NSString *)[dict objectForKey:@"url"] stringByDecodingHTMLEncodedCharacters];
+    aStory.URL = (NSString *)[dict objectForKey:@"url"];
 	aStory.created = (NSString *)[(NSNumber *)[dict objectForKey:@"created_utc"] stringValue];
 	aStory.kind = @"t3";
 	aStory.thumbnailURL = (NSString *)[dict objectForKey:@"thumbnail"];

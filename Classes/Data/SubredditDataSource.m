@@ -12,8 +12,6 @@
 #import "Constants.h"
 
 #import "SubredditDataSource.h"
-#import "NSDictionary_JSONExtensions.h"
-#import "NSDictionary+JSON.h"
 #import "SubredditViewController.h"
 
 static id lastLoadedSubreddit = nil;

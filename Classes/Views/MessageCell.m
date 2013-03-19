@@ -7,7 +7,6 @@
 //
 
 #import "MessageCell.h"
-#import "NSString+HTMLEncoding.h"
 
 @implementation MessageCell
 
@@ -86,7 +85,7 @@
 	[subjectLabel setText:message.subject];
 	[bodyLabel setText:message.body];
 	[fromLabel setText:message.author];
-	[dateLabel setText:[NSString stringWithFormat:@"%@ ago", [message.created stringByConvertingUTCTimestampToFriendlyString]]];
+	[dateLabel setText:[NSString stringWithFormat:@"%@ ago", message.created]];
 	
 	[bodyLabel setNeedsDisplay];
 	[fromLabel setNeedsDisplay];

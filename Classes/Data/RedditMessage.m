@@ -7,7 +7,6 @@
 //
 
 #import "RedditMessage.h"
-#import "NSString+HTMLEncoding.h"
 #import "Constants.h"
 #define PORTRAIT_INDEX 0
 #define LANDSCAPE_INDEX 1
@@ -20,7 +19,7 @@
 + (RedditMessage *)messageWithDictionary:(NSDictionary *)dict
 {			
     RedditMessage *aMessage = [[[RedditMessage alloc] init] autorelease];
-	NSString *messageBody = [(NSString *)[dict objectForKey:@"body_html"] stringByDecodingHTMLEncodedCharacters];
+	NSString *messageBody = (NSString *)[dict objectForKey:@"body_html"];
     
     // unfortunately need to conform to Three20 for markup in messages...
     messageBody = [messageBody stringByReplacingOccurrencesOfString:@"<em>" withString:@"<i>"];

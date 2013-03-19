@@ -13,8 +13,6 @@
 #import "Constants.h"
 #import "LoginController.h"
 
-#define SEEN_DEPRECATED_NOTICE_TIMESTAMP @"ireddit-free-seen-deprecated"
-
 extern NSMutableArray *visitedArray;
 
 iRedditAppDelegate *sharedAppDelegate;
@@ -61,7 +59,8 @@ iRedditAppDelegate *sharedAppDelegate;
     self.navController = [[[UINavigationController alloc] initWithRootViewController:[[[RootViewController alloc] init] autorelease]] autorelease];
 	self.navController.delegate = (id <UINavigationControllerDelegate>)self;
 	navController.toolbarHidden = NO;
-	[window addSubview:navController.view];
+    self.window.rootViewController = navController;
+//	[window addSubview:navController.view];
 	
 	NSString *initialRedditURL = [[NSUserDefaults standardUserDefaults] stringForKey:initialRedditURLKey];
 	NSString *initialRedditTitle = [[NSUserDefaults standardUserDefaults] stringForKey:initialRedditTitleKey];
@@ -86,42 +85,11 @@ iRedditAppDelegate *sharedAppDelegate;
     [self loadRandomData];
 }
 
-- (void)applicationDidBecomeActive:(UIApplication *)application
-{
-#ifdef DEPRECATED_FREE
-    NSTimeInterval periodOfBlessedSilence = 60 * 60 * 24 * 7; // if the user hasn't seen the alert for 1 week, show it again
-    NSTimeInterval lastSeenDeprecatedAlertTime = [[NSUserDefaults standardUserDefaults] doubleForKey:SEEN_DEPRECATED_NOTICE_TIMESTAMP];
-    NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
-    if(currentTime - lastSeenDeprecatedAlertTime > periodOfBlessedSilence)
-    {
-        UIAlertView *deprecatedAlert = [[UIAlertView alloc] initWithTitle:@"Goodbye, iReddit Free!" 
-        message:@"iReddit Free will no longer be supported or updated. Please download the new iReddit for FREE from App Store to keep up with future updates!"
-        delegate:self 
-        cancelButtonTitle:@"Later" 
-        otherButtonTitles:@"Download", nil];
-        [deprecatedAlert show];
-        [deprecatedAlert release];
-    }
-#endif
-}
-
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     if ([[PocketAPI sharedAPI] handleOpenURL:url]) {
         return YES;
     }
     return YES;
-}
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    // save the last timestamp
-    [[NSUserDefaults standardUserDefaults] setDouble:[NSDate timeIntervalSinceReferenceDate] forKey:SEEN_DEPRECATED_NOTICE_TIMESTAMP];
-    
-    if(buttonIndex != alertView.cancelButtonIndex)
-    {
-        // take them to the store if requested
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms-apps://itunes.com/apps/iReddit"]];
-    }
-    
 }
 
 - (void)deviceDidShake:(NSNotification *)notif

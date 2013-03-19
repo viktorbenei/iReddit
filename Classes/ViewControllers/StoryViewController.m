@@ -503,6 +503,25 @@
 - (void)saveOnPocket:(id)sender {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults boolForKey:@"usePocket"]) {
+        if ([PocketAPI sharedAPI].isLoggedIn) {
+            NSString *stringURL = story.URL;
+            if (isForComments && story.commentsURL)
+                stringURL = story.commentsURL;
+            NSURL *url = [NSURL URLWithString:stringURL];
+            [[PocketAPI sharedAPI] saveURL:url handler: ^(PocketAPI *API, NSURL *URL,
+                                                          NSError *error){
+                if(error){
+                    // there was an issue connecting to Pocket
+                    // present some UI to notify if necessary
+                }else{
+                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithSpinnerAndMessage:@"saved \u2713"];
+                    [gav presentAlertFor:1.07];
+                    [gav release];
+                    NSLog(@"saved\u2713");
+                    // the URL was saved successfully
+                }
+            }];
+        } else {
         [[PocketAPI sharedAPI] loginWithHandler: ^(PocketAPI *API, NSError *error){
             if (error != nil)
             {
@@ -518,26 +537,12 @@
                 // The user logged in successfully, your app can now make requests.
                 // [API username] will return the logged-in user’s username
                 // and API.loggedIn will == YES
-                NSString *stringURL = story.URL;
-                if (isForComments && story.commentsURL)
-                    stringURL = story.commentsURL;
-                NSURL *url = [NSURL URLWithString:stringURL];
-                [[PocketAPI sharedAPI] saveURL:url handler: ^(PocketAPI *API, NSURL *URL,
-                                                              NSError *error){
-                    if(error){
-                        // there was an issue connecting to Pocket
-                        // present some UI to notify if necessary
-                    }else{
-                        NSLog(@"saved");
-                        // the URL was saved successfully
-                    }
-                }];
+                [self saveOnPocket:nil];
             }
         }];
         
+        }
     }
-    
-    
 }
 
 - (void)saveCurrentStory:(id)sender

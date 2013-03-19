@@ -10,6 +10,7 @@
 #import <Three20/Three20.h>
 #import "Story.h"
 #import "AlienProgressView.h"
+#import "GIDAAlertView.h"
 
 @interface StoryViewController : TTViewController <UIWebViewDelegate>
 {

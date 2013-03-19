@@ -7,7 +7,6 @@
 //
 
 #import "MessageDataSource.h"
-#import "NSDictionary+JSON.h"
 #import "Constants.h"
 #import "RedditMessage.h"
 #import "MessageCell.h"
@@ -166,11 +165,7 @@
 	int totalCount = [self.items count];
 
     TTURLDataResponse *response = request.response;
-    NSString *responseBody = [[NSString alloc] initWithData:response.data encoding:NSUTF8StringEncoding];
-	
-    NSDictionary *json = [NSDictionary dictionaryWithJSONString:responseBody error:nil];
-
-    [responseBody release];
+	NSDictionary *json = [NSJSONSerialization JSONObjectWithData:response.data options:NSJSONReadingMutableContainers error:nil];
     
 	if (![json isKindOfClass:[NSDictionary class]])
 	{

@@ -353,7 +353,7 @@
         _progressBar = [[ProgressBar alloc] initWithFrame:CGRectMake(100, 35, 0, 80)];
         [self addSubview:_progressBar];
         _progressLabel = [[UILabel alloc] initWithFrame:CGRectMake(115, 50, 60, 50)];
-        [_progressLabel setTextAlignment:UITextAlignmentCenter];
+        [_progressLabel setTextAlignment:NSTextAlignmentCenter];
         _progressLabel.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
         [_progressLabel setTextColor:[UIColor whiteColor]];
         [_progressLabel setBackgroundColor:[UIColor clearColor]];

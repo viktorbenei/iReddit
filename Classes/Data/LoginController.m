@@ -8,7 +8,6 @@
 
 #import "LoginController.h"
 #import "Constants.h"
-#import "NSDictionary+JSON.h"
 
 LoginController *SharedLoginController = nil;
 
@@ -88,15 +87,11 @@ LoginController *SharedLoginController = nil;
 - (void)requestDidFinishLoad:(TTURLRequest*)request
 {
     TTURLDataResponse *response = request.response;
-    NSString *responseBody = [[NSString alloc] initWithData:response.data encoding:NSUTF8StringEncoding];
 	
     // parse the JSON data that we retrieved from the server
 	NSError *error = nil;
-
-    NSDictionary *json = [NSDictionary dictionaryWithJSONString:responseBody error:&error];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:response.data options:NSJSONReadingMutableContainers error:&error];
 	NSDictionary *responseJSON = [(NSDictionary *)json valueForKey:@"json"];
-    
-	[responseBody release];
 
 	BOOL loggedIn = !error && [responseJSON objectForKey:@"data"];
 	

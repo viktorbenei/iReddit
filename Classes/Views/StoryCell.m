@@ -226,7 +226,7 @@
 	[storyDescriptionView setText:[NSString stringWithFormat:@"%@", story.domain]];
 	[storyDescriptionView setNeedsDisplay];
 	
-	[secondaryDescriptionView setText:[NSString stringWithFormat:@"%d points in %@ by %@", story.score, story.subreddit, story.author, story.totalComments, story.totalComments == 1  ? @"" : @"s"]];
+	[secondaryDescriptionView setText:[NSString stringWithFormat:@"%d points in %@ by %@", story.score, story.subreddit, story.author ]];//]], story.totalComments, story.totalComments == 1  ? @"" : @"s"]];
 	[secondaryDescriptionView setNeedsDisplay];
 }
 

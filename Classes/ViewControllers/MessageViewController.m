@@ -11,7 +11,6 @@
 #import "RedditMessage.h"
 #import "Constants.h"
 #import "LoginController.h"
-#import "NSDictionary+JSON.h"
 #import "RedditWebView.h"
 
 @implementation MessageViewController

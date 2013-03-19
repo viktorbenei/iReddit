@@ -29,7 +29,8 @@ id _realDelegate;
 	NSRange redditComRange = [host rangeOfString:@"reddit.com"];
 	NSRange commentsRange = [path rangeOfString:@"/comments/"];
 		
-	if (redditComRange.location > 0 && commentsRange.location >= 0 && NSMaxRange(commentsRange) < [path length])
+	//if (redditComRange.location > 0 && commentsRange.location >= 0 && NSMaxRange(commentsRange) < [path length])
+    if (redditComRange.location > 0 && NSMaxRange(commentsRange) < [path length])
 	{
 		NSString *storyID = nil;
 		NSString *remainder = [path substringFromIndex:NSMaxRange(commentsRange)];		
@@ -178,7 +179,7 @@ id _realDelegate;
     {
         lastSort = @"confidence";
     }
-	NSString *path = [NSString stringWithFormat:@"%@?id=%@&title=%@&author=%@&created=%@&domain=%@&base=%@&jump=%@&sort=%@",
+	NSString *path = [NSString stringWithFormat:@"%@?id=%@&title=%@&author=%@&created=%@&domain=%@&base=%@&sort=%@",
 					  [[NSBundle mainBundle] pathForResource:@"comments" ofType:@"html"],
 					  [theID stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
 					  [@"Loading story..." stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
