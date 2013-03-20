@@ -7,10 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Three20/Three20.h>
 
 
-@interface LoginController : NSObject <TTURLRequestDelegate>
+@interface LoginController : NSObject <NSURLConnectionDataDelegate>
 {
 	NSString *modhash;
 	NSDate *lastLoginTime;
@@ -26,5 +25,5 @@
 - (BOOL)isLoggingIn;
 
 - (void)loginWithUsername:(NSString *)aUsername password:(NSString *)aPassword;
-
+- (void)logOut;
 @end

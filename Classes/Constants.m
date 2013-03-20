@@ -41,6 +41,9 @@ NSString *const shakingSoundKey				 = @"shakingSoundKey";
 NSString *const redditSortOrderKey			 = @"redditSortOrderKey";
 NSString *const allowLandscapeOrientationKey = @"allowLandscapeOrientationKey";
 NSString *const usePocket                    = @"usePocket";
+NSString *const hasModHash                   = @"hasModHash";
+NSString *const redditModHash                = @"redditModHash";
+
 
 NSString *const initialRedditURLKey			 = @"initialRedditURLKey";
 NSString *const initialRedditTitleKey		 = @"initialRedditTitleKey";

@@ -244,11 +244,14 @@
     [_sections retain];
     [_options retain];
 }
-- (void)viewWillDisappear:(BOOL)animated
-{
+- (void)viewWillDisappear:(BOOL)animated{
+    [[[[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]] accessoryView] resignFirstResponder];
+    [[[[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]] accessoryView] resignFirstResponder];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if (changed)
+    if (changed) {
+        [[LoginController sharedLoginController] logOut];
         [[LoginController sharedLoginController] loginWithUsername:[defaults stringForKey:redditUsernameKey] password:[defaults stringForKey:redditPasswordKey]];
+    }
     
     
 }
