@@ -222,10 +222,14 @@
     _sections = [NSArray arrayWithObjects:
                  @"reddit Account Information",
                  @"Instapaper Account Information",
-                 @"Pocket",
+                 @"Other",
                  @"Customized reddits",
                  @"Display Preferences",
                  nil];
+    NSDictionary *chrome = nil;
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"googlechrome://"]]) {
+        chrome =  [NSDictionary dictionaryWithObjectsAndKeys:@"Use Chrome",@"title",[NSNumber numberWithBool:[defaults boolForKey:useChrome]],@"value",useChrome, @"key", @"switch", @"type", nil];
+    }
     _options = [NSMutableArray arrayWithObjects:
                 [NSArray arrayWithObjects:
                  [NSDictionary dictionaryWithObjectsAndKeys:
@@ -256,12 +260,11 @@
                   nil],
                  [NSDictionary dictionaryWithObjectsAndKeys:@"Password",@"title",instapaperPasswordKey, @"key", @"text", @"type", [NSNumber numberWithBool:YES],@"secure", @"••••••", @"placeholder", [defaults stringForKey:instapaperPasswordKey],@"value", nil],
                  nil],
-                [NSArray arrayWithObject:
-                 [NSDictionary dictionaryWithObjectsAndKeys:@"Pocket",@"title",[NSNumber numberWithBool:[defaults boolForKey:usePocket]],@"value",usePocket, @"key", @"switch", @"type", nil]],
+                [NSArray arrayWithObjects:
+                 [NSDictionary dictionaryWithObjectsAndKeys:@"Pocket",@"title",[NSNumber numberWithBool:[defaults boolForKey:usePocket]],@"value",usePocket, @"key", @"switch", @"type", nil], chrome, nil],
                 [NSArray arrayWithObject:
                  [NSDictionary dictionaryWithObjectsAndKeys:@"Use Account Settings",@"title",[NSNumber numberWithBool:[defaults boolForKey:useCustomRedditListKey]],@"value",useCustomRedditListKey, @"key", @"switch", @"type", nil]],
                 [NSArray arrayWithObjects:
-                 [NSDictionary dictionaryWithObjectsAndKeys:@"Use Chrome",@"title",[NSNumber numberWithBool:[defaults boolForKey:useChrome]],@"value",useChrome, @"key", @"switch", @"type", nil],
                  [NSDictionary dictionaryWithObjectsAndKeys:@"Show Thumbnails",@"title",[NSNumber numberWithBool:[defaults boolForKey:showStoryThumbnailKey]],@"value",showStoryThumbnailKey, @"key", @"switch", @"type", nil],
                  [NSDictionary dictionaryWithObjectsAndKeys:@"Shake for New Story",@"title",[NSNumber numberWithBool:[defaults boolForKey:shakeForStoryKey]],@"value",shakeForStoryKey, @"key", @"switch", @"type", nil],
                  [NSDictionary dictionaryWithObjectsAndKeys:@"Show Loading Alien",@"title",[NSNumber numberWithBool:[defaults boolForKey:showLoadingAlienKey]],@"value",showLoadingAlienKey, @"key", @"switch", @"type", nil],
