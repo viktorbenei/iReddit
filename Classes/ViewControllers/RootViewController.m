@@ -8,35 +8,6 @@
 
 #import "RootViewController.h"
 
-@interface SubredditTableItem : TTTableTextItem
-{
-	id tag;
-}
-
-@property (nonatomic, retain) id tag;
-
-@end
-
-@implementation SubredditTableItem
-
-@synthesize tag;
-
-+ (id)itemWithText:(NSString *)aString URL:(NSString *)aURL tag:(id)aTag
-{
-	SubredditTableItem *item = [self itemWithText:aString URL:aURL];
-	item.tag = aTag;
-    
-	return item;
-}
-
-- (void)dealloc
-{
-	self.tag = nil;
-	[super dealloc];
-}
-
-@end
-
 @interface RootViewController () {
 	NSArray *customSubreddits;
     
@@ -94,7 +65,6 @@
 }
 
 - (void)viewDidLoad {
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -204,10 +174,11 @@
     [receivedData appendData:data];
 }
 -(void)connectionDidFinishLoading:(NSURLConnection *)connection {
-   
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:receivedData options:NSJSONReadingMutableContainers error:nil];
     
-	if (![json isKindOfClass:[NSDictionary class]] || ![json objectForKey:@"data"])
+    id json = [NSJSONSerialization JSONObjectWithData:receivedData
+                                                         options:NSJSONReadingMutableContainers
+                                                           error:nil];
+   if (![json isKindOfClass:[NSDictionary class]] || ![json objectForKey:@"data"])
 	{
         [self createModel];
         [self.tableView reloadData];
@@ -234,8 +205,6 @@
     _connection = nil;
 }
 -(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    
-    
     [self createModel];
     [self.tableView reloadData];
     _connection = nil;
@@ -468,7 +437,7 @@
     return proposedDestinationIndexPath;
 }
 -(BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 1) {
+    if (indexPath.section == 1 && [[_dataSource objectAtIndex:1] count]>1) {
         return YES;
     }
     return NO;

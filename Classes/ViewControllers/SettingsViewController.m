@@ -141,26 +141,42 @@
                     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:usePocket];
                     [[NSUserDefaults standardUserDefaults] synchronize];
                     NSLog(@"%@",error.localizedDescription);
+                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithXMarkAndMessage:@"Could not log in to Pocket"];
+                    [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
+                    [gav presentAlertFor:1.08];
+                    [gav release];
+
                 }
                 else
                 {
                     // The user logged in successfully, your app can now make requests.
                     // [API username] will return the logged-in user’s username
                     // and API.loggedIn will == YES
-                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithTitle:@"Logged in to Pocket"
-                                                            cancelButtonTitle:nil
-                                                            acceptButtonTitle:@"Ok"
-                                                                   andMessage:nil];
-                    [gav show];
+                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithCheckAndMessage:@"Logged in to Pocket"];
+                    [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
+                    [gav presentAlertFor:1.08];
                     [gav release];
+                    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:usePocket];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
                 }
             }];
         }
-    }
+        if (![sender isOn] && [[PocketAPI sharedAPI] isLoggedIn]) {
+            [[PocketAPI sharedAPI] logout];
+            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:data[@"key"]];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+        if ([sender isOn] && [[PocketAPI sharedAPI] isLoggedIn]) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:usePocket];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+    } else {
     [[NSUserDefaults standardUserDefaults] setBool:[sender isOn] forKey:data[@"key"]];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    }
     
     [self createModel];
+   // [self.tableView reloadData];
     
 }
 -(BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
