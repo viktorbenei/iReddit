@@ -584,7 +584,7 @@
     if (failedDownload) {
         dictionary = nil;
     } else {
-        dictionary = [NSDictionary dictionaryWithObjectsAndKeys:_responseData,@"data",_mimeType,@"mime", _userURL, @"url", _textEncoding, @"encoding", nil];
+        dictionary = [NSDictionary dictionaryWithObjectsAndKeys:_responseData,@"data", _userURL, @"url", _mimeType,@"mime",_textEncoding, @"encoding", nil];
     }
     return dictionary;
 }

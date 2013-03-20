@@ -10,21 +10,8 @@
 #import "GIDAAlertView.h"
 
 @interface AddRedditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, GIDAAlertViewDelegate>
-{
-	UINavigationBar *navigationBar;	
-	
-	BOOL shouldViewOnly;
-}
 
-
-- (IBAction)cancel:(id)sender;
-- (IBAction)save:(id)sender;
 - (BOOL)shouldViewOnly;
 - (id)initForViewing;
-
-//private
-- (void)loadReddit:(NSString *)redditURL;
-- (void)requestFailed;
-
 
 @end

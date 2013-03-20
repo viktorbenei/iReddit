@@ -9,13 +9,13 @@
 #import <UIKit/UIKit.h>
 #import <Three20/Three20.h>
 
-@interface SubredditViewController : TTTableViewController 
+@interface SubredditViewController : TTTableViewController
 {
-	BOOL			showTabBar;
-	NSDictionary	*subredditItem;
-	TTTabStrip		*tabBar;
-	
-	NSIndexPath		*savedLocation;
+	BOOL                showTabBar;
+	NSDictionary        *subredditItem;
+	UISegmentedControl  *tabBar;
+    NSIndexPath         *savedLocation;
+
 }
 
 - (id)initWithField:(NSDictionary *)anItem;

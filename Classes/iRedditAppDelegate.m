@@ -101,7 +101,14 @@ iRedditAppDelegate *sharedAppDelegate;
 			[self showRandomStory];
     }
 }
-
+-(BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url  {
+    UIAlertView *alertView;
+    NSString *text = [[url host] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    alertView = [[UIAlertView alloc] initWithTitle:@"Text" message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    return YES;
+}
 - (void)didEndLogin:(NSNotification *)notif
 {
     if([[LoginController sharedLoginController] isLoggedIn] && !messageDataSource && !messageTimer)

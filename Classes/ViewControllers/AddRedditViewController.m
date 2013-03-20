@@ -11,7 +11,15 @@
 #import "Constants.h"
 #import "LoginController.h"
 
-@interface AddRedditViewController ()
+@interface AddRedditViewController (){
+	UINavigationBar *navigationBar;
+	BOOL shouldViewOnly;
+}
+
+- (IBAction)cancel:(id)sender;
+- (IBAction)save:(id)sender;
+- (void)loadReddit:(NSString *)redditURL;
+- (void)requestFailed;
 @property (retain) NSArray *dataSource;
 @property (retain) NSArray *section;
 @property (nonatomic, retain) IBOutlet UINavigationBar *navigationBar;

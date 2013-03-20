@@ -13,11 +13,13 @@
 #import "Constants.h"
 #import "SubredditTableViewDelegate.h" 
 
+
+
 @implementation SubredditViewController
 
 - (void)dealloc 
 {
-	[self.dataSource cancel];
+	//[self.dataSource cancel];
 	[subredditItem release];
 	[tabBar release];
 	[savedLocation release];
@@ -64,17 +66,17 @@
 			
 	if (showTabBar)
 	{
-		tabBar = [[TTTabStrip alloc] initWithFrame:CGRectMake(0, 0, applicationFrame.size.width, 36)];
-
-		tabBar.tabItems = [NSArray arrayWithObjects:
-							 [[[TTTabItem alloc] initWithTitle:@"   Hot   "] autorelease],
-							 [[[TTTabItem alloc] initWithTitle:@"  New  "] autorelease],
-							 [[[TTTabItem alloc] initWithTitle:@"  Top  "] autorelease],
-							 [[[TTTabItem alloc] initWithTitle:@"Controversial"] autorelease],
-						   nil];
-
-		tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		tabBar.delegate = (id <TTTabDelegate>)self;
+        tabBar = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Hot",@"New",@"Top",@"Controversial", nil]];
+        [tabBar setSelectedSegmentIndex:0];
+        UIFont *font = [UIFont boldSystemFontOfSize:11.0f];
+        NSDictionary *attributes = [NSDictionary dictionaryWithObject:font
+                                                               forKey:UITextAttributeFont];
+        [tabBar setTitleTextAttributes:attributes
+                                        forState:UIControlStateNormal];
+        [tabBar setFrame:CGRectMake(0, 0, applicationFrame.size.width, 30)];
+        [tabBar setSegmentedControlStyle:UISegmentedControlStyleBar];
+        [tabBar setTintColor:[UIColor colorWithWhite:0.8 alpha:1]];
+        [tabBar addTarget:self action:@selector(toolBarButton:) forControlEvents:UIControlEventValueChanged];
 	}
 
 	CGRect aFrame = self.view.frame;
@@ -165,17 +167,13 @@
 }
 
 #pragma mark tab bar stuff
-
-- (void)tabBar:(id)tabBar tabSelected:(int)selectedIndex
-{
-	[self.dataSource cancel];
+-(void)toolBarButton:(UISegmentedControl *)sender {
+    [self.dataSource cancel];
 	[self.dataSource invalidate:YES];
     
-    ((SubredditDataModel *)((SubredditDataSource *)self.dataSource).model).newsModeIndex = selectedIndex;
+    ((SubredditDataModel *)((SubredditDataSource *)self.dataSource).model).newsModeIndex = sender.selectedSegmentIndex;
     [self reload];
-	//[self reloadContent];
 }
-
 #pragma mark orientation
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
