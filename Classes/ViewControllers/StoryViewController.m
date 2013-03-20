@@ -425,13 +425,25 @@
             //open link in safari
             //[[Beacon shared] startSubBeaconWithName:@"openedInSafari" timeSession:NO];
             if ([[NSUserDefaults standardUserDefaults] boolForKey:@"useChrome"]) {
-                if ([url hasPrefix:@"http://"]) {
+                NSString *appName =
+                [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+                url = [NSString stringWithFormat:
+                                             @"googlechrome-x-callback://x-callback-url/open/?x-source=%@&x-success=%@&url=%@",
+                                             encodeByAddingPercentEscapes(appName),
+                                             encodeByAddingPercentEscapes(@"ireddit://"),
+                                             encodeByAddingPercentEscapes(url)];
+                NSLog(@"%@",url);
+              //  NSURL *chromeURL = [NSURL URLWithString:chromeURLString];
+                
+                // Open the URL with Google Chrome.
+             //   [[UIApplication sharedApplication] openURL:chromeURL];
+          /*      if ([url hasPrefix:@"http://"]) {
                     url = [@"googlechrome://" stringByAppendingString:[[url componentsSeparatedByString:@"http://"] objectAtIndex:1]];
                 } else {
                     if ([url hasPrefix:@"https://"]) {
                         url = [@"googlechromes://" stringByAppendingString:[[url componentsSeparatedByString:@"https://"] objectAtIndex:1]];
                     }
-                }
+                }*/
             }
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
             break;
@@ -463,6 +475,17 @@
             [self actionSheetCancel:currentSheet];
             break;
     }
+}
+
+static NSString * encodeByAddingPercentEscapes(NSString *input) {
+    NSString *encodedValue =
+    (NSString *)CFURLCreateStringByAddingPercentEscapes(
+                                                        kCFAllocatorDefault,
+                                                        (CFStringRef)input,
+                                                        NULL,
+                                                        (CFStringRef)@"!*'();:@&=+$,/?%#[]",
+                                                        kCFStringEncodingUTF8);
+    return [encodedValue autorelease];
 }
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
@@ -519,7 +542,9 @@
                     // there was an issue connecting to Pocket
                     // present some UI to notify if necessary
                 }else{
-                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithSpinnerAndMessage:@"saved \u2713"];
+                    
+                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithCheckAndMessage:@"Saved to Pocket"];
+                    [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
                     [gav presentAlertFor:1.07];
                     [gav release];
                     NSLog(@"saved\u2713");
