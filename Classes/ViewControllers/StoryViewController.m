@@ -7,16 +7,16 @@
 //
 
 #import "StoryViewController.h"
+
+#import "GIDAAlertView.h"
+#import "iRedditAppDelegate.h"
 #import "Constants.h"
 #import "LoginController.h"
 #import "LoginViewController.h"
 #import "SubredditDataSource.h"
 #import "SubredditViewController.h"
 #import "RedditWebView.h"
-#import "iRedditAppDelegate.h"
-
-#import <MessageUI/MessageUI.h>
-#import <MessageUI/MFMailComposeViewController.h>
+#import "PocketAPI.h"
 
 @implementation StoryViewController
 
@@ -34,7 +34,7 @@
 
 - (void)loadView
 {
-	self.navigationBarTintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+	self.navigationController.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
 	self.hidesBottomBarWhenPushed = NO;
     
 	[super loadView];
@@ -266,19 +266,17 @@
 	}
     
 	NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditVoteAPIString];
-	TTURLRequest *request = [TTURLRequest requestWithURL:url delegate:nil];
-	
-	request.cacheExpirationAge = 0;
-	request.cachePolicy = TTURLRequestCachePolicyNoCache;
-	request.contentType = @"application/x-www-form-urlencoded";
-	request.httpMethod = @"POST";
-	request.httpBody = [[NSString stringWithFormat:@"dir=%d&uh=%@&id=%@&_=", story.likes ? 0 : 1,
-                         [[LoginController sharedLoginController] modhash], story.name]
-                        dataUsingEncoding:NSASCIIStringEncoding];
-    request.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
     
-	[request send];
-    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+    [request setHTTPShouldHandleCookies:[[LoginController sharedLoginController] isLoggedIn] ? YES : NO];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPMethod:@"POST"];
+    [request setHTTPBody:[[NSString stringWithFormat:@"dir=%d&uh=%@&id=%@&_=", story.likes ? 0 : 1,
+                           [[LoginController sharedLoginController] modhash], story.name]
+                          dataUsingEncoding:NSASCIIStringEncoding]];
+    NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:nil];
+    [connection start];    
 	
 	story.likes = !story.likes;
 	story.dislikes = NO;
@@ -297,18 +295,17 @@
 	}
     
 	NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditVoteAPIString];
-	TTURLRequest *request = [TTURLRequest requestWithURL:url delegate:nil];
-	
-	request.cacheExpirationAge = 0;
-	request.cachePolicy = TTURLRequestCachePolicyNoCache;
-	request.contentType = @"application/x-www-form-urlencoded";
-	request.httpMethod = @"POST";
-	request.httpBody = [[NSString stringWithFormat:@"dir=%d&uh=%@&id=%@&_=", story.dislikes ? 0 : -1,
-						 [[LoginController sharedLoginController] modhash], story.name]
-						dataUsingEncoding:NSASCIIStringEncoding];
-    request.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
     
-	[request send];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+    [request setHTTPShouldHandleCookies:[[LoginController sharedLoginController] isLoggedIn] ? YES : NO];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPMethod:@"POST"];
+    [request setHTTPBody:[[NSString stringWithFormat:@"dir=%d&uh=%@&id=%@&_=", story.dislikes ? 0 : -1,
+                           [[LoginController sharedLoginController] modhash], story.name]
+                          dataUsingEncoding:NSASCIIStringEncoding]];
+    NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:nil];
+    [connection start];
     
     
 	story.likes = NO;
@@ -495,19 +492,18 @@
     if (isForComments && story.commentsURL)
         url = story.commentsURL;
     
-    TTURLRequest *request = [TTURLRequest requestWithURL:InstapaperAPIString delegate:nil];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:InstapaperAPIString]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+    [request setValue:username forKey:@"username"];
+    [request setValue:password forKey:@"password"];
+    [request setValue:url forKey:@"url"];
+    [request setValue:(story.title ? story.title : @"no title") forKey:@"title"];
+  
+    [request setHTTPMethod:@"POST"];
+   
+    NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:nil];
+    [connection start];
     
-    request.cacheExpirationAge = 0;
-    request.cachePolicy = TTURLRequestCachePolicyNoCache;
-    
-    request.httpMethod = @"POST";
-    
-    [request.parameters setObject:username forKey:@"username"];
-    [request.parameters setObject:password forKey:@"password"];
-    [request.parameters setObject:url forKey:@"url"];
-    [request.parameters setObject:story.title ? story.title : @"no title" forKey:@"title"];
-    
-    [request send];
 }
 - (void)saveOnPocket:(id)sender {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -539,33 +535,34 @@
 - (void)saveCurrentStory:(id)sender
 {
     NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditSaveStoryAPIString];
-    TTURLRequest *request = [TTURLRequest requestWithURL:url delegate:nil];
     
-    request.cacheExpirationAge = 0;
-    request.cachePolicy = TTURLRequestCachePolicyNoCache;
-    request.contentType = @"application/x-www-form-urlencoded";
-    request.httpMethod = @"POST";
-    request.httpBody = [[NSString stringWithFormat:@"uh=%@&id=%@&_=",
-                         [[LoginController sharedLoginController] modhash], story.name]
-                        dataUsingEncoding:NSASCIIStringEncoding];
-    request.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
-    [request send];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+    [request setHTTPShouldHandleCookies:[[LoginController sharedLoginController] isLoggedIn] ? YES : NO];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPMethod:@"POST"];
+    [request setHTTPBody:[[NSString stringWithFormat:@"uh=%@&id=%@&_=",
+                           [[LoginController sharedLoginController] modhash], story.name]
+                          dataUsingEncoding:NSASCIIStringEncoding]];
+    NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:nil];
+    [connection start];
+    
 }
 
 - (void)hideCurrentStory:(id)sender
 {
     NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditHideStoryAPIString];
-    TTURLRequest *request = [TTURLRequest requestWithURL:url delegate:nil];
     
-    request.cacheExpirationAge = 0;
-    request.cachePolicy = TTURLRequestCachePolicyNoCache;
-    request.contentType = @"application/x-www-form-urlencoded";
-    request.httpMethod = @"POST";
-    request.httpBody = [[NSString stringWithFormat:@"uh=%@&id=%@&executed=hidden",
-                         [[LoginController sharedLoginController] modhash], story.name]
-                        dataUsingEncoding:NSASCIIStringEncoding];
-    
-    [request send];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPMethod:@"POST"];
+    [request setHTTPBody:[[NSString stringWithFormat:@"uh=%@&id=%@&executed=hidden",
+                           [[LoginController sharedLoginController] modhash], story.name]
+                          dataUsingEncoding:NSASCIIStringEncoding]];
+    NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:nil];
+    [connection start];
+
     
     NSArray *viewControllers = self.navigationController.viewControllers;
     

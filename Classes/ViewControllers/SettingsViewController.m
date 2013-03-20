@@ -10,6 +10,7 @@
 #import "iRedditAppDelegate.h"
 #import "LoginController.h"
 #import "Constants.h"
+#import "GIDAAlertView.h"
 
 @interface SettingsViewController () {
     NSInteger selectedRow;

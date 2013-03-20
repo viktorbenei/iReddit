@@ -6,13 +6,15 @@
 //  Copyright 2009 280 North. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <Three20/Three20.h>
+#import <MessageUI/MessageUI.h>
+#import <MessageUI/MFMailComposeViewController.h>
 #import "Story.h"
 #import "AlienProgressView.h"
-#import "GIDAAlertView.h"
 
-@interface StoryViewController : TTViewController <UIWebViewDelegate>
+
+@interface StoryViewController : UIViewController <UIWebViewDelegate>
 {
 	BOOL		isForComments;
 	

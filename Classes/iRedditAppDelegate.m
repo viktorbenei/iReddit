@@ -7,11 +7,7 @@
 //
 
 #import "iRedditAppDelegate.h"
-#import "RootViewController.h"
-#import "SubredditViewController.h"
-#import "Story.h"
-#import "Constants.h"
-#import "LoginController.h"
+
 
 extern NSMutableArray *visitedArray;
 
@@ -81,9 +77,6 @@ iRedditAppDelegate *sharedAppDelegate;
         [[NSNotificationCenter defaultCenter] postNotificationName:RedditDidFinishLoggingInNotification object:nil];
     }
 	
-	shakingSound = 0;
-	[self reloadSound];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(deviceDidShake:)
                                                  name:DeviceDidShakeNotification
@@ -102,14 +95,7 @@ iRedditAppDelegate *sharedAppDelegate;
 
 - (void)deviceDidShake:(NSNotification *)notif
 {
-    if(shouldDetectDeviceShake)
-    {
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:playSoundOnShakeKey])
-		{
-			AudioServicesPlaySystemSound(shakingSound);
-			AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-		}
-		
+    if(shouldDetectDeviceShake){
 		if ([[NSUserDefaults standardUserDefaults] boolForKey:shakeForStoryKey])
 			[self showRandomStory];
     }
@@ -162,14 +148,7 @@ iRedditAppDelegate *sharedAppDelegate;
 	//[[Beacon shared] endBeacon];
 }
 
-- (void)reloadSound
-{
-	if (shakingSound != 0)
-		AudioServicesDisposeSystemSoundID(shakingSound);
-	
-	NSString *path = [[NSBundle mainBundle] pathForResource:[[NSUserDefaults standardUserDefaults] stringForKey:shakingSoundKey] ofType:@"pcm"];
-	AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &shakingSound);
-}
+
 
 - (void)dealloc
 {
@@ -178,9 +157,7 @@ iRedditAppDelegate *sharedAppDelegate;
 	
     [messageTimer invalidate];
     [messageTimer release];
-    
-	AudioServicesDisposeSystemSoundID(shakingSound);
-    
+      
 	[window release];
     [super dealloc];
 }

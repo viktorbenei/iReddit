@@ -7,12 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Three20/Three20.h>
-#import <AudioToolbox/AudioToolbox.h>
 #import "SubredditDataSource.h"
-#import "StoryViewController.h"
 #import "MessageDataSource.h"
 #import "PocketAPI.h"
+#import "RootViewController.h"
+#import "SubredditViewController.h"
+#import "Story.h"
+#import "Constants.h"
+#import "LoginController.h"
+#import "StoryViewController.h"
 
 @interface iRedditAppDelegate : NSObject <UIApplicationDelegate> 
 {
@@ -20,18 +23,15 @@
 	UINavigationController *navController;
 	
 	SubredditDataSource *randomDataSource;
-	StoryViewController *randomController;
+    StoryViewController *randomController;
 	
 	MessageDataSource *messageDataSource;
     NSTimer *messageTimer;
-    
-	SystemSoundID shakingSound;
 }
 
 + (UIColor *)redditNavigationBarTintColor;
 + (iRedditAppDelegate *)sharedAppDelegate;
 
-- (void)reloadSound;
 - (void)showRandomStory;
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
