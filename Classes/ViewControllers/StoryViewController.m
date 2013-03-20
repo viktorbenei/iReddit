@@ -361,7 +361,7 @@
 						cancelButtonTitle:@"Cancel"
 						destructiveButtonTitle:nil
                         //						otherButtonTitles:@"E-mail Link", @"Open Link in Safari", @"Hide on reddit", @"Save on reddit", @"Save on Instapaper", @"Save on Pocket", nil];
-                        otherButtonTitles:@"E-mail Link", @"Open Link in Safari", @"Hide on reddit", @"Save on reddit", @"Save on Pocket", nil];
+                        otherButtonTitles:@"E-mail Link", @"Open Link in browser", @"Hide on reddit", @"Save on reddit", @"Save on Pocket", nil];
 		
 		currentSheet.actionSheetStyle = UIActionSheetStyleDefault;
 		
@@ -427,6 +427,15 @@
         case 1:
             //open link in safari
             //[[Beacon shared] startSubBeaconWithName:@"openedInSafari" timeSession:NO];
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"useChrome"]) {
+                if ([url hasPrefix:@"http://"]) {
+                    url = [@"googlechrome://" stringByAppendingString:[[url componentsSeparatedByString:@"http://"] objectAtIndex:1]];
+                } else {
+                    if ([url hasPrefix:@"https://"]) {
+                        url = [@"googlechromes://" stringByAppendingString:[[url componentsSeparatedByString:@"https://"] objectAtIndex:1]];
+                    }
+                }
+            }
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
             break;
         case 2:
@@ -461,44 +470,44 @@
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
 {
-	[controller dismissViewControllerAnimated:YES completion:nil];
+    [controller dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)saveOnInstapaper:(id)sender
 {
-	NSString *username = [[NSUserDefaults standardUserDefaults] stringForKey:instapaperUsernameKey];
-	NSString *password = [[NSUserDefaults standardUserDefaults] stringForKey:instapaperPasswordKey];
+    NSString *username = [[NSUserDefaults standardUserDefaults] stringForKey:instapaperUsernameKey];
+    NSString *password = [[NSUserDefaults standardUserDefaults] stringForKey:instapaperPasswordKey];
     
-	if (!password || [password isEqual:@""])
-		password = @"password";
+    if (!password || [password isEqual:@""])
+        password = @"password";
     
-	if (!username || [username isEqual:@""])
-	{
-		[[[[UIAlertView alloc] initWithTitle:@"Instapaper Error"
-									 message:@"You must provide an Instapaper username to save stories with Instapaper. You can add a username in the iReddit settings."
-									delegate:nil
-						   cancelButtonTitle:@"OK"
-						   otherButtonTitles:nil] autorelease] show];
-		return;
-	}
+    if (!username || [username isEqual:@""])
+    {
+        [[[[UIAlertView alloc] initWithTitle:@"Instapaper Error"
+                                     message:@"You must provide an Instapaper username to save stories with Instapaper. You can add a username in the iReddit settings."
+                                    delegate:nil
+                           cancelButtonTitle:@"OK"
+                           otherButtonTitles:nil] autorelease] show];
+        return;
+    }
     
-	NSString *url = story.URL;
-	if (isForComments && story.commentsURL)
-		url = story.commentsURL;
+    NSString *url = story.URL;
+    if (isForComments && story.commentsURL)
+        url = story.commentsURL;
     
-	TTURLRequest *request = [TTURLRequest requestWithURL:InstapaperAPIString delegate:nil];
-	
-	request.cacheExpirationAge = 0;
-	request.cachePolicy = TTURLRequestCachePolicyNoCache;
+    TTURLRequest *request = [TTURLRequest requestWithURL:InstapaperAPIString delegate:nil];
     
-	request.httpMethod = @"POST";
+    request.cacheExpirationAge = 0;
+    request.cachePolicy = TTURLRequestCachePolicyNoCache;
     
-	[request.parameters setObject:username forKey:@"username"];
-	[request.parameters setObject:password forKey:@"password"];
-	[request.parameters setObject:url forKey:@"url"];
-	[request.parameters setObject:story.title ? story.title : @"no title" forKey:@"title"];
-	
-	[request send];
+    request.httpMethod = @"POST";
+    
+    [request.parameters setObject:username forKey:@"username"];
+    [request.parameters setObject:password forKey:@"password"];
+    [request.parameters setObject:url forKey:@"url"];
+    [request.parameters setObject:story.title ? story.title : @"no title" forKey:@"title"];
+    
+    [request send];
 }
 - (void)saveOnPocket:(id)sender {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -522,91 +531,91 @@
                 }
             }];
         } else {
-                
+            
         }
     }
 }
 
 - (void)saveCurrentStory:(id)sender
 {
-	NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditSaveStoryAPIString];
-	TTURLRequest *request = [TTURLRequest requestWithURL:url delegate:nil];
-	
-	request.cacheExpirationAge = 0;
-	request.cachePolicy = TTURLRequestCachePolicyNoCache;
-	request.contentType = @"application/x-www-form-urlencoded";
-	request.httpMethod = @"POST";
-	request.httpBody = [[NSString stringWithFormat:@"uh=%@&id=%@&_=",
+    NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditSaveStoryAPIString];
+    TTURLRequest *request = [TTURLRequest requestWithURL:url delegate:nil];
+    
+    request.cacheExpirationAge = 0;
+    request.cachePolicy = TTURLRequestCachePolicyNoCache;
+    request.contentType = @"application/x-www-form-urlencoded";
+    request.httpMethod = @"POST";
+    request.httpBody = [[NSString stringWithFormat:@"uh=%@&id=%@&_=",
                          [[LoginController sharedLoginController] modhash], story.name]
-						dataUsingEncoding:NSASCIIStringEncoding];
+                        dataUsingEncoding:NSASCIIStringEncoding];
     request.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
-	[request send];
+    [request send];
 }
 
 - (void)hideCurrentStory:(id)sender
 {
-	NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditHideStoryAPIString];
-	TTURLRequest *request = [TTURLRequest requestWithURL:url delegate:nil];
-	
-	request.cacheExpirationAge = 0;
-	request.cachePolicy = TTURLRequestCachePolicyNoCache;
-	request.contentType = @"application/x-www-form-urlencoded";
-	request.httpMethod = @"POST";
-	request.httpBody = [[NSString stringWithFormat:@"uh=%@&id=%@&executed=hidden",
-						 [[LoginController sharedLoginController] modhash], story.name]
-						dataUsingEncoding:NSASCIIStringEncoding];
-	
-	[request send];
-	
-	NSArray *viewControllers = self.navigationController.viewControllers;
-	
-	if ([viewControllers count] > 2 && [[viewControllers objectAtIndex:[viewControllers count] - 2] isKindOfClass:[SubredditViewController class]])
-	{
-		SubredditViewController *controller = (SubredditViewController *)[viewControllers objectAtIndex:[viewControllers count] - 2];
-		SubredditDataSource *ds = (SubredditDataSource *)controller.dataSource;
-		[ds.items removeObject:self.story];
-	}
+    NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditHideStoryAPIString];
+    TTURLRequest *request = [TTURLRequest requestWithURL:url delegate:nil];
+    
+    request.cacheExpirationAge = 0;
+    request.cachePolicy = TTURLRequestCachePolicyNoCache;
+    request.contentType = @"application/x-www-form-urlencoded";
+    request.httpMethod = @"POST";
+    request.httpBody = [[NSString stringWithFormat:@"uh=%@&id=%@&executed=hidden",
+                         [[LoginController sharedLoginController] modhash], story.name]
+                        dataUsingEncoding:NSASCIIStringEncoding];
+    
+    [request send];
+    
+    NSArray *viewControllers = self.navigationController.viewControllers;
+    
+    if ([viewControllers count] > 2 && [[viewControllers objectAtIndex:[viewControllers count] - 2] isKindOfClass:[SubredditViewController class]])
+    {
+        SubredditViewController *controller = (SubredditViewController *)[viewControllers objectAtIndex:[viewControllers count] - 2];
+        SubredditDataSource *ds = (SubredditDataSource *)controller.dataSource;
+        [ds.items removeObject:self.story];
+    }
 }
 
 - (void)loginViewController:(LoginViewController *)aController didFinishWithContext:(id)aContext
 {
-	if ([[LoginController sharedLoginController] isLoggedIn])
-	{
-		if ([aContext isEqual:@"save"])
-			[self saveCurrentStory:self];
-		else if ([aContext isEqual:@"voteUp"])
-			[self voteUp:self];
-		else if ([aContext isEqual:@"voteDown"])
-			[self voteDown:self];
-		else if ([aContext isEqual:@"hide"])
-			[self hideCurrentStory:self];
-	}
+    if ([[LoginController sharedLoginController] isLoggedIn])
+    {
+        if ([aContext isEqual:@"save"])
+            [self saveCurrentStory:self];
+        else if ([aContext isEqual:@"voteUp"])
+            [self voteUp:self];
+        else if ([aContext isEqual:@"voteDown"])
+            [self voteDown:self];
+        else if ([aContext isEqual:@"hide"])
+            [self hideCurrentStory:self];
+    }
 }
 
 - (IBAction)segmentAction:(id)sender
 {
-	switch ([sender selectedSegmentIndex])
-	{
-		case 0:
-			[webview goBack];
-			break;
-		case 1:
-			if ([webview isLoading])
-			{
-				[webview stopLoading];
-				[self webViewDidFinishLoad:webview];
-			}
-			else
-			{
-				[webview reload];
-			}
-			
-			break;
-		case 2:
-			[webview goForward];
-			break;
-	}
-	//[[Beacon shared] startSubBeaconWithName:@"usedSegmentNav" timeSession:NO];
+    switch ([sender selectedSegmentIndex])
+    {
+        case 0:
+            [webview goBack];
+            break;
+        case 1:
+            if ([webview isLoading])
+            {
+                [webview stopLoading];
+                [self webViewDidFinishLoad:webview];
+            }
+            else
+            {
+                [webview reload];
+            }
+            
+            break;
+        case 2:
+            [webview goForward];
+            break;
+    }
+    //[[Beacon shared] startSubBeaconWithName:@"usedSegmentNav" timeSession:NO];
 }
 
 - (void)webViewDidStartLoad:(RedditWebView *)webView
@@ -617,76 +626,76 @@
         [loadingView startAnimating];
     }
     [(UILabel *)(self.navigationItem.titleView) setText:@"Loading..."];
-	[segmentedControl setEnabled:[webView canGoBack] forSegmentAtIndex:0];
-	[segmentedControl setEnabled:[webView canGoForward] forSegmentAtIndex:2];
-	[segmentedControl setImage:[UIImage imageNamed:@"stop.png"] forSegmentAtIndex:1];
+    [segmentedControl setEnabled:[webView canGoBack] forSegmentAtIndex:0];
+    [segmentedControl setEnabled:[webView canGoForward] forSegmentAtIndex:2];
+    [segmentedControl setImage:[UIImage imageNamed:@"stop.png"] forSegmentAtIndex:1];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-	if ([loadingView isAnimating])
-	{
-		[loadingView setHidden:YES];
-		[loadingView stopAnimating];
-	}
+    if ([loadingView isAnimating])
+    {
+        [loadingView setHidden:YES];
+        [loadingView stopAnimating];
+    }
     
-	[segmentedControl setEnabled:[webView canGoBack] forSegmentAtIndex:0];
-	[segmentedControl setEnabled:[webView canGoForward] forSegmentAtIndex:2];
-	[segmentedControl setImage:[UIImage imageNamed:@"refresh.png"] forSegmentAtIndex:1];
-	
-	[(UILabel *)(self.navigationItem.titleView) setText:[webView stringByEvaluatingJavaScriptFromString:@"document.title"]];
+    [segmentedControl setEnabled:[webView canGoBack] forSegmentAtIndex:0];
+    [segmentedControl setEnabled:[webView canGoForward] forSegmentAtIndex:2];
+    [segmentedControl setImage:[UIImage imageNamed:@"refresh.png"] forSegmentAtIndex:1];
+    
+    [(UILabel *)(self.navigationItem.titleView) setText:[webView stringByEvaluatingJavaScriptFromString:@"document.title"]];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-	[super viewWillDisappear:animated];
+    [super viewWillDisappear:animated];
     
-	if (![self.navigationController.topViewController isKindOfClass:[StoryViewController class]])
-	{
-		CGRect frame = self.webview.frame;
-		frame.size.height += self.navigationController.toolbar.frame.size.height;
-		self.webview.frame = frame;
+    if (![self.navigationController.topViewController isKindOfClass:[StoryViewController class]])
+    {
+        CGRect frame = self.webview.frame;
+        frame.size.height += self.navigationController.toolbar.frame.size.height;
+        self.webview.frame = frame;
         
-		[self.navigationController setToolbarHidden:YES animated:YES];
-	}
+        [self.navigationController setToolbarHidden:YES animated:YES];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-	[super viewWillAppear:animated];
-	[self setScore:story.score];
-	
-	self.navigationController.toolbar.tintColor = [UIColor blackColor];
-	
-	if (self.navigationController.toolbarHidden)
-		[self.navigationController setToolbarHidden:NO animated:YES];
+    [super viewWillAppear:animated];
+    [self setScore:story.score];
+    
+    self.navigationController.toolbar.tintColor = [UIColor blackColor];
+    
+    if (self.navigationController.toolbarHidden)
+        [self.navigationController setToolbarHidden:NO animated:YES];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : UIInterfaceOrientationIsPortrait(interfaceOrientation);
 }
 
 - (void)viewDidUnload
 {
-	[webview setDelegate:nil];
-	[webview stopLoading];
-	[webview removeFromSuperview];
-	self.webview = nil;
-	self.scoreItem = nil;
-	self.commentCountItem = nil;
-	self.toggleButtonItem = nil;
-	self.segmentedControl = nil;
-	self.loadingView = nil;
+    [webview setDelegate:nil];
+    [webview stopLoading];
+    [webview removeFromSuperview];
+    self.webview = nil;
+    self.scoreItem = nil;
+    self.commentCountItem = nil;
+    self.toggleButtonItem = nil;
+    self.segmentedControl = nil;
+    self.loadingView = nil;
     [super viewDidUnload];
 }
 
-- (void)dealloc 
+- (void)dealloc
 {
-	self.story = nil;
-	[currentSheet release];
-	[moreButtonItem release];
-	
+    self.story = nil;
+    [currentSheet release];
+    [moreButtonItem release];
+    
     [super dealloc];
 }
 

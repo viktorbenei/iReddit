@@ -39,6 +39,7 @@ NSString *const shakingSoundKey;
 NSString *const redditSortOrderKey;
 NSString *const allowLandscapeOrientationKey;
 NSString *const usePocket;
+NSString *const useChrome;
 NSString *const hasModHash;
 NSString *const redditModHash;
 

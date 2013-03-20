@@ -107,7 +107,7 @@
     
     if (redditPasswordKey == data[@"key"] || redditUsernameKey == data[@"key"]) {
         if (![previous isEqualToString:data[@"value"]]) {
-              changed = YES;
+            changed = YES;
         }
     }
     [self createModel];
@@ -145,7 +145,7 @@
                     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
                     [gav presentAlertFor:1.08];
                     [gav release];
-
+                    
                 }
                 else
                 {
@@ -171,12 +171,22 @@
             [[NSUserDefaults standardUserDefaults] synchronize];
         }
     } else {
-    [[NSUserDefaults standardUserDefaults] setBool:[sender isOn] forKey:data[@"key"]];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+        if ([data[@"key"] isEqualToString:@"useChrome"]) {
+            if ([sender isOn] && ![[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"googlechrome://"]]) {
+                [[NSUserDefaults standardUserDefaults] setBool:NO forKey:data[@"key"]];
+                [sender setOn:NO animated:YES];
+            } else {
+                [[NSUserDefaults standardUserDefaults] setBool:[sender isOn] forKey:data[@"key"]];
+            }
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        } else {
+            [[NSUserDefaults standardUserDefaults] setBool:[sender isOn] forKey:data[@"key"]];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
     }
     
     [self createModel];
-   // [self.tableView reloadData];
+    //[self.tableView reloadData];
     
 }
 -(BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -251,6 +261,7 @@
                 [NSArray arrayWithObject:
                  [NSDictionary dictionaryWithObjectsAndKeys:@"Use Account Settings",@"title",[NSNumber numberWithBool:[defaults boolForKey:useCustomRedditListKey]],@"value",useCustomRedditListKey, @"key", @"switch", @"type", nil]],
                 [NSArray arrayWithObjects:
+                 [NSDictionary dictionaryWithObjectsAndKeys:@"Use Chrome",@"title",[NSNumber numberWithBool:[defaults boolForKey:useChrome]],@"value",useChrome, @"key", @"switch", @"type", nil],
                  [NSDictionary dictionaryWithObjectsAndKeys:@"Show Thumbnails",@"title",[NSNumber numberWithBool:[defaults boolForKey:showStoryThumbnailKey]],@"value",showStoryThumbnailKey, @"key", @"switch", @"type", nil],
                  [NSDictionary dictionaryWithObjectsAndKeys:@"Shake for New Story",@"title",[NSNumber numberWithBool:[defaults boolForKey:shakeForStoryKey]],@"value",shakeForStoryKey, @"key", @"switch", @"type", nil],
                  [NSDictionary dictionaryWithObjectsAndKeys:@"Show Loading Alien",@"title",[NSNumber numberWithBool:[defaults boolForKey:showLoadingAlienKey]],@"value",showLoadingAlienKey, @"key", @"switch", @"type", nil],
