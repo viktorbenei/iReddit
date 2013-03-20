@@ -31,55 +31,63 @@ iRedditAppDelegate *sharedAppDelegate;
 
 @synthesize window, navController, messageDataSource;
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application 
-{    	    
+- (void)applicationDidFinishLaunching:(UIApplication *)application
+{
 	sharedAppDelegate = self;
 	[[PocketAPI sharedAPI] setConsumerKey:@"12494-5c5d662193512e29902989da"];
 	//register defaults
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	
 	[defaults registerDefaults:
-         [NSDictionary dictionaryWithObjectsAndKeys:
-              [NSNumber numberWithBool:YES], showStoryThumbnailKey,
-              [NSNumber numberWithBool:YES], shakeForStoryKey,
-              [NSNumber numberWithBool:YES], playSoundOnShakeKey,
-              [NSNumber numberWithBool:YES], useCustomRedditListKey,
-              [NSNumber numberWithBool:YES], showLoadingAlienKey,
-              [NSNumber numberWithBool:NO], usePocket,
-              [NSArray array], visitedStoriesKey,
-              [NSArray array], redditSortOrderKey,
-              redditSoundLightsaber, shakingSoundKey,
-              [NSNumber numberWithBool:YES], allowLandscapeOrientationKey,
-              @"/", initialRedditURLKey,
-              @"Front Page", initialRedditTitleKey,
-              nil
-            ]
-	  ];		
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      [NSNumber numberWithBool:YES], showStoryThumbnailKey,
+      [NSNumber numberWithBool:YES], shakeForStoryKey,
+      [NSNumber numberWithBool:YES], playSoundOnShakeKey,
+      [NSNumber numberWithBool:YES], useCustomRedditListKey,
+      [NSNumber numberWithBool:YES], showLoadingAlienKey,
+      [NSNumber numberWithBool:NO], usePocket,
+      [NSArray array], visitedStoriesKey,
+      [NSArray array], redditSortOrderKey,
+      redditSoundLightsaber, shakingSoundKey,
+      [NSNumber numberWithBool:YES], allowLandscapeOrientationKey,
+      @"/", initialRedditURLKey,
+      @"Front Page", initialRedditTitleKey,
+      nil
+      ]
+     ];
+    self.window.frame = [[UIScreen mainScreen] bounds];
 	
     self.navController = [[[UINavigationController alloc] initWithRootViewController:[[[RootViewController alloc] init] autorelease]] autorelease];
 	self.navController.delegate = (id <UINavigationControllerDelegate>)self;
 	navController.toolbarHidden = NO;
     self.window.rootViewController = navController;
-//	[window addSubview:navController.view];
+    //	[window addSubview:navController.view];
 	
 	NSString *initialRedditURL = [[NSUserDefaults standardUserDefaults] stringForKey:initialRedditURLKey];
 	NSString *initialRedditTitle = [[NSUserDefaults standardUserDefaults] stringForKey:initialRedditTitleKey];
 	
 	SubredditViewController *controller = [[[SubredditViewController alloc] initWithField:[TTTableTextItem itemWithText:initialRedditTitle URL:initialRedditURL]] autorelease];
 	[navController pushViewController:controller animated:NO];
-
+    
 	
 	//login
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didEndLogin:) name:RedditDidFinishLoggingInNotification object:nil];
-	[[LoginController sharedLoginController] loginWithUsername:[defaults stringForKey:redditUsernameKey] password:[defaults stringForKey:redditPasswordKey]];
+    if (![[LoginController sharedLoginController] isLoggedIn]) {
+        NSLog(@"Not Logged in, will try to login");
+        [[LoginController sharedLoginController] loginWithUsername:[defaults stringForKey:redditUsernameKey]
+                                                          password:[defaults stringForKey:redditPasswordKey]];
+    } else {
+        NSLog(@"Already logged in");
+        [[NSNotificationCenter defaultCenter] postNotificationName:RedditDidFinishLoggingInNotification object:nil];
+    }
 	
 	shakingSound = 0;
 	[self reloadSound];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                          selector:@selector(deviceDidShake:)
-                                          name:DeviceDidShakeNotification
-                                          object:nil]; 
+                                             selector:@selector(deviceDidShake:)
+                                                 name:DeviceDidShakeNotification
+                                               object:nil];
 	
     randomDataSource = [[SubredditDataSource alloc] initWithSubreddit:@"/randomrising/"];
     [self loadRandomData];
@@ -95,8 +103,8 @@ iRedditAppDelegate *sharedAppDelegate;
 - (void)deviceDidShake:(NSNotification *)notif
 {
     if(shouldDetectDeviceShake)
-    {   
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:playSoundOnShakeKey]) 
+    {
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:playSoundOnShakeKey])
 		{
 			AudioServicesPlaySystemSound(shakingSound);
 			AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
@@ -108,17 +116,17 @@ iRedditAppDelegate *sharedAppDelegate;
 }
 
 - (void)didEndLogin:(NSNotification *)notif
-{    
+{
     if([[LoginController sharedLoginController] isLoggedIn] && !messageDataSource && !messageTimer)
     {
         messageDataSource = [[MessageDataSource alloc] init];
         [messageDataSource.model load:TTURLRequestCachePolicyNoCache more:NO];
-
+        
         messageTimer = [[NSTimer scheduledTimerWithTimeInterval:60.0
-                                 target:self
-                                 selector:@selector(reloadMessages)
-                                 userInfo:nil
-                                 repeats:YES] retain];
+                                                         target:self
+                                                       selector:@selector(reloadMessages)
+                                                       userInfo:nil
+                                                        repeats:YES] retain];
     }
     else
     {
@@ -143,8 +151,8 @@ iRedditAppDelegate *sharedAppDelegate;
     [self performSelector:@selector(loadRandomData) withObject:nil afterDelay:60.0];
 }
 
-- (void)applicationWillTerminate:(UIApplication *)application 
-{	
+- (void)applicationWillTerminate:(UIApplication *)application
+{
 	// Save data if appropriate
 	[[NSUserDefaults standardUserDefaults] setObject:[visitedArray subarrayWithRange:NSMakeRange(0, MIN(500, [visitedArray count]))]
 											  forKey:visitedStoriesKey];
@@ -163,7 +171,7 @@ iRedditAppDelegate *sharedAppDelegate;
 	AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &shakingSound);
 }
 
-- (void)dealloc 
+- (void)dealloc
 {
 	self.navController = nil;
 	self.messageDataSource = nil;
@@ -181,7 +189,7 @@ iRedditAppDelegate *sharedAppDelegate;
 {
 	if (!randomDataSource || ![randomDataSource.model isLoaded])
 		return;
-
+    
 	if (!randomController)
 	{
 		randomController= [[StoryViewController alloc] init];
@@ -197,7 +205,7 @@ iRedditAppDelegate *sharedAppDelegate;
 	while (!story && i++ < count)
 	{
 		story = [randomDataSource storyWithIndex:(randomIndex++)%count];
-
+        
 		if ([story visited] && i < count - 1)
 			story = nil;
 	}
@@ -207,7 +215,7 @@ iRedditAppDelegate *sharedAppDelegate;
 		[randomDataSource.model load:TTURLRequestCachePolicyDefault more:YES];
 		return;
 	}
-
+    
 	if (navController.topViewController != randomController)
 	{
 		if (![navController.viewControllers containsObject:randomController])
@@ -217,7 +225,7 @@ iRedditAppDelegate *sharedAppDelegate;
 	}
 	
 	[randomController setStory:story];
-
+    
 	//[[Beacon shared] startSubBeaconWithName:@"shakeForStory" timeSession:NO];
 }
 
@@ -228,7 +236,7 @@ iRedditAppDelegate *sharedAppDelegate;
 	[messageDataSource release];
 	messageDataSource = nil;
 	
-	[randomController release];	
+	[randomController release];
 	randomController = nil;
 }
 
