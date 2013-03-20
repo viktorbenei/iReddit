@@ -36,7 +36,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         [self setBackgroundColor:[UIColor clearColor]];
-        _color = [UIColor blueColor];
+        _color = nil;
     }
     return self;
 }
@@ -48,6 +48,8 @@
 	CGContextSetLineWidth(context, 0.0);
 	CGContextSetAlpha(context, 0.8);
 	CGContextSetLineWidth(context, 2.0);
+    if (!_color)
+        _color = [UIColor redColor];
     UIColor *fillColor = _color;
     UIColor *borderColor = [UIColor clearColor];
 	CGContextSetStrokeColorWithColor(context, [borderColor CGColor]);
@@ -411,16 +413,10 @@
 
 - (void)drawRect:(CGRect)rect
 {
-#ifdef DEBUG
-    NSLog(@"%f  %f  %f  %f",rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-#endif
     if (withSpinnerOrImage) {
         rect.origin.x = (rect.size.width - 180)/2;
         rect.size.width = rect.size.height = 180;
     }
-#ifdef DEBUG
-    NSLog(@"%f  %f  %f  %f",rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-#endif
     
 	CGContextRef context = UIGraphicsGetCurrentContext();
     
@@ -518,7 +514,46 @@
                        });
     });
 }
-
+-(id)initWithCharacter:(NSString *)character andMessage:(NSString *)message{
+    self = [super initWithTitle:@"\n\n\n\n\n" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:nil];
+    if (self) {
+        withSpinnerOrImage = YES;
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(100, 35, 80, 80)];
+        [label setText:character];
+        [label setFont:[UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:90]];
+        [label setTextColor:[UIColor whiteColor]];
+        [label setTextAlignment:NSTextAlignmentCenter];
+        [label setBackgroundColor:[UIColor clearColor]];
+        [self addSubview:label];
+        
+        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(62, 115, 160, 50)];
+        [messageLabel setTextAlignment:NSTextAlignmentCenter];
+        [messageLabel setText:message];
+        [messageLabel setBackgroundColor:[UIColor clearColor]];
+        [messageLabel setTextColor:[UIColor whiteColor]];
+        [messageLabel setFont:[UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:20]];
+        [messageLabel setAdjustsFontSizeToFitWidth:YES];
+        [self addSubview:messageLabel];
+        [messageLabel release];
+        [label release];
+        _responseData = nil;
+    }
+    return self;
+}
+-(id)initWithCheckAndMessage:(NSString *)message {
+    self = [self initWithCharacter:@"\u2714" andMessage:message];
+    if (self) {
+        alertType = GIDAAlertViewCheck;
+    }
+    return self;
+}
+-(id)initWithXMarkAndMessage:(NSString *)message {
+    self = [self initWithCharacter:@"\u2718" andMessage:message];
+    if (self) {
+        alertType = GIDAAlertViewCheck;
+    }
+    return self;
+}
 -(void)presentAlertFor:(float)seconds {
     [self show];
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(seconds * NSEC_PER_SEC));
