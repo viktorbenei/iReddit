@@ -62,7 +62,8 @@ iRedditAppDelegate *sharedAppDelegate;
 	NSString *initialRedditURL = [[NSUserDefaults standardUserDefaults] stringForKey:initialRedditURLKey];
 	NSString *initialRedditTitle = [[NSUserDefaults standardUserDefaults] stringForKey:initialRedditTitleKey];
 	
-	SubredditViewController *controller = [[[SubredditViewController alloc] initWithField:[TTTableTextItem itemWithText:initialRedditTitle URL:initialRedditURL]] autorelease];
+	SubredditViewController *controller = [[[SubredditViewController alloc] initWithField:
+                                            [NSDictionary dictionaryWithObjectsAndKeys:initialRedditTitle, @"text", initialRedditURL, @"url", nil]] autorelease];
 	[navController pushViewController:controller animated:NO];
     
 	

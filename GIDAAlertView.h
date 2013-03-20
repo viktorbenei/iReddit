@@ -26,7 +26,7 @@ typedef enum {
 }GIDAAlertViewType;
 
 @interface ProgressBar : UIView
-@property (strong) UIColor *color;
+@property (retain, nonatomic) UIColor *color;
 @end
 
 @class GIDAAlertView;

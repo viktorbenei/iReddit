@@ -193,7 +193,7 @@
 	{
 		NSDictionary *thisReddit = [[children objectAtIndex:i] objectForKey:@"data"];
         [loadedReddits addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                  [thisReddit objectForKey:@"title"], @"title",
+                                  [thisReddit objectForKey:@"title"], @"text",
                                   [thisReddit objectForKey:@"url"], @"url",
                                   [thisReddit objectForKey:@"name"], @"tag",
                                   nil]];
@@ -216,8 +216,7 @@
 	{
 		NSDictionary *redditInfo = (NSDictionary *)[note userInfo];
 		SubredditViewController *controller = [[[SubredditViewController alloc] initWithField:
-                                                [TTTableTextItem itemWithText:[redditInfo objectForKey:@"subreddit"]
-                                                                          URL:[redditInfo objectForKey:@"subreddit_url"]]]
+                                                [NSDictionary dictionaryWithObjectsAndKeys:[redditInfo objectForKey:@"subreddit"], @"text", [redditInfo objectForKey:@"subreddit_url"], @"url", nil]]
 											   autorelease];
         
 		[[self navigationController] pushViewController:controller animated:YES];
@@ -278,7 +277,7 @@
         [connection start];
         
 		NSDictionary *newRedditField = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [redditInfo objectForKey:@"subreddit"],@"title",
+                                        [redditInfo objectForKey:@"subreddit"],@"text",
                                         [redditInfo objectForKey:@"subreddit_url"],@"url",
                                         [redditInfo objectForKey:@"subreddit_id"],@"tag",
                                         nil];
@@ -313,17 +312,17 @@
 	}
 	else{
         if (useCustomReddits && ([[LoginController sharedLoginController] isLoggingIn] || _connection)) {
-            [result addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Loading custom reddits...", @"title", @"", @"url", nil]];
+            [result addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Loading custom reddits...", @"text", @"", @"url", nil]];
         } else {
             [result addObjectsFromArray:
              [NSArray arrayWithObjects:
-              [NSDictionary dictionaryWithObjectsAndKeys:@"reddit",           @"title", @"/r/reddit.com/", @"url", nil],
-              [NSDictionary dictionaryWithObjectsAndKeys:@"programming",      @"title", @"/r/programming/", @"url", nil],
-              [NSDictionary dictionaryWithObjectsAndKeys:@"pics",             @"title", @"/r/pics/", @"url", nil],
-              [NSDictionary dictionaryWithObjectsAndKeys:@"politics",         @"title", @"/r/politics/", @"url", nil],
-              [NSDictionary dictionaryWithObjectsAndKeys:@"technology",       @"title", @"/r/technology/", @"url", nil],
-              [NSDictionary dictionaryWithObjectsAndKeys:@"world news",       @"title", @"/r/worldnews/", @"url", nil],
-              [NSDictionary dictionaryWithObjectsAndKeys:@"best of reddit",   @"title", @"/r/bestof/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"reddit",           @"text", @"/r/reddit.com/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"programming",      @"text", @"/r/programming/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"pics",             @"text", @"/r/pics/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"politics",         @"text", @"/r/politics/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"technology",       @"text", @"/r/technology/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"world news",       @"text", @"/r/worldnews/", @"url", nil],
+              [NSDictionary dictionaryWithObjectsAndKeys:@"best of reddit",   @"text", @"/r/bestof/", @"url", nil],
               nil]
              ];
         }
@@ -346,19 +345,19 @@
 
 - (NSArray *)extraItems{
 	return [NSArray arrayWithObjects:
-            [NSDictionary dictionaryWithObjectsAndKeys:@"All reddits combined",   @"title", @"/r/all/", @"url", nil],
-            [NSDictionary dictionaryWithObjectsAndKeys:@"Other reddit...",   @"title", @"/other/", @"url", nil],
+            [NSDictionary dictionaryWithObjectsAndKeys:@"All reddits combined",   @"text", @"/r/all/", @"url", nil],
+            [NSDictionary dictionaryWithObjectsAndKeys:@"Other reddit...",   @"text", @"/other/", @"url", nil],
 			nil];
     
 }
 
 - (NSArray *)topItems{
-    NSDictionary *homeField = [NSDictionary dictionaryWithObjectsAndKeys:@"reddit Front Page",   @"title", @"/", @"url", nil];
+    NSDictionary *homeField = [NSDictionary dictionaryWithObjectsAndKeys:@"reddit Front Page",   @"text", @"/", @"url", nil];
 	if ([[LoginController sharedLoginController] isLoggedIn]) {
 		unsigned int count = [[iRedditAppDelegate sharedAppDelegate].messageDataSource unreadMessageCount];
 		NSString *mailboxString = count > 0 ? [NSString stringWithFormat:@"Inbox (%u)", count] : @"Inbox";
-        NSDictionary *saved = [NSDictionary dictionaryWithObjectsAndKeys:@"Saved",   @"title", @"/saved/", @"url", nil];
-        NSDictionary *mailboxField = [NSDictionary dictionaryWithObjectsAndKeys:mailboxString,   @"title", @"/messages/", @"url", nil];
+        NSDictionary *saved = [NSDictionary dictionaryWithObjectsAndKeys:@"Saved",   @"text", @"/saved/", @"url", nil];
+        NSDictionary *mailboxField = [NSDictionary dictionaryWithObjectsAndKeys:mailboxString,   @"text", @"/messages/", @"url", nil];
         
 		return [NSArray arrayWithObjects:homeField, mailboxField, saved, nil];
 	}
@@ -384,7 +383,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     NSDictionary *item = [[self.dataSource objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-    [[cell textLabel] setText:item[@"title"]];
+    [[cell textLabel] setText:item[@"text"]];
     [cell setShowsReorderControl:YES];
     return  cell;
 }
@@ -393,7 +392,7 @@
 	NSArray *topItems   = [[self topItems] retain];
 	NSArray *subreddits = [[self subreddits] retain];
 	NSArray *extra      = [[self extraItems] retain];
-	NSArray *settingsItems = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Settings",   @"title", @"/settings/", @"url", nil]];
+	NSArray *settingsItems = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Settings",   @"text", @"/settings/", @"url", nil]];
     _sections = [[NSArray arrayWithObjects:@"",@"reddits",@"",@"", nil] retain];
 	_dataSource = [[NSMutableArray arrayWithObjects:topItems,subreddits,extra,settingsItems, nil] retain];
     [self.tableView reloadData];
@@ -406,21 +405,21 @@
             if ([cell[@"url"] isEqualToString:@"/messages/"]) {
                 controller = [[[MessageViewController alloc] init] autorelease];
             } else {
-                controller = [[[SubredditViewController alloc] initWithField:[TTTableTextItem itemWithText:cell[@"title"] URL:cell[@"url"]]] autorelease];
+                controller = [[[SubredditViewController alloc] initWithField:cell] autorelease];
             }
             break;
         case 2:
             if ([cell[@"url"] isEqualToString:@"/other/"]) {
                 [self presentViewController:[[AddRedditViewController alloc] initForViewing] animated:YES completion:nil];
             } else {
-                controller = [[[SubredditViewController alloc] initWithField:[TTTableTextItem itemWithText:cell[@"title"] URL:cell[@"url"]]] autorelease];
+                controller = [[[SubredditViewController alloc] initWithField:cell] autorelease];
             }
             break;
         case 3:
             controller = [[[SettingsViewController alloc] init] autorelease];
             break;
         default:
-            controller = [[[SubredditViewController alloc] initWithField:[TTTableTextItem itemWithText:cell[@"title"] URL:cell[@"url"]]] autorelease];
+            controller = [[[SubredditViewController alloc] initWithField:cell] autorelease];
             break;
     }
     [[self navigationController] pushViewController:controller animated:YES];

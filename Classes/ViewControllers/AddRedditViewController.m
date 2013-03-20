@@ -9,15 +9,20 @@
 #import "AddRedditViewController.h"
 #import "iRedditAppDelegate.h"
 #import "Constants.h"
-#import "Three20Extensions.h"
 #import "LoginController.h"
+
+@interface AddRedditViewController ()
+@property (retain) NSArray *dataSource;
+@property (retain) NSArray *section;
+@property (nonatomic, retain) IBOutlet UINavigationBar *navigationBar;
+@property (nonatomic, retain) IBOutlet UITableView *tableView;
+@end
 
 @implementation AddRedditViewController
 
 @synthesize navigationBar;
 
-- (IBAction)cancel:(id)sender
-{
+- (IBAction)cancel:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -25,13 +30,12 @@
 {
 	NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
 	TTTableControlCell *cell = (TTTableControlCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-	UITextField *textField = (UITextField *)cell.control;
+	UITextField *textField = (UITextField *)cell.accessoryView;
 	if (textField)
 	{
 		[self loadReddit:textField.text];
-	}	
+	}
 }
-
 - (id)initForViewing
 {
 	if (self = [super init])
@@ -44,10 +48,10 @@
 
 - (void)loadView
 {
-	self.navigationBarTintColor = [iRedditAppDelegate redditNavigationBarTintColor];
-
+	self.navigationController.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+    
     [super loadView];
-
+    
 	self.navigationBar = [[[UINavigationBar alloc] init] autorelease];
 	
 	[self.navigationBar sizeToFit];
@@ -64,180 +68,176 @@
 		item.prompt = @"Subscribe to a new reddit by entering a URL";
 	}
 	
-	item.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)] autorelease];
-	item.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(save:)] autorelease];
-
+	item.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                                            target:self
+                                                                            action:@selector(cancel:)] autorelease];
+	item.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                             target:self
+                                                                             action:@selector(save:)] autorelease];
+    
 	self.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
 	
 	[self.navigationBar pushNavigationItem:item animated:NO];
-	
-	self.tableView = [[[UITableView alloc] initWithFrame:CGRectMake(0.0, 75.0, self.view.bounds.size.width, self.view.bounds.size.height - 75.0) style:UITableViewStyleGrouped] autorelease];
+    self.tableView = [[[UITableView alloc] initWithFrame:CGRectMake(0.0, 75.0, self.view.bounds.size.width, self.view.bounds.size.height - 75.0)
+                                                   style:UITableViewStyleGrouped] retain];
 	self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	self.tableView.backgroundColor = [UIColor colorWithRed:229.0/255.0 green:238.0/255.0 blue:1 alpha:1];
 	
 	self.tableView.allowsSelectionDuringEditing = NO;
 	self.tableView.editing = NO;
-	
+	self.tableView.scrollEnabled = NO;
+    self.tableView.dataSource = self;
+    self.tableView.delegate =self;
 	[self.view addSubview:self.navigationBar];
-	[self.view addSubview:self.tableView];
-
-	[self performSelector:@selector(focus) withObject:nil afterDelay:0.5];
+    [self.view addSubview:self.tableView];
+    [self createModel];
+    [[self tableView] reloadData];
 }
 
--(void)createModel 
-{
-	TTTableControlItem *item = [SettingsControlItem textFieldControlWithTitle:@"reddit.com/r/" text:@"" placeholder:@"pics" key:@"" secure:NO];	
-	UITextField *textField = (UITextField *)item.control;
-	
-	textField.keyboardType = UIKeyboardTypeURL;
-	textField.returnKeyType = UIReturnKeyGo;
-	textField.delegate = (id <UITextFieldDelegate>)self;
-		 
-	if (activeRequest)
-	{
-		TTTableActivityItem *informationField = [TTTableActivityItem itemWithText:@"Loading reddit..."];
-		self.dataSource = [TTSectionedDataSource dataSourceWithArrays:@"Enter a reddit URL (e.g. /r/pics)", [NSArray arrayWithObject:item], @"", [NSArray arrayWithObject:informationField], nil];
-	}
-	else
-		self.dataSource = [TTSectionedDataSource dataSourceWithArrays:@"Enter a reddit URL (e.g. /r/pics)", [NSArray arrayWithObject:item], nil];	
+-(void)createModel {
+    self.dataSource = [[NSArray arrayWithObject:[NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:@"reddit.com/r/",@"title",@"pics",@"placeholder",@"",@"key",[NSNumber numberWithBool:NO],@"secure", @"text", @"type", nil]]] retain];
+    self.section = [[NSArray arrayWithObject:@"Enter a reddit URL (e.g. /r/pics)"] retain];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-
-/*
-	UILabel *label = (UILabel *)[[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] firstViewOfClass:[UILabel class]];
-	label.font = [UIFont boldSystemFontOfSize:14.0];
-*/
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return [_section count];
+}
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    return [_section objectAtIndex:section];
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [_dataSource count];
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    id cell = [tableView dequeueReusableCellWithIdentifier:@"settings"];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"settings"];
+    }
+    
+    [cell setAccessoryView:nil];
+    NSDictionary *cellData = [[_dataSource objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    
+    [[cell textLabel] setText:[cellData objectForKey:@"title"]];
+    if ([[cellData objectForKey:@"type"] isEqualToString:@"switch"]) {
+        UISwitch *switchview = [[UISwitch alloc] initWithFrame:CGRectZero];
+        [switchview setOn:[cellData[@"value"] boolValue]];
+        
+        [cell setAccessoryView:switchview];
+        [switchview addTarget:self action:@selector(valueChange:) forControlEvents:UIControlEventValueChanged];
+        
+        [switchview release];
+    } else {
+        if ([cellData[@"type"] isEqualToString:@"check"]) {
+            if ([cellData[@"value"] boolValue]) {
+                [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
+            }
+        } else {
+            if ([cellData[@"type"] isEqualToString:@"text"]) {
+                UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 162, 24)];
+                [textField setDelegate:self];
+                [textField setText:cellData[@"value"]];
+                [textField setBackgroundColor:[UIColor clearColor]];
+                [textField setSpellCheckingType:UITextSpellCheckingTypeNo];
+                [textField setAutocorrectionType:UITextAutocorrectionTypeNo];
+                [textField setAutocapitalizationType:UITextAutocapitalizationTypeNone];
+                [textField setPlaceholder:cellData[@"placeholder"]];
+                if ([cellData[@"secure"] boolValue]) {
+                    [textField setSecureTextEntry:YES];
+                }
+                [textField becomeFirstResponder];
+                [cell setAccessoryView:textField];
+                [textField release];
+            }
+        }
+    }
+    return cell;
 }
 
-- (void)focus
-{
-	/*
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-	UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-	
-	UITextField *textField = (UITextField *)[cell firstViewOfClass:[UITextField class]];
-
-	if (textField)
-	{
-		//fixme this doesn't belong here.
-		textField.enablesReturnKeyAutomatically = YES;
-		[textField becomeFirstResponder];
-		return;
-	}
-    */
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)aField
-{	
-	[self loadReddit:aField.text];
-	return YES;
+- (BOOL)textFieldShouldReturn:(UITextField *)aField {
+    [self loadReddit:aField.text];
+    return YES;
 }
 
 - (void)loadReddit:(NSString *)redditURL
 {
-	if (activeRequest)
-		return;
 
-	NSString *url = [NSString stringWithFormat:@"%@/r/%@/.json", RedditBaseURLString, redditURL];
-
-	activeRequest = [TTURLRequest requestWithURL:url delegate:(id <TTURLRequestDelegate>)self];
-	
-	activeRequest.response = [[[TTURLDataResponse alloc] init] autorelease];
-	activeRequest.cacheExpirationAge = 0;
-	activeRequest.cachePolicy = TTURLRequestCachePolicyNoCache;
-    activeRequest.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
-	
-    [activeRequest send];
-	
-	[self updateView];
+    NSString *url = [NSString stringWithFormat:@"%@/r/%@/.json", RedditBaseURLString, redditURL];
+    GIDAAlertView *gav = [[[GIDAAlertView alloc] initWithProgressBarAndMessage:@"Loading reddit" andURL:[NSURL URLWithString:url]] autorelease];
+    [gav setDelegate:self];
+    [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
+    [gav setProgressBarColor:[UIColor blueColor]];
+    [gav progresBarStartDownload];
 }
-
-- (void)requestDidFinishLoad:(TTURLRequest*)request
+-(void)alertFinished:(GIDAAlertView *)alertView
 {
-	activeRequest = nil;
-	
-    TTURLDataResponse *response = request.response;
-	
-	NSError *error = nil;
+    NSDictionary *response = [alertView getDownloadedData];
+    if (!response) {
+        [self requestFailed];
+        return;
+    }
+    NSError *error = nil;
     // parse the JSON data that we retrieved from the server
-    	NSDictionary *json = [NSJSONSerialization JSONObjectWithData:response.data options:NSJSONReadingMutableContainers error:&error];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:response[@"data"] options:NSJSONReadingMutableContainers error:&error];
     
-	if (error != nil || ![json isKindOfClass:[NSDictionary class]] || ![json objectForKey:@"data"])
-	{
-		[self requestFailed];
-		[self updateView];
-		return;
-	}
-	
-	NSDictionary *data = [json objectForKey:@"data"];
-	NSArray *children = [data objectForKey:@"children"];
-	
-	if (![children count])
-	{
-		[self requestFailed];
-		[self updateView];
-		return;
-	}
-	
-	NSDictionary *firstStory = [[children objectAtIndex:0] objectForKey:@"data"];
-	NSMutableDictionary *completeRedditInfo = [NSMutableDictionary dictionaryWithDictionary:firstStory];
+    if (error != nil || ![json isKindOfClass:[NSDictionary class]] || ![json objectForKey:@"data"])
+    {
+        [self requestFailed];
+    //    [self updateView];
+        return;
+    }
     
-	NSString *url = [request.urlPath substringFromIndex:NSMaxRange([request.urlPath rangeOfString:RedditBaseURLString])];
-	url = [url stringByReplacingOccurrencesOfString:@".json" withString:@""];
-	
-	[completeRedditInfo setObject:url forKey:@"subreddit_url"]; 
-	
-	[[NSNotificationCenter defaultCenter] postNotificationName:RedditWasAddedNotification object:self userInfo:completeRedditInfo];
-	
-	[self updateView];
-	
-	[self performSelector:@selector(cancel:) withObject:self afterDelay:1.0];
+    NSDictionary *data = [json objectForKey:@"data"];
+    NSArray *children = [data objectForKey:@"children"];
+    
+    if (![children count])
+    {
+        [self requestFailed];
+   //     [self updateView];
+        return;
+    }
+    
+    NSDictionary *firstStory = [[children objectAtIndex:0] objectForKey:@"data"];
+    NSMutableDictionary *completeRedditInfo = [NSMutableDictionary dictionaryWithDictionary:firstStory];
+    
+    NSString *url = [[response[@"url"] absoluteString] substringFromIndex:NSMaxRange([[response[@"url"] absoluteString] rangeOfString:RedditBaseURLString])];
+    url = [url stringByReplacingOccurrencesOfString:@".json" withString:@""];
+    
+    [completeRedditInfo setObject:url forKey:@"subreddit_url"];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:RedditWasAddedNotification object:self userInfo:completeRedditInfo];
+    
+ //   [self updateView];
+    
+    [self performSelector:@selector(cancel:) withObject:self afterDelay:1.0];
 }
 
 - (BOOL)shouldViewOnly
 {
-	return shouldViewOnly;
-}
-
-- (void)request:(TTURLRequest*)request didFailLoadWithError:(NSError*)error
-{
-	activeRequest = nil;
-	[self requestFailed];
-	[self updateView];
-}
-
-- (void)requestDidCancelLoad:(TTURLRequest*)request
-{
-	activeRequest = nil;
-	[self updateView];
+    return shouldViewOnly;
 }
 
 - (void)requestFailed
 {
-	[[[[UIAlertView alloc] initWithTitle:@"Whoops!" message:@"This is not the reddit you were looking for. We couldn't find anything at that URL. Try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease] show];
+    GIDAAlertView *gav = [[[GIDAAlertView alloc] initWithTitle:@"Whoops!" message:@"This is not the reddit you were looking for. We couldn't find anything at that URL. Try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease];
+    [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
+    [gav show];
 }
 
-- (void)viewDidUnload 
+- (void)viewDidUnload
 {
-	self.navigationBar = nil;
-	[super viewDidUnload];
+    self.navigationBar = nil;
+    [super viewDidUnload];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // this interface is portrait only, but allow it to operate in *either* portrait
-    return UIInterfaceOrientationIsPortrait(interfaceOrientation); 
+    return UIInterfaceOrientationIsPortrait(interfaceOrientation);
 }
 
-- (void)dealloc 
+- (void)dealloc
 {
-	[activeRequest cancel];
-	activeRequest = nil;
-	
-	self.navigationBar = nil;
+    self.navigationBar = nil;
     [super dealloc];
 }
 

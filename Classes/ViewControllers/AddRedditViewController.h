@@ -7,17 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Three20/Three20.h>
+#import "GIDAAlertView.h"
 
-@interface AddRedditViewController : TTTableViewController 
+@interface AddRedditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, GIDAAlertViewDelegate>
 {
 	UINavigationBar *navigationBar;	
-	TTURLRequest *activeRequest;
 	
 	BOOL shouldViewOnly;
 }
 
-@property (nonatomic, retain) IBOutlet UINavigationBar *navigationBar;
 
 - (IBAction)cancel:(id)sender;
 - (IBAction)save:(id)sender;

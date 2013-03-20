@@ -25,18 +25,15 @@
     [super dealloc];
 }
 
-- (id)initWithField:(TTTableTextItem*)anItem
-{
-    if (self = [super init])
-	{
+- (id)initWithField:(NSDictionary *)anItem {
+    if (self = [super init]) {
 		subredditItem = [anItem retain];
-		showTabBar = ![subredditItem.URL isEqual:@"/saved/"] && ![subredditItem.URL isEqual:@"/recommended/"];
+		showTabBar = ![subredditItem[@"url"] isEqual:@"/saved/"] && ![subredditItem[@"url"] isEqual:@"/recommended/"];
 		
-        self.title = [anItem.URL isEqual:@"/"] ? @"Front Page" : anItem.text;
+        self.title = [anItem[@"url"] isEqual:@"/"] ? @"Front Page" : anItem[@"text"];
 		
-		if (showTabBar && ![subredditItem.URL isEqual:@"/randomrising/"])
-		{
-			[[NSUserDefaults standardUserDefaults] setObject:subredditItem.URL forKey:initialRedditURLKey];
+		if (showTabBar && ![subredditItem[@"url"] isEqual:@"/randomrising/"]){
+			[[NSUserDefaults standardUserDefaults] setObject:subredditItem[@"url"] forKey:initialRedditURLKey];
 			[[NSUserDefaults standardUserDefaults] setObject:self.title forKey:initialRedditTitleKey];
 			[[NSUserDefaults standardUserDefaults] synchronize];
 		}
@@ -131,7 +128,7 @@
 
 - (void)createModel 
 {
-    SubredditDataSource *source = [[SubredditDataSource alloc] initWithSubreddit:subredditItem.URL];
+    SubredditDataSource *source = [[SubredditDataSource alloc] initWithSubreddit:subredditItem[@"url"]];
     source.viewController = self;
     self.dataSource = source;
     [source release];

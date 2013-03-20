@@ -12,13 +12,13 @@
 @interface SubredditViewController : TTTableViewController 
 {
 	BOOL			showTabBar;
-	TTTableTextItem	*subredditItem;
+	NSDictionary	*subredditItem;
 	TTTabStrip		*tabBar;
 	
 	NSIndexPath		*savedLocation;
 }
 
-- (id)initWithField:(TTTableTextItem*)anItem;
+- (id)initWithField:(NSDictionary *)anItem;
 
 - (void)didSelectAccessoryForObject:(id)object atIndexPath:(NSIndexPath*)indexPath;
 

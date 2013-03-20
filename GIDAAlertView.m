@@ -16,6 +16,10 @@
 #import "GIDAAlertView.h"
 
 @implementation ProgressBar
+@synthesize color = _color;
+- (void)setColor:(UIColor *)color {
+    _color = [color retain];
+}
 - (void) drawRoundedRect:(CGRect)rect inContext:(CGContextRef)context withRadius:(CGFloat)radius{
 	CGContextBeginPath (context);
     
@@ -40,6 +44,7 @@
     }
     return self;
 }
+
 -(void)drawRect:(CGRect)rect {
     CGContextRef context = UIGraphicsGetCurrentContext();
     
@@ -49,7 +54,10 @@
 	CGContextSetAlpha(context, 0.8);
 	CGContextSetLineWidth(context, 2.0);
     if (!_color)
-        _color = [UIColor redColor];
+        _color = [UIColor colorWithRed:40.0/255.0
+                                 green:80.0/255.0
+                                  blue:225.0/255.0
+                                 alpha:1.0];
     UIColor *fillColor = _color;
     UIColor *borderColor = [UIColor clearColor];
 	CGContextSetStrokeColorWithColor(context, [borderColor CGColor]);
@@ -169,10 +177,10 @@
         progress = -0.1;
         timeSeconds = seconds/10;
         withSpinnerOrImage = YES;
-       //   UIImageView *iv = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Bar.png"]];
+        //   UIImageView *iv = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Bar.png"]];
         //ProgressBar *iv = ;
         _progressBar = [[ProgressBar alloc] initWithFrame:CGRectMake(100, 35, 0, 80)];
-       // [iv setFrame:];
+        // [iv setFrame:];
         [self addSubview:_progressBar];
         UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(62, 115, 160, 50)];
         [messageLabel setTextAlignment:NSTextAlignmentCenter];
@@ -198,9 +206,6 @@
         [iv release];
         // [progressView setProgress:progress];
     } else {
-#ifdef DEBUG
-        NSLog(@"INVALIDATE");
-#endif
         [_timer invalidate];
         _timer = nil;
         [self dismissWithClickedButtonIndex:0 animated:NO];
@@ -305,27 +310,39 @@
     _textEncoding = [response textEncodingName];
 }
 
-
+-(void)setProgressBarColor:(UIColor *)progressBarColor {
+    [_progressBar setColor:progressBarColor];
+    _progressBarColor = [progressBarColor retain];
+}
 -(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
     _receivedDataBytes += [data length];
     progress = _receivedDataBytes / (float)_totalFileSize;
     [_responseData appendData:data];
     
     [_progressBar removeFromSuperview];
-    _progressBar = [[ProgressBar alloc] initWithFrame:CGRectMake(100, 35, 8+progress*80, 80)];
-    [_progressBar setColor:_progressBarColor];
-    [self addSubview:_progressBar];
     
-    if (progress < 1) {
+    [_progressBar setColor:_progressBarColor];
+    
+    
+    if (progress < 1 && progress >= 0) {
         NSString *string = [NSString stringWithFormat:@"%.1f%@",progress*100,@"%"];
         [_progressLabel setText:string];
+        _progressBar = [[ProgressBar alloc] initWithFrame:CGRectMake(100, 35, 8+progress*80, 80)];
     } else {
+        _progressBar = [[ProgressBar alloc] initWithFrame:CGRectMake(100, 35, 8+80, 80)];
         [_progressLabel setText:@"100%"];
     }
+    [self addSubview:_progressBar];
     [self bringSubviewToFront:_progressLabel];
 }
 
 -(void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    [_progressBar removeFromSuperview];
+    [_progressBar setColor:_progressBarColor];
+    _progressBar = [[ProgressBar alloc] initWithFrame:CGRectMake(100, 35, 8+80, 80)];
+    [_progressLabel setText:@"100%"];
+    
+    [self addSubview:_progressBar];
     double delayInSeconds = 0.7;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -568,7 +585,7 @@
         dictionary = nil;
     } else {
         dictionary = [NSDictionary dictionaryWithObjectsAndKeys:_responseData,@"data",_mimeType,@"mime", _userURL, @"url", _textEncoding, @"encoding", nil];
-    } 
+    }
     return dictionary;
 }
 -(void)progresBarStartDownload {
@@ -600,7 +617,7 @@
     }
     if([_gavdelegate respondsToSelector:@selector(alertOnDismiss:)])
         [_gavdelegate alertOnDismiss:(GIDAAlertView *)alertView];
-    if ([_gavdelegate respondsToSelector:@selector(alertFinished:)]) 
+    if ([_gavdelegate respondsToSelector:@selector(alertFinished:)])
         [_gavdelegate alertFinished:(GIDAAlertView *)alertView];
 }
 @end
