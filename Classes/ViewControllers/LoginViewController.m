@@ -22,8 +22,7 @@
 
 @synthesize delegate, context;
 
-+ (void)presentWithDelegate:(id <LoginViewControllerDelegate>)aDelegate context:(id)aContext
-{
++ (void)presentWithDelegate:(id <LoginViewControllerDelegate>)aDelegate context:(id)aContext {
 	LoginViewController *controller = [[[self alloc] init] autorelease];
 	
 	controller.delegate = aDelegate;
@@ -35,18 +34,15 @@
 	[[iRedditAppDelegate sharedAppDelegate].navController presentViewController:controller animated:YES completion:nil];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
 	self.delegate = nil;
 	self.context = nil;
-
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 
 	[super dealloc];
 }
 
-- (void)loadView
-{
+- (void)loadView {
 	[super loadView];
 	[self createModel];
 	self.title = @"Login";
@@ -70,14 +66,14 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
 	UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-	cancelButton.frame = CGRectMake(10.0, 184.0, ([[UIScreen mainScreen] applicationFrame].size.width - 30.0) / 2.0, 40.0);
+	cancelButton.frame = CGRectMake(10.0, 150.0, ([[UIScreen mainScreen] applicationFrame].size.width - 30.0) / 2.0, 40.0);
 	[cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
 	[cancelButton addTarget:self action:@selector(cancel:) forControlEvents:UIControlEventTouchUpInside];
 	
 	[self.tableView addSubview:cancelButton];
 	
 	loginButton = [[UIButton buttonWithType:UIButtonTypeRoundedRect] retain];
-	loginButton.frame = CGRectMake(CGRectGetMaxX(cancelButton.frame) + 10.0, 184.0, ([[UIScreen mainScreen] applicationFrame].size.width -30.0) / 2.0, 40.0);
+	loginButton.frame = CGRectMake(CGRectGetMaxX(cancelButton.frame) + 10.0, 150.0, ([[UIScreen mainScreen] applicationFrame].size.width -30.0) / 2.0, 40.0);
 	[loginButton setTitle:@"Login" forState:UIControlStateNormal];
 	[loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
 	
@@ -97,42 +93,28 @@
 	[self.view addSubview:self.tableView];
 }
 
-- (void)cancel:(id)sender
-{
+- (void)cancel:(id)sender {
 	[self dismiss:sender];
 }
 
-- (void)dismiss:(id)sender
-{
+- (void)dismiss:(id)sender {
 	if ([(id)self.delegate respondsToSelector:@selector(loginViewController:didFinishWithContext:)])
 		[self.delegate loginViewController:self didFinishWithContext:self.context];
 
 	[[iRedditAppDelegate sharedAppDelegate].navController dismissViewControllerAnimated:YES completion:nil];
 }
 
--(void)createModel 
-{
+-(void)createModel {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	
-    self.headers = [[NSArray arrayWithObject:@"reddit Account Information"] retain];
-    self.dataSource = [[NSArray arrayWithObject:[NSArray arrayWithObjects:
-     [NSDictionary dictionaryWithObjectsAndKeys:
-      @"Username",@"title",
-      redditUsernameKey, @"key",
-      @"text", @"type",
-      [NSNumber numberWithBool:NO],@"secure",
-      @"splashy", @"placeholder",
-      [defaults stringForKey:redditUsernameKey],@"value",
-      nil],
-     [NSDictionary dictionaryWithObjectsAndKeys:
-      @"Password",@"title",
-      redditPasswordKey, @"key",
-      @"text", @"type",
-      [NSNumber numberWithBool:YES],@"secure",
-      @"••••••", @"placeholder",
-      [defaults stringForKey:redditPasswordKey],@"value",
-      nil],
-     nil]]  retain];
+    self.headers = [NSArray arrayWithObject:@"reddit Account Information"];
+    self.dataSource = [NSArray arrayWithObject:[NSArray arrayWithObjects:
+     [NSDictionary dictionaryWithObjectsAndKeys:@"Username",@"title",redditUsernameKey, @"key",@"text", @"type",[NSNumber numberWithBool:NO],@"secure",@"splashy", @"placeholder",[defaults stringForKey:redditUsernameKey],@"value",nil],
+     [NSDictionary dictionaryWithObjectsAndKeys:@"Password",@"title",redditPasswordKey, @"key",@"text", @"type",[NSNumber numberWithBool:YES],@"secure",@"••••••", @"placeholder",[defaults stringForKey:redditPasswordKey],@"value",nil],
+     nil]];
+}
+-(BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    return NO;
 }
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     return [self.headers objectAtIndex:section];
@@ -184,8 +166,7 @@
     }
     return cell;
 }
-- (void)login:(id)sender
-{
+- (void)login:(id)sender {
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
     NSString *usernameField = [(UITextField *)[[self.tableView cellForRowAtIndexPath:indexPath] accessoryView] text];
     indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
@@ -193,14 +174,12 @@
 	[[LoginController sharedLoginController] loginWithUsername:usernameField password:passwordField];
 }
 
-- (void)loginDidStart:(NSNotification *)note
-{
+- (void)loginDidStart:(NSNotification *)note {
 	[loginButton setEnabled:NO];
 	statusLabel.text = @"Logging in...";
 }
 
-- (void)loginDidEnd:(NSNotification *)note
-{
+- (void)loginDidEnd:(NSNotification *)note {
 	[loginButton setEnabled:YES];
 
 	if ([[LoginController sharedLoginController] isLoggedIn])
@@ -221,8 +200,7 @@
 	}
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
-{
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation  {
     // this interface is portrait only, but allow it to operate in *either* portrait
     return UIInterfaceOrientationIsPortrait(interfaceOrientation); 
 }
