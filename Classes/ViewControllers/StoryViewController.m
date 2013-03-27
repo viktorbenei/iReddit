@@ -128,7 +128,9 @@
 	[titleView setOpaque:NO];
 	
 	[titleView setFont:[UIFont boldSystemFontOfSize:14.0]];
-	[titleView setMinimumScaleFactor:12.0];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0) {
+        [titleView setMinimumScaleFactor:12.0];
+    }
     
 	[titleView setTextColor:[UIColor whiteColor]];
 	[titleView setShadowColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
@@ -345,13 +347,13 @@
 }
 
 
-- (IBAction)share:(id)sender
-{
+- (IBAction)share:(id)sender {
 	if (currentSheet) {
 		[currentSheet dismissWithClickedButtonIndex:currentSheet.cancelButtonIndex animated:YES];
 		[currentSheet release];
 		currentSheet = nil;
 	} else {
+        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"usePocket"] boolValue]) {
 		currentSheet = [[UIActionSheet alloc]
 						initWithTitle:@""
 						delegate:(id <UIActionSheetDelegate>)self
@@ -359,7 +361,16 @@
 						destructiveButtonTitle:nil
                         //						otherButtonTitles:@"E-mail Link", @"Open Link in Safari", @"Hide on reddit", @"Save on reddit", @"Save on Instapaper", @"Save on Pocket", nil];
                         otherButtonTitles:@"E-mail Link", @"Open Link in browser", @"Hide on reddit", @"Save on reddit", @"Save on Pocket", nil];
-		
+		} else {
+            currentSheet = [[UIActionSheet alloc]
+                            initWithTitle:@""
+                            delegate:(id <UIActionSheetDelegate>)self
+                            cancelButtonTitle:@"Cancel"
+                            destructiveButtonTitle:nil
+                            //						otherButtonTitles:@"E-mail Link", @"Open Link in Safari", @"Hide on reddit", @"Save on reddit", @"Save on Instapaper", @"Save on Pocket", nil];
+                            otherButtonTitles:@"E-mail Link", @"Open Link in browser", @"Hide on reddit", @"Save on reddit", nil];
+
+        }
 		currentSheet.actionSheetStyle = UIActionSheetStyleDefault;
 		
 		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
