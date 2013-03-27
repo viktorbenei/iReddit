@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Three20/Three20.h>
 
 @protocol LoginViewControllerDelegate
 
@@ -15,13 +14,10 @@
 
 @end
 
-@interface LoginViewController : TTTableViewController
+@interface LoginViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 {
 	id <LoginViewControllerDelegate>delegate;
 	id context;
-	
-	UITextField *usernameField;
-	UITextField *passwordField;
 	
 	UIButton *loginButton;
 	UILabel *statusLabel;
@@ -29,8 +25,6 @@
 
 @property (nonatomic, retain) id <LoginViewControllerDelegate>delegate;
 @property (nonatomic, retain) id context;
-@property (nonatomic, retain) UITextField *usernameField;
-@property (nonatomic, retain) UITextField *passwordField;
 
 + (void)presentWithDelegate:(id <LoginViewControllerDelegate>)aDelegate context:(id)aContext;
 

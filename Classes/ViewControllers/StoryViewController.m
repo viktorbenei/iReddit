@@ -452,6 +452,7 @@
                 [self saveCurrentStory:nil];
                 //	[[Beacon shared] startSubBeaconWithName:@"savedOnReddit" timeSession:NO];
             }
+            break;
         case 4:
             //		[self saveOnInstapaper:nil];
             //		//[[Beacon shared] startSubBeaconWithName:@"instapaper" timeSession:NO];

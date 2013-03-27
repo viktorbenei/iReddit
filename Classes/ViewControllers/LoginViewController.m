@@ -10,11 +10,17 @@
 #import "LoginController.h"
 #import "iRedditAppDelegate.h"
 #import "Constants.h"
-#import "Three20Extensions.h"
+
+@interface LoginViewController () 
+@property (nonatomic, retain) UITableView *tableView;
+@property (nonatomic, retain) NSArray *dataSource;
+@property (nonatomic, retain) NSArray *headers;
+@property (nonatomic, retain) UINavigationBar *navigationBar;
+@end
 
 @implementation LoginViewController
 
-@synthesize delegate, context, usernameField, passwordField;
+@synthesize delegate, context;
 
 + (void)presentWithDelegate:(id <LoginViewControllerDelegate>)aDelegate context:(id)aContext
 {
@@ -33,8 +39,6 @@
 {
 	self.delegate = nil;
 	self.context = nil;
-	self.usernameField = nil;
-	self.passwordField = nil;
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -44,24 +48,36 @@
 - (void)loadView
 {
 	[super loadView];
-	
-	self.title = @"Login";	
-	self.navigationBarTintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+	[self createModel];
+	self.title = @"Login";
 	self.navigationController.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+    
+    self.navigationBar = [[[UINavigationBar alloc] init] autorelease];
 	
-	self.tableView = [[[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStyleGrouped] autorelease];
+	[self.navigationBar sizeToFit];
+	
+	UINavigationItem *item = nil;
+    item = [[[UINavigationItem alloc] initWithTitle:@"Login"] autorelease];
+
+	self.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+	
+	[self.navigationBar pushNavigationItem:item animated:NO];
+    [self.view addSubview:_navigationBar];
+	self.tableView = [[[UITableView alloc] initWithFrame:CGRectMake(0.0, 44.0, self.view.bounds.size.width, self.view.bounds.size.height - 44.0)
+                                                   style:UITableViewStyleGrouped] autorelease];
 	self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	self.tableView.backgroundColor = [UIColor colorWithRed:229.0/255.0 green:238.0/255.0 blue:1 alpha:1];
-
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
 	UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-	cancelButton.frame = CGRectMake(10.0, 184.0, (TTApplicationFrame().size.width - 30.0) / 2.0, 40.0);
+	cancelButton.frame = CGRectMake(10.0, 184.0, ([[UIScreen mainScreen] applicationFrame].size.width - 30.0) / 2.0, 40.0);
 	[cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
 	[cancelButton addTarget:self action:@selector(cancel:) forControlEvents:UIControlEventTouchUpInside];
 	
 	[self.tableView addSubview:cancelButton];
 	
 	loginButton = [[UIButton buttonWithType:UIButtonTypeRoundedRect] retain];
-	loginButton.frame = CGRectMake(CGRectGetMaxX(cancelButton.frame) + 10.0, 184.0, (TTApplicationFrame().size.width - 30.0) / 2.0, 40.0);
+	loginButton.frame = CGRectMake(CGRectGetMaxX(cancelButton.frame) + 10.0, 184.0, ([[UIScreen mainScreen] applicationFrame].size.width -30.0) / 2.0, 40.0);
 	[loginButton setTitle:@"Login" forState:UIControlStateNormal];
 	[loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
 	
@@ -79,12 +95,7 @@
 	[self.tableView addSubview:loginButton];
 	
 	[self.view addSubview:self.tableView];
-	
-	[self performSelector:@selector(focus) withObject:nil afterDelay:0.5];
 }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// TTTableViewController
 
 - (void)cancel:(id)sender
 {
@@ -103,46 +114,83 @@
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	
-	UITextField *textField = [[[UITextField alloc] init] autorelease];
-	TTTableControlItem *usernameItem = [[[TTTableControlItem alloc] init] autorelease];
-	
-	usernameItem.caption = @"Username";
-	usernameItem.control = textField;
-	
-	textField.placeholder = @"splashy";
-	textField.text = [defaults stringForKey:redditUsernameKey];
-	textField.autocorrectionType = UITextAutocorrectionTypeNo;
-	textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-	textField.enablesReturnKeyAutomatically = YES;
-	textField.returnKeyType = UIReturnKeyNext;
-	textField.delegate = (id <UITextFieldDelegate>)self;
-	
-	self.usernameField = textField;
-
-	TTTableControlItem *passwordItem = [[[TTTableControlItem alloc] init] autorelease];
-	textField = [[[UITextField alloc] init] autorelease];
-
-	textField.placeholder = @"••••••";
-	textField.text = [defaults stringForKey:redditPasswordKey];
-	textField.autocorrectionType = UITextAutocorrectionTypeNo;
-	textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-	textField.returnKeyType = UIReturnKeyGo;
-	textField.enablesReturnKeyAutomatically = YES;
-	textField.secureTextEntry = YES;
-	textField.delegate = (id <UITextFieldDelegate>)self;
-
-	passwordItem.caption = @"Password";
-	passwordItem.control = textField;
-
-	self.passwordField = textField;
-
-	self.dataSource = [TTSectionedDataSource dataSourceWithObjects:
-			@"reddit Account Information", usernameItem, passwordItem, nil];
+    self.headers = [[NSArray arrayWithObject:@"reddit Account Information"] retain];
+    self.dataSource = [[NSArray arrayWithObject:[NSArray arrayWithObjects:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      @"Username",@"title",
+      redditUsernameKey, @"key",
+      @"text", @"type",
+      [NSNumber numberWithBool:NO],@"secure",
+      @"splashy", @"placeholder",
+      [defaults stringForKey:redditUsernameKey],@"value",
+      nil],
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      @"Password",@"title",
+      redditPasswordKey, @"key",
+      @"text", @"type",
+      [NSNumber numberWithBool:YES],@"secure",
+      @"••••••", @"placeholder",
+      [defaults stringForKey:redditPasswordKey],@"value",
+      nil],
+     nil]]  retain];
 }
-
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    return [self.headers objectAtIndex:section];
+}
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return [self.headers count];
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [[self.dataSource objectAtIndex:section] count];
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    id cell = [tableView dequeueReusableCellWithIdentifier:@"settings"];
+    if (!cell) {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"settings"] autorelease];
+    }
+    
+    [cell setAccessoryView:nil];
+    NSDictionary *cellData = [[_dataSource objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    [[cell textLabel] setText:[cellData objectForKey:@"title"]];
+    if ([[cellData objectForKey:@"type"] isEqualToString:@"switch"]) {
+        UISwitch *switchview = [[UISwitch alloc] initWithFrame:CGRectZero];
+        [switchview setOn:[cellData[@"value"] boolValue]];
+        
+        [cell setAccessoryView:switchview];
+        [switchview addTarget:self action:@selector(valueChange:) forControlEvents:UIControlEventValueChanged];
+        
+        [switchview release];
+    } else {
+        if ([cellData[@"type"] isEqualToString:@"check"]) {
+            if ([cellData[@"value"] boolValue]) {
+                [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
+            }
+        } else {
+            if ([cellData[@"type"] isEqualToString:@"text"]) {
+                UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 180, 24)];
+                [textField setDelegate:self];
+                [textField setText:cellData[@"value"]];
+                [textField setSpellCheckingType:UITextSpellCheckingTypeNo];
+                [textField setAutocorrectionType:UITextAutocorrectionTypeNo];
+                [textField setAutocapitalizationType:UITextAutocapitalizationTypeNone];
+                [textField setPlaceholder:cellData[@"placeholder"]];
+                if ([cellData[@"secure"] boolValue]) {
+                    [textField setSecureTextEntry:YES];
+                }
+                [cell setAccessoryView:textField];
+                [textField release];
+            }
+        }
+    }
+    return cell;
+}
 - (void)login:(id)sender
 {
-	[[LoginController sharedLoginController] loginWithUsername:usernameField.text password:passwordField.text];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
+    NSString *usernameField = [(UITextField *)[[self.tableView cellForRowAtIndexPath:indexPath] accessoryView] text];
+    indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
+    NSString *passwordField = [(UITextField *)[[self.tableView cellForRowAtIndexPath:indexPath] accessoryView] text];
+	[[LoginController sharedLoginController] loginWithUsername:usernameField password:passwordField];
 }
 
 - (void)loginDidStart:(NSNotification *)note
@@ -157,33 +205,20 @@
 
 	if ([[LoginController sharedLoginController] isLoggedIn])
 	{
-		statusLabel.text = [NSString stringWithFormat:@"Logged in as %@", usernameField.text];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
+        NSString *usernameField = [(UITextField *)[[self.tableView cellForRowAtIndexPath:indexPath] accessoryView] text];
+        indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
+        NSString *passwordField = [(UITextField *)[[self.tableView cellForRowAtIndexPath:indexPath] accessoryView] text];
+		statusLabel.text = [NSString stringWithFormat:@"Logged in as %@", usernameField];
 		[self performSelector:@selector(dismiss:) withObject:self afterDelay:1.5];
 
-		[[NSUserDefaults standardUserDefaults] setObject:usernameField.text forKey:redditUsernameKey];
-		[[NSUserDefaults standardUserDefaults] setObject:passwordField.text forKey:redditPasswordKey];
+		[[NSUserDefaults standardUserDefaults] setObject:usernameField forKey:redditUsernameKey];
+		[[NSUserDefaults standardUserDefaults] setObject:passwordField forKey:redditPasswordKey];
 	}
 	else
 	{
 		statusLabel.text = @"Unable to Login";
 	}
-}
-
-- (void)textFieldShouldReturn:(UITextField *)aField
-{
-	if (aField == self.usernameField)
-	{
-		[self.passwordField becomeFirstResponder];
-	}
-	else
-	{
-		[self login:self];
-	}
-}
-
-- (void)focus
-{
-	[self.usernameField becomeFirstResponder];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
