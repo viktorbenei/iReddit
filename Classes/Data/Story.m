@@ -39,7 +39,7 @@ NSMutableDictionary *storyDictionary;
 + (Story *)storyWithDictionary:(NSDictionary *)dict inReddit:(id)reddit
 {			
 	Story *aStory = [[[Story alloc] init] autorelease];
-		
+
 	aStory.title = (NSString *)[dict objectForKey:@"title"];
 	aStory.author = (NSString *)[dict objectForKey:@"author"];
 	aStory.domain = (NSString *)[dict objectForKey:@"domain"];

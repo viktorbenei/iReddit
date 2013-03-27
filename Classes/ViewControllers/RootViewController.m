@@ -380,7 +380,7 @@
     NSString *identifier = @"root";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier] autorelease];
     }
     NSDictionary *item = [[self.dataSource objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     [[cell textLabel] setText:item[@"text"]];
@@ -389,9 +389,9 @@
 }
 
 -(void)createModel{
-	NSArray *topItems   = [[self topItems] retain];
-	NSArray *subreddits = [[self subreddits] retain];
-	NSArray *extra      = [[self extraItems] retain];
+	NSArray *topItems   = [self topItems];
+	NSArray *subreddits = [self subreddits];
+	NSArray *extra      = [self extraItems];
 	NSArray *settingsItems = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Settings",   @"text", @"/settings/", @"url", nil]];
     _sections = [[NSArray arrayWithObjects:@"",@"reddits",@"",@"", nil] retain];
 	_dataSource = [[NSMutableArray arrayWithObjects:topItems,subreddits,extra,settingsItems, nil] retain];
@@ -410,7 +410,7 @@
             break;
         case 2:
             if ([cell[@"url"] isEqualToString:@"/other/"]) {
-                [self presentViewController:[[AddRedditViewController alloc] initForViewing] animated:YES completion:nil];
+                [self presentViewController:[[[AddRedditViewController alloc] initForViewing] autorelease] animated:YES completion:nil];
             } else {
                 controller = [[[SubredditViewController alloc] initWithField:cell] autorelease];
             }
@@ -444,7 +444,7 @@
 -(void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
     if (destinationIndexPath.section == 1 && sourceIndexPath.section == 1) {
         NSMutableArray *data = [_dataSource objectAtIndex:1];
-        NSDictionary *temp = [[data objectAtIndex:sourceIndexPath.row] retain];
+        NSDictionary *temp = [data objectAtIndex:sourceIndexPath.row];
         [data removeObjectAtIndex:sourceIndexPath.row];
         [data insertObject:temp atIndex:destinationIndexPath.row];
         [_dataSource setObject:data atIndexedSubscript:1];

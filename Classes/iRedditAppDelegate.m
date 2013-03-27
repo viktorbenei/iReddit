@@ -154,6 +154,16 @@ iRedditAppDelegate *sharedAppDelegate;
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	
 	//[[Beacon shared] endBeacon];
+    //Remove temp files
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error;
+    NSString *saveDirectory = NSTemporaryDirectory();
+    NSArray *cacheFiles = [fileManager contentsOfDirectoryAtPath:saveDirectory error:&error];
+    for (NSString *file in cacheFiles) {
+        error = nil;
+        [fileManager removeItemAtPath:[saveDirectory stringByAppendingPathComponent:file] error:&error];
+        /* handle error */
+    }
 }
 
 
@@ -165,7 +175,7 @@ iRedditAppDelegate *sharedAppDelegate;
 	
     [messageTimer invalidate];
     [messageTimer release];
-      
+    
 	[window release];
     [super dealloc];
 }

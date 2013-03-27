@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Three20/Three20.h>
+#import <QuartzCore/QuartzCore.h>
 #import "Story.h"
 
 @interface StoryCell : UITableViewCell
@@ -16,13 +16,13 @@
 	UILabel		*storyTitleView;
 	UILabel		*storyDescriptionView;
 	UILabel		*secondaryDescriptionView;
-	TTImageView	*storyImage;
-    UIButton    *virtualAccessory;
+	UIImageView	*storyImage;
+  //  UIButton    *virtualAccessory;
 }
 
 @property (nonatomic,retain) Story *story;
 @property (nonatomic,retain) UILabel *storyTitleView;
 @property (nonatomic,retain) UILabel *storyDescriptionView;
-@property (nonatomic,retain) TTImageView *storyImage;
+@property (nonatomic,retain) UIImageView *storyImage;
 
 @end

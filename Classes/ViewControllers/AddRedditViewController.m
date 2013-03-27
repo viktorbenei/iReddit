@@ -86,8 +86,9 @@
 	self.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
 	
 	[self.navigationBar pushNavigationItem:item animated:NO];
+    
     self.tableView = [[[UITableView alloc] initWithFrame:CGRectMake(0.0, 75.0, self.view.bounds.size.width, self.view.bounds.size.height - 75.0)
-                                                   style:UITableViewStyleGrouped] retain];
+                                                   style:UITableViewStyleGrouped] autorelease];
 	self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	self.tableView.backgroundColor = [UIColor colorWithRed:229.0/255.0 green:238.0/255.0 blue:1 alpha:1];
 	
@@ -103,8 +104,8 @@
 }
 
 -(void)createModel {
-    self.dataSource = [[NSArray arrayWithObject:[NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:@"reddit.com/r/",@"title",@"pics",@"placeholder",@"",@"key",[NSNumber numberWithBool:NO],@"secure", @"text", @"type", nil]]] retain];
-    self.section = [[NSArray arrayWithObject:@"Enter a reddit URL (e.g. /r/pics)"] retain];
+    self.dataSource = [NSArray arrayWithObject:[NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:@"reddit.com/r/",@"title",@"pics",@"placeholder",@"",@"key",[NSNumber numberWithBool:NO],@"secure", @"text", @"type", nil]]];
+    self.section = [NSArray arrayWithObject:@"Enter a reddit URL (e.g. /r/pics)"];
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -119,7 +120,7 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     id cell = [tableView dequeueReusableCellWithIdentifier:@"settings"];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"settings"];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"settings"] autorelease];
     }
     
     [cell setAccessoryView:nil];
@@ -175,6 +176,9 @@
     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
     [gav setProgressBarColor:[UIColor blueColor]];
     [gav progresBarStartDownload];
+}
+-(BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    return NO;
 }
 -(void)alertFinished:(GIDAAlertView *)alertView
 {
@@ -245,6 +249,7 @@
 
 - (void)dealloc
 {
+    self.tableView = nil;
     self.navigationBar = nil;
     [super dealloc];
 }

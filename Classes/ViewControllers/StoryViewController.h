@@ -17,7 +17,6 @@
 @interface StoryViewController : UIViewController <UIWebViewDelegate>
 {
 	BOOL		isForComments;
-	
 	UIWebView	*webview;
 	UIButton	*scoreItem;
 	UIButton	*commentCountItem;
@@ -26,7 +25,6 @@
 	UISegmentedControl *segmentedControl;
 	AlienProgressView  *loadingView;
 	UIActionSheet *currentSheet;
-	
 	Story	*story;
 }
 

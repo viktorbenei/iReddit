@@ -25,10 +25,8 @@
 		return height;
 }
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier 
-{	
-    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) 
-	{
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {	
+    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         self.opaque = YES;
 		self.backgroundColor = [UIColor whiteColor];
 
@@ -75,48 +73,28 @@
 		[[self contentView] addSubview:storyTitleView];
 		[[self contentView] addSubview:storyDescriptionView];
 		[[self contentView] addSubview:secondaryDescriptionView];
-		
-		storyImage = [[TTImageView alloc] initWithFrame:CGRectZero];
-		storyImage.defaultImage = [UIImage imageNamed:@"noimage.png"];
-
-		storyImage.autoresizesToImage = NO;
+		storyImage = [[UIImageView alloc] initWithFrame:CGRectZero];
+        [storyImage setImage:[UIImage imageNamed:@"noimage.png"]];
 		storyImage.autoresizesSubviews = NO;
 		storyImage.contentMode = UIViewContentModeScaleAspectFill;
 		storyImage.clipsToBounds = YES;
 		storyImage.opaque = YES;
 		storyImage.backgroundColor = [UIColor whiteColor];
-		storyImage.style =  [TTSolidFillStyle styleWithColor:[UIColor clearColor] 
-														next:[TTShapeStyle styleWithShape:[TTRoundedRectangleShape shapeWithRadius:6.0f] 
-																					 next:[TTContentStyle styleWithNext:nil]]];
+        CALayer * l = [storyImage layer];
+        [l setMasksToBounds:YES];
+        [l setCornerRadius:10.0];
 
 		[[self contentView] addSubview:storyImage];
-        
-        virtualAccessory = [[UIButton alloc] initWithFrame:CGRectZero];
-        virtualAccessory.adjustsImageWhenHighlighted = NO;
-        [virtualAccessory addTarget:self action:@selector(virtualAccessoryTapped:) forControlEvents:UIControlEventTouchUpInside];
-        virtualAccessory.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleLeftMargin;
-        virtualAccessory.backgroundColor = [UIColor clearColor];
-        [self addSubview:virtualAccessory];
     }
 	
     return self;
-}
-
-- (void)virtualAccessoryTapped:(id)sender
-{
-    UITableView *enclosingTable = (UITableView *)self.superview;
-    if(self.accessoryView && enclosingTable.delegate && [enclosingTable.delegate respondsToSelector:@selector(virtualAccessoryViewTapped:)])
-    {
-        [enclosingTable.delegate virtualAccessoryViewTapped:self.accessoryView];
-    }
 }
 
 - (void)layoutSubviews 
 {
 	[super layoutSubviews];
 	
-    CGRect cellRect = self.bounds;
-	CGRect contentRect = self.contentView.bounds;
+    CGRect contentRect = self.contentView.bounds;
 	CGRect labelRect = contentRect;
 
 	//contentRect.size.width = 320;
@@ -129,7 +107,6 @@
 
 	//BOOL showThumbnails = [[NSUserDefaults standardUserDefaults] boolForKey:@"showStoryThumbnails"];
 	
-    virtualAccessory.frame = CGRectMake(cellRect.size.width-40, 0, 40, cellRect.size.height);
     
 	if ([storyImage isHidden])
 	{
@@ -195,7 +172,8 @@
 
 	if (!story)
 	{
-		[storyImage setUrlPath:nil];
+        [storyImage setImage:nil];
+		//[storyImage setUrlPath:nil];
 		[storyTitleView setText:@""];
 		[storyDescriptionView setText:@""];
 		[secondaryDescriptionView setText:@""];
@@ -207,7 +185,18 @@
 		if ([story hasThumbnail])
 		{
 			[storyImage setHidden:NO];
-			[storyImage setUrlPath:story.thumbnailURL];
+            [storyImage setImage:[UIImage imageNamed:@"noimage.png"]];
+		   if (![story.thumbnailURL isEqualToString:@"self"] && ![story.thumbnailURL isEqualToString:@"nsfw"] && ![story.thumbnailURL isEqualToString:@"default"]) {
+                NSString *temp = [story.thumbnailURL stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
+                temp = [temp stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+                temp = [NSTemporaryDirectory() stringByAppendingString:temp];
+                if (![[NSFileManager defaultManager] fileExistsAtPath:temp]) {
+                    [self performSelectorInBackground:@selector(setThumbnail) withObject:nil];
+                } else {
+                    [storyImage setImage:[UIImage imageWithContentsOfFile:temp]];
+                }
+                
+            }
 		}
 		else
 		{
@@ -229,5 +218,12 @@
 	[secondaryDescriptionView setText:[NSString stringWithFormat:@"%d points in %@ by %@", story.score, story.subreddit, story.author ]];//]], story.totalComments, story.totalComments == 1  ? @"" : @"s"]];
 	[secondaryDescriptionView setNeedsDisplay];
 }
-
+-(void)setThumbnail {
+    NSString *temp = [story.thumbnailURL stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
+    temp = [temp stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+    temp = [NSTemporaryDirectory() stringByAppendingString:temp];
+    NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:story.thumbnailURL]];
+    [data writeToFile:temp atomically:YES];
+    [storyImage setImage:[UIImage imageWithContentsOfFile:temp]];
+}
 @end

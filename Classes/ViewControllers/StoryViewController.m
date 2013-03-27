@@ -428,22 +428,10 @@
                 NSString *appName =
                 [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
                 url = [NSString stringWithFormat:
-                                             @"googlechrome-x-callback://x-callback-url/open/?x-source=%@&x-success=%@&url=%@",
+                                             @"googlechrome-x-callback://x-callback-url/open/?x-source=%@&x-success=%@&url=%@&create-new-tab",
                                              encodeByAddingPercentEscapes(appName),
                                              encodeByAddingPercentEscapes(@"ireddit://"),
                                              encodeByAddingPercentEscapes(url)];
-                NSLog(@"%@",url);
-              //  NSURL *chromeURL = [NSURL URLWithString:chromeURLString];
-                
-                // Open the URL with Google Chrome.
-             //   [[UIApplication sharedApplication] openURL:chromeURL];
-          /*      if ([url hasPrefix:@"http://"]) {
-                    url = [@"googlechrome://" stringByAppendingString:[[url componentsSeparatedByString:@"http://"] objectAtIndex:1]];
-                } else {
-                    if ([url hasPrefix:@"https://"]) {
-                        url = [@"googlechromes://" stringByAppendingString:[[url componentsSeparatedByString:@"https://"] objectAtIndex:1]];
-                    }
-                }*/
             }
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
             break;
@@ -671,7 +659,7 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    
+    [webview stopLoading];
     if (![self.navigationController.topViewController isKindOfClass:[StoryViewController class]])
     {
         CGRect frame = self.webview.frame;

@@ -54,7 +54,7 @@
 	[super loadView];
 
     // create the tableview
-	CGRect applicationFrame = TTApplicationFrame();
+	CGRect applicationFrame = [[UIScreen mainScreen] applicationFrame];
     self.view = [[[UIView alloc] initWithFrame:applicationFrame] autorelease];
     self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
@@ -69,13 +69,11 @@
         tabBar = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Hot",@"New",@"Top",@"Controversial", nil]];
         [tabBar setSelectedSegmentIndex:0];
         UIFont *font = [UIFont boldSystemFontOfSize:11.0f];
-        NSDictionary *attributes = [NSDictionary dictionaryWithObject:font
-                                                               forKey:UITextAttributeFont];
-        [tabBar setTitleTextAttributes:attributes
-                                        forState:UIControlStateNormal];
+        NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:UITextAttributeFont];
+        [tabBar setTitleTextAttributes:attributes forState:UIControlStateNormal];
         [tabBar setFrame:CGRectMake(0, 0, applicationFrame.size.width, 30)];
         [tabBar setSegmentedControlStyle:UISegmentedControlStyleBar];
-        [tabBar setTintColor:[UIColor colorWithWhite:0.8 alpha:1]];
+        [tabBar setTintColor:[iRedditAppDelegate redditNavigationBarTintColor]];
         [tabBar addTarget:self action:@selector(toolBarButton:) forControlEvents:UIControlEventValueChanged];
 	}
 
