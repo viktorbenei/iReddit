@@ -97,7 +97,7 @@
 		}
 		else
 		{
-			TTMessageController* controller = [[[TTMessageController alloc] initWithRecipients:[NSArray array]] autorelease];
+			/*TTMessageController* controller = [[[TTMessageController alloc] initWithRecipients:[NSArray array]] autorelease];
 
 			TTMessageTextField *toField = [[[TTMessageTextField alloc] initWithTitle:
 											TTLocalizedString(@"To:", @"") required:YES] autorelease];
@@ -113,7 +113,11 @@
 
 			[controller setText:message.author forFieldAtIndex:0];
 			[controller setSubject:[NSString stringWithFormat:@"RE: %@", message.subject]];
-			
+			*/
+            CreateMessage *controller = [[CreateMessage alloc] init];
+            controller.subject = [NSString stringWithFormat:@"RE: %@", message.subject];
+            controller.to = message.author;
+            controller.delegate = self;
 			UINavigationController* navController = [[[UINavigationController alloc] init] autorelease];
 			[navController pushViewController:controller animated:NO];
 
@@ -127,12 +131,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // TTMessageControllerDelegate
 
-- (void)composeController:(TTMessageController*)controller didSendFields:(NSArray*)fields 
+- (void)composeController:(CreateMessage *)controller didSendFields:(NSArray*)fields
 {
-	TTMessageTextField *toField = [fields objectAtIndex:0];
-	TTMessageSubjectField *subjectField = [fields objectAtIndex:1];
-	TTMessageTextField *messageBody = [fields objectAtIndex:2];
-
+	NSString *toField = [fields objectAtIndex:0];
+	NSString *subjectField = [fields objectAtIndex:1];
+	NSString *messageBody = [fields objectAtIndex:2];
+    NSString *captchaID = [fields objectAtIndex:3];
+    NSString *captchaText = [fields objectAtIndex:4];
 	NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditComposeMessageAPIString];
 	
 	activeRequest = [TTURLRequest requestWithURL:url delegate:self];
@@ -141,14 +146,16 @@
     activeRequest.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
 	activeRequest.httpMethod = @"POST";
 	activeRequest.contentType = @"application/x-www-form-urlencoded";
-	activeRequest.httpBody = 	 [[NSString stringWithFormat:@"id=%@&uh=%@&to=%@&subject=%@&text=%@",
+	activeRequest.httpBody = 	 [[NSString stringWithFormat:@"id=%@&uh=%@&to=%@&subject=%@&text=%@&iden=%@&captcha=%@",
 								   @"%23compose-message",
 								   [[LoginController sharedLoginController] modhash],
-								   [[toField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
-								   [[subjectField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
-								   [[messageBody.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]
+								   [[toField stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+								   [[subjectField stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+								   [[messageBody stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+                                   [[captchaID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+                                   [[captchaText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]
 								   ] dataUsingEncoding:NSASCIIStringEncoding];
-	activeRequest.response = [[[TTURLDataResponse alloc] init] autorelease];
+   	activeRequest.response = [[[TTURLDataResponse alloc] init] autorelease];
 
 	[activeRequest send];
 

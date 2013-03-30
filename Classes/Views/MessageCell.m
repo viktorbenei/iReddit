@@ -43,10 +43,12 @@
 		[subjectLabel setNumberOfLines:0];
 		
 		
-		bodyLabel = [[TTStyledTextLabel alloc] initWithFrame:CGRectZero];		
+		bodyLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         bodyLabel.userInteractionEnabled = NO;
 		bodyLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		[bodyLabel setFont:[UIFont systemFontOfSize:14]];
+        [bodyLabel setLineBreakMode:NSLineBreakByTruncatingTail];
+        [bodyLabel setNumberOfLines:0];
 		[bodyLabel setTextColor:[UIColor blackColor]];
 		
 		dateLabel = [[UILabel alloc] initWithFrame:CGRectZero];		
@@ -74,7 +76,7 @@
 	
 	if (!message)
 	{
-		[bodyLabel setText:[TTStyledText textFromXHTML:@""]];
+		[bodyLabel setText:@""];
 		[fromLabel setText:@""];
 		[subjectLabel setText:@""];
 		[dateLabel setText:@""];
@@ -83,7 +85,7 @@
 	}
 	
 	[subjectLabel setText:message.subject];
-	[bodyLabel setText:message.body];
+	[bodyLabel setAttributedText:message.body];
 	[fromLabel setText:message.author];
 	[dateLabel setText:[NSString stringWithFormat:@"%@ ago", message.created]];
 	
@@ -108,7 +110,7 @@
 	subjectLabel.frame = frame;
 
     CGSize constrainedSize = CGRectInset([self bounds], 20.0, 12.0).size;
-    bodyLabel.text.width = constrainedSize.width;
+//    bodyLabel.attributedText.size.width = constrainedSize.width;
 	size = [bodyLabel sizeThatFits:constrainedSize];
 	frame = bodyLabel.frame;
 	

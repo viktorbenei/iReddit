@@ -46,6 +46,8 @@ typedef enum {
 
 - (id)initWithMessage:(NSString *)someMessage andAlertImage:(UIImage *)someImage;
 - (id) initWithSpinnerAndMessage:(NSString *)message;
+
+- (id)initWithImage:(UIImage *)image andPrompt:(NSString *)prompt cancelButtonTitle:(NSString *)cancelTitle acceptButtonTitle:(NSString *)acceptTitle;
 - (id)initWithPrompt:(NSString *)prompt cancelButtonTitle:(NSString *)cancelTitle acceptButtonTitle:(NSString *)acceptTitle;
 - (id)initWithTitle:(NSString *)title cancelButtonTitle:(NSString *)cancelTitle acceptButtonTitle:(NSString *)acceptTitle andMessage:(NSString *)message;
 - (id)initWithProgressBarAndMessage:(NSString *)message andTime:(NSInteger)seconds;

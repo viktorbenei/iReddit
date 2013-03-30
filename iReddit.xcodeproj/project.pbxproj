@@ -107,6 +107,12 @@
 		BE27743916F7CF59009D445C /* PocketAPIOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27741D16F7CF59009D445C /* PocketAPIOperation.m */; };
 		BE27743A16F7CF59009D445C /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27742016F7CF59009D445C /* SFHFKeychainUtils.m */; };
 		BE27744316F7CF99009D445C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE27744216F7CF99009D445C /* Security.framework */; };
+		BE7DBCDD170455E70012B6D1 /* libDTCoreText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7DBCD3170454A50012B6D1 /* libDTCoreText.a */; };
+		BE7DBCDF170455FA0012B6D1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7DBCDE170455FA0012B6D1 /* ImageIO.framework */; };
+		BE7DBCE1170456100012B6D1 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7DBCE0170456100012B6D1 /* CoreText.framework */; };
+		BE7DBCE3170456190012B6D1 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7DBCE2170456190012B6D1 /* MobileCoreServices.framework */; };
+		BEC679C71705E0F300B4E82E /* CreateMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC679C51705E0F300B4E82E /* CreateMessage.m */; };
+		BEC679C81705E0F300B4E82E /* CreateMessage.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEC679C61705E0F300B4E82E /* CreateMessage.xib */; };
 		BECC89F416F864E200CF00A4 /* GIDAAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = BECC89F316F864E200CF00A4 /* GIDAAlertView.m */; };
 		E58C0EFA12B48A9B004D2070 /* Three20.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E58C0EF912B48A9B004D2070 /* Three20.bundle */; };
 		E58C100E12B49244004D2070 /* SubredditDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E58C100D12B49244004D2070 /* SubredditDataModel.m */; };
@@ -115,6 +121,55 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		BE7DBCCE170454A50012B6D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1D6058910D05DD3D006BFB54;
+			remoteInfo = DemoApp;
+		};
+		BE7DBCD0170454A50012B6D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A70F119B14863198009202BF;
+			remoteInfo = "Static Framework";
+		};
+		BE7DBCD2170454A50012B6D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A70F11DE148632CD009202BF;
+			remoteInfo = "Static Library";
+		};
+		BE7DBCD4170454A50012B6D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A788CA681486456100E1AFD9;
+			remoteInfo = UnitTest;
+		};
+		BE7DBCD6170454A50012B6D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7949A5814CC456000A8CCDE;
+			remoteInfo = MacUnitTest;
+		};
+		BE7DBCD8170454A50012B6D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7F7EFCD1573603100F5A4D0;
+			remoteInfo = "Static Library (no DTFoundation)";
+		};
+		BE7DBCDA170454A50012B6D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E2262DC61638331500BFDAD7;
+			remoteInfo = "Mac Framework";
+		};
 		E58C0F2A12B48AA6004D2070 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E58C0EFB12B48AA5004D2070 /* Three20.xcodeproj */;
@@ -338,6 +393,13 @@
 		BE27741F16F7CF59009D445C /* SFHFKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFHFKeychainUtils.h; sourceTree = "<group>"; };
 		BE27742016F7CF59009D445C /* SFHFKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFHFKeychainUtils.m; sourceTree = "<group>"; };
 		BE27744216F7CF99009D445C /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DTCoreText.xcodeproj; path = Externals/DTCoreText/DTCoreText.xcodeproj; sourceTree = "<group>"; };
+		BE7DBCDE170455FA0012B6D1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		BE7DBCE0170456100012B6D1 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		BE7DBCE2170456190012B6D1 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		BEC679C41705E0F300B4E82E /* CreateMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateMessage.h; sourceTree = "<group>"; };
+		BEC679C51705E0F300B4E82E /* CreateMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateMessage.m; sourceTree = "<group>"; };
+		BEC679C61705E0F300B4E82E /* CreateMessage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CreateMessage.xib; path = ViewControllers/CreateMessage.xib; sourceTree = "<group>"; };
 		BECC89F216F864E200CF00A4 /* GIDAAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GIDAAlertView.h; sourceTree = "<group>"; };
 		BECC89F316F864E200CF00A4 /* GIDAAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GIDAAlertView.m; sourceTree = "<group>"; };
 		E566C63412BEF9FC00E3E04E /* iReddit-Free-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iReddit-Free-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
@@ -362,6 +424,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE7DBCE3170456190012B6D1 /* MobileCoreServices.framework in Frameworks */,
+				BE7DBCE1170456100012B6D1 /* CoreText.framework in Frameworks */,
+				ADFB540F0FEAC6010067CEC1 /* QuartzCore.framework in Frameworks */,
+				BE7DBCDF170455FA0012B6D1 /* ImageIO.framework in Frameworks */,
+				ADFB54950FEAC6700067CEC1 /* libxml2.dylib in Frameworks */,
+				BE7DBCDD170455E70012B6D1 /* libDTCoreText.a in Frameworks */,
 				BE27744316F7CF99009D445C /* Security.framework in Frameworks */,
 				BE0910E916F7C45F00EE6296 /* libThree20Core.a in Frameworks */,
 				BE0910EA16F7C45F00EE6296 /* libThree20Network.a in Frameworks */,
@@ -373,13 +441,11 @@
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				2892E4100DC94CBA00A64D0F /* CoreGraphics.framework in Frameworks */,
-				ADFB540F0FEAC6010067CEC1 /* QuartzCore.framework in Frameworks */,
 				ADFB54130FEAC60E0067CEC1 /* AudioToolbox.framework in Frameworks */,
 				ADFB54170FEAC61B0067CEC1 /* libsqlite3.dylib in Frameworks */,
 				ADFB54190FEAC6270067CEC1 /* CoreLocation.framework in Frameworks */,
 				ADFB541D0FEAC6370067CEC1 /* SystemConfiguration.framework in Frameworks */,
 				ADFB54210FEAC63E0067CEC1 /* libz.dylib in Frameworks */,
-				ADFB54950FEAC6700067CEC1 /* libxml2.dylib in Frameworks */,
 				ADFB549B0FEAC6FB0067CEC1 /* AddressBook.framework in Frameworks */,
 				ADB2A0C40FEC207C00405C52 /* CFNetwork.framework in Frameworks */,
 				ADF243ED1014171400C392BF /* MessageUI.framework in Frameworks */,
@@ -400,6 +466,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */,
 				BECC89F216F864E200CF00A4 /* GIDAAlertView.h */,
 				BECC89F316F864E200CF00A4 /* GIDAAlertView.m */,
 				BE2773E516F7CF59009D445C /* Pocket-ObjC-SDK */,
@@ -446,6 +513,9 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BE7DBCE2170456190012B6D1 /* MobileCoreServices.framework */,
+				BE7DBCE0170456100012B6D1 /* CoreText.framework */,
+				BE7DBCDE170455FA0012B6D1 /* ImageIO.framework */,
 				BE27744216F7CF99009D445C /* Security.framework */,
 				ADB2A0C30FEC207C00405C52 /* CFNetwork.framework */,
 				ADF243EC1014171400C392BF /* MessageUI.framework */,
@@ -467,6 +537,7 @@
 		61C35E0211FF0B67001A2F85 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
+				BEC679C61705E0F300B4E82E /* CreateMessage.xib */,
 				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
 			);
 			name = XIBs;
@@ -532,6 +603,8 @@
 				ADFB535D0FEAC3EA0067CEC1 /* LoginViewController.m */,
 				ADFB535E0FEAC3EA0067CEC1 /* MessageViewController.h */,
 				ADFB535F0FEAC3EA0067CEC1 /* MessageViewController.m */,
+				BEC679C41705E0F300B4E82E /* CreateMessage.h */,
+				BEC679C51705E0F300B4E82E /* CreateMessage.m */,
 				ADFB53600FEAC3EA0067CEC1 /* RootViewController.h */,
 				ADFB53610FEAC3EA0067CEC1 /* RootViewController.m */,
 				ADFB53620FEAC3EA0067CEC1 /* SettingsViewController.h */,
@@ -647,6 +720,20 @@
 				BE27742016F7CF59009D445C /* SFHFKeychainUtils.m */,
 			);
 			path = SDK;
+			sourceTree = "<group>";
+		};
+		BE7DBCC3170454A50012B6D1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BE7DBCCF170454A50012B6D1 /* RTDemoApp.app */,
+				BE7DBCD1170454A50012B6D1 /* DTCoreText.framework */,
+				BE7DBCD3170454A50012B6D1 /* libDTCoreText.a */,
+				BE7DBCD5170454A50012B6D1 /* UnitTest.octest */,
+				BE7DBCD7170454A50012B6D1 /* MacUnitTest.octest */,
+				BE7DBCD9170454A50012B6D1 /* libDTCoreText_no_DTFoundation.a */,
+				BE7DBCDB170454A50012B6D1 /* DTCoreText.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		E58C0EC912B48A3C004D2070 /* Three20 */ = {
@@ -785,6 +872,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = BE7DBCC3170454A50012B6D1 /* Products */;
+					ProjectRef = BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */;
+				},
+				{
 					ProductGroup = E58C0EFC12B48AA5004D2070 /* Products */;
 					ProjectRef = E58C0EFB12B48AA5004D2070 /* Three20.xcodeproj */;
 				},
@@ -821,6 +912,55 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		BE7DBCCF170454A50012B6D1 /* RTDemoApp.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = RTDemoApp.app;
+			remoteRef = BE7DBCCE170454A50012B6D1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BE7DBCD1170454A50012B6D1 /* DTCoreText.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DTCoreText.framework;
+			remoteRef = BE7DBCD0170454A50012B6D1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BE7DBCD3170454A50012B6D1 /* libDTCoreText.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTCoreText.a;
+			remoteRef = BE7DBCD2170454A50012B6D1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BE7DBCD5170454A50012B6D1 /* UnitTest.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = UnitTest.octest;
+			remoteRef = BE7DBCD4170454A50012B6D1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BE7DBCD7170454A50012B6D1 /* MacUnitTest.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = MacUnitTest.octest;
+			remoteRef = BE7DBCD6170454A50012B6D1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BE7DBCD9170454A50012B6D1 /* libDTCoreText_no_DTFoundation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTCoreText_no_DTFoundation.a;
+			remoteRef = BE7DBCD8170454A50012B6D1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BE7DBCDB170454A50012B6D1 /* DTCoreText.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DTCoreText.framework;
+			remoteRef = BE7DBCDA170454A50012B6D1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		E58C0F2B12B48AA6004D2070 /* libThree20.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -981,6 +1121,7 @@
 				94C3A41A12D75B8100E2BF79 /* Default-Landscape.png in Resources */,
 				94C3A41B12D75B8100E2BF79 /* Default-Portrait.png in Resources */,
 				BE0910F016F7C47900EE6296 /* Default-568h@2x.png in Resources */,
+				BEC679C81705E0F300B4E82E /* CreateMessage.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1020,6 +1161,7 @@
 				BE27743916F7CF59009D445C /* PocketAPIOperation.m in Sources */,
 				BE27743A16F7CF59009D445C /* SFHFKeychainUtils.m in Sources */,
 				BECC89F416F864E200CF00A4 /* GIDAAlertView.m in Sources */,
+				BEC679C71705E0F300B4E82E /* CreateMessage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1042,6 +1184,7 @@
 				PRODUCT_NAME = iReddit;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "Externals/DTCoreText/Core/**";
 			};
 			name = Debug;
 		};
@@ -1059,6 +1202,7 @@
 				PRODUCT_NAME = iReddit;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "Externals/DTCoreText/Core/**";
 			};
 			name = Release;
 		};
@@ -1067,7 +1211,8 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1077,6 +1222,7 @@
 					"-all_load",
 					"-ObjC",
 				);
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 			};
@@ -1098,6 +1244,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "Externals/DTCoreText/Core/**";
 			};
 			name = Distribution;
 		};
@@ -1105,6 +1252,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
@@ -1116,6 +1264,7 @@
 					"-all_load",
 					"-ObjC",
 				);
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 			};
@@ -1125,6 +1274,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1135,6 +1285,7 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 			};

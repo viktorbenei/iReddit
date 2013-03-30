@@ -7,11 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Three20/Three20.h>
+#import "DTCoreText.h"
 
 @interface RedditMessage : NSObject 
 {
-	TTStyledText	*body;
+	NSAttributedString	*body;
     NSString        *name;
     NSString        *identifier;
     NSString        *author;
@@ -34,7 +34,7 @@
 - (void)setHeight:(CGFloat)aHeight forIndex:(int)anIndex;
 
 
-@property (nonatomic, retain) TTStyledText	*body;
+@property (nonatomic, retain) NSAttributedString	*body;
 @property (nonatomic, retain) NSString	*name;
 @property (nonatomic, retain) NSString	*identifier;
 @property (nonatomic, retain) NSString	*author;

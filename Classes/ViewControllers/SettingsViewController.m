@@ -276,8 +276,8 @@
     [_options retain];
 }
 - (void)viewWillDisappear:(BOOL)animated{
-    [[[[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]] accessoryView] resignFirstResponder];
-    [[[[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]] accessoryView] resignFirstResponder];
+    [[[[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] accessoryView] resignFirstResponder];
+    [[[[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]] accessoryView] resignFirstResponder];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (changed) {
         [[LoginController sharedLoginController] logOut];

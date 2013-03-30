@@ -4,3 +4,6 @@
 [submodule "Pocket-ObjC-SDK"]
 	path = Pocket-ObjC-SDK
 	url = git://github.com/Pocket/Pocket-ObjC-SDK.git
+[submodule "Externals/DTCoreText"]
+	path = Externals/DTCoreText
+	url = https://github.com/Cocoanetics/DTCoreText.git

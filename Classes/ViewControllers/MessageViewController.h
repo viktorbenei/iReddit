@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DTCoreText.h"
 #import <Three20/Three20.h>
+#import "CreateMessage.h"
 
-@interface MessageViewController : TTTableViewController
+@interface MessageViewController : TTTableViewController <CreateMessageDelegate>
 {
 	TTURLRequest *activeRequest;
 }
