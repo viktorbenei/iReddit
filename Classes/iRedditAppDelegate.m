@@ -85,7 +85,8 @@ iRedditAppDelegate *sharedAppDelegate;
                                                object:nil];
 	
     randomData = [[SubredditData alloc] initWithSubreddit:@"/randomrising/"];
-    [self loadRandomData];
+    [self performSelectorInBackground:@selector(loadRandomData) withObject:nil];
+
 }
 
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {

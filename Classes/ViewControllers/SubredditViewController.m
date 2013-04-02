@@ -178,13 +178,16 @@
     
     _loadingView = [[UIView alloc] initWithFrame:aFrame];
     [_loadingView setBackgroundColor:[UIColor whiteColor]];
-    label = [[UILabel alloc] initWithFrame:CGRectMake((_tableView.frame.size.width-100)/2, (_tableView.frame.size.height-30)/2, 100, 30)];
+    [_loadingView setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
+    label = [[UILabel alloc] initWithFrame:aFrame];
     [label setTextAlignment:UITextAlignmentCenter];
     [label setText:@"Loading..."];
     [label setContentMode:UIViewContentModeCenter];
     [label setBackgroundColor:[UIColor clearColor]];
+    [label setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin];
     aic = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    [aic setFrame:CGRectMake((_tableView.frame.size.width-200)/2, (_tableView.frame.size.height-100)/2, 100, 100)];
+    [aic setFrame:CGRectMake((_tableView.frame.size.width-100)/2, (_tableView.frame.size.height-100)/2, 100, 100)];
+    [aic setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin];
     [aic startAnimating];
     
     [_loadingView addSubview:aic];

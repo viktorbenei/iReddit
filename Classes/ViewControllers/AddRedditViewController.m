@@ -142,7 +142,11 @@
             }
         } else {
             if ([cellData[@"type"] isEqualToString:@"text"]) {
-                UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 162, 24)];
+                CGFloat width = 162;
+                if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+                    width = 490;
+                }
+                UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, width, 24)];
                 [textField setDelegate:self];
                 [textField setText:cellData[@"value"]];
                 [textField setBackgroundColor:[UIColor clearColor]];
