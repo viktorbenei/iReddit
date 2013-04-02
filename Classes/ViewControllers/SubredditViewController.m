@@ -134,7 +134,7 @@
     [source release];
 }
 
-- (id<TTTableViewDelegate>)createDelegate
+- (id)createDelegate
 {
     return [[[SubredditTableViewDelegate alloc] initWithController:self] autorelease]; 
 }

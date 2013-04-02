@@ -7,24 +7,27 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Three20/Three20.h>
+#import "RedditMessage.h"
+//#import <Three20/Three20.h>
 
-@interface MessageDataSource : TTListDataSource <TTURLRequestDelegate>
+@interface MessageDataSource : NSObject <NSURLConnectionDataDelegate>
 {	
     NSDate *lastLoadedTime;
     BOOL isLoading;
     BOOL isLoadingMore;
 	BOOL canLoadMore;
-
+    
 	unsigned int unreadMessageCount;
 	
-	TTURLRequest *activeRequest;
+	//TTURLRequest *activeRequest;
 }
-
-- (NSString *)fullURL;
+- (void)loadMore:(BOOL)more;
+-(RedditMessage *)messageAtIndex:(NSInteger)index;
+-(NSInteger)count;
 - (unsigned int)unreadMessageCount;
 // marking as read doesn't actually work from the API, so let's not pretend it does
 //- (void)markRead:(id)sender;
 - (BOOL)canLoadMore;
+- (void)cancel;
 
 @end

@@ -18,6 +18,7 @@
 @end
 
 @interface CreateMessage : UIViewController <NSURLConnectionDataDelegate, GIDAAlertViewDelegate>
+-(void)newCaptcha;
 @property (retain, nonatomic) id<CreateMessageDelegate> delegate;
 @property (retain, nonatomic) NSString *subject;
 @property (retain, nonatomic) NSString *to;

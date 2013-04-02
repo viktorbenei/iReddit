@@ -296,6 +296,7 @@
         [self addSubview:theTextField];
         self.textField = theTextField;
         [theTextField release];
+        [imageView release];
         
         _alertColor = [UIColor blackColor];
         

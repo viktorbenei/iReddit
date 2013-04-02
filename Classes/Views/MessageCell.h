@@ -8,17 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "RedditMessage.h"
-#import "DTCoreText.h"
-#import <Three20/Three20.h>
 
 @interface MessageCell : UITableViewCell 
-{
-	RedditMessage *message;
-	UILabel *fromLabel;
-	UILabel *subjectLabel;
-	UILabel *bodyLabel;
-	UILabel *dateLabel;
-}
++ (float)tableView:(UITableView *)aTableView rowHeightForObject:(RedditMessage *)aMessage;
 
 @property (nonatomic,retain) RedditMessage *message;
 @property (nonatomic,retain) UILabel *fromLabel;

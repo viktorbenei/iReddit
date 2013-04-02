@@ -13,6 +13,15 @@
 #import "LoginController.h"
 #import "RedditWebView.h"
 
+@interface MessageViewController ()
+@property (nonatomic, retain) MessageDataSource *dataSource;
+@property (nonatomic, retain) UINavigationBar *navigationBar;
+@property (nonatomic, retain) UITableView *tableView;
+@property (retain) NSMutableData* responseData;
+@property (retain, nonatomic) NSURLConnection *connection;
+@property (retain, nonatomic) CreateMessage *controller;
+@end
+
 @implementation MessageViewController
 
 - (void)loadView
@@ -21,32 +30,32 @@
 	
 	self.title = @"Inbox";
 
-	self.navigationBarTintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+	self.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
 	
-	self.variableHeightRows = YES;
+	//self.variableHeightRows = YES;
 
 	self.tableView = [[[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain] autorelease];
 	self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
 	
 	[self.view addSubview:self.tableView];
 	
 	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(compose:)] autorelease];
-
+    [self messageCountChanged:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageCountChanged:) name:MessageCountDidChangeNotification object:nil];
 }
 
 - (void)messageCountChanged:(NSNotification *)notif
 {
     [self createModel];
-    [self refresh];
+    [[self tableView] reloadData];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
-    
-    // marking as read doesn't actually work, so let's not pretend it does
-	//[[iRedditAppDelegate sharedAppDelegate].messageDataSource markRead:self];
 }
 
 -(void)createModel 
@@ -54,85 +63,51 @@
 	self.dataSource = [iRedditAppDelegate sharedAppDelegate].messageDataSource;
 }
 
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [MessageCell tableView:tableView rowHeightForObject:(RedditMessage *)[_dataSource messageAtIndex:indexPath.row]];
+}
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [_dataSource count];
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    id cell = [tableView dequeueReusableCellWithIdentifier:@"message"];
+    if (!cell) {
+        cell = [[[MessageCell alloc] init] autorelease];
+    }
+    [(MessageCell *)cell setMessage:[_dataSource messageAtIndex:indexPath.row]];
+    return cell;
+}
 - (void)compose:(id)sender
 {
-	TTMessageController* controller = [[[TTMessageController alloc] initWithRecipients:[NSArray array]] autorelease];
-	
-	TTMessageTextField *toField = [[[TTMessageTextField alloc] initWithTitle:
-									TTLocalizedString(@"To:", @"") required:YES] autorelease];
-
-	controller.fields = [[NSArray alloc] initWithObjects:
-						 toField,
-						 [[[TTMessageSubjectField alloc] initWithTitle:
-						   TTLocalizedString(@"Subject:", @"") required:NO] autorelease],
-						 nil];
-	
-	controller.delegate = (id <TTMessageControllerDelegate>)self;	
-	controller.navigationBarTintColor = self.navigationBarTintColor;
-	controller.navigationController.navigationBar.tintColor = self.navigationBarTintColor;
-
-	UINavigationController* navController = [[[UINavigationController alloc] init] autorelease];
-    [navController pushViewController:controller animated:NO];
-	
+    _controller = [[CreateMessage alloc] init];
+    _controller.subject = @"";
+    _controller.to = @"";
+    _controller.delegate = self;
+    UINavigationController* navController = [[[UINavigationController alloc] init] autorelease];
+    navController.navigationBar.tintColor = self.navigationBar.tintColor;
+    _controller.title = @"New Message";
+    [navController pushViewController:_controller animated:NO];
+    
     [self presentViewController:navController animated:YES completion:nil];
 }
-
-- (void)didSelectObject:(TTTableItem*)object atIndexPath:(NSIndexPath*)indexPath
-{
-	if ([object isKindOfClass:[TTTableMoreButton class]])
-		[super didSelectObject:object atIndexPath:indexPath];
-	else
-	{	
-		RedditMessage *message = (RedditMessage *)object;
-		
-		if (message.isCommentReply)
-		{
-			NSString *commentID = nil;
-			NSString *storyID = [RedditWebView storyIDForURL:[NSURL URLWithString:message.context] commentID:&commentID];
-
-			StoryViewController *controller = [[[StoryViewController alloc] initForComments] autorelease];
-
-			[[self navigationController] pushViewController:controller animated:YES];
-			[controller setStoryID:storyID commentID:commentID URL:message.context];
-		}
-		else
-		{
-			/*TTMessageController* controller = [[[TTMessageController alloc] initWithRecipients:[NSArray array]] autorelease];
-
-			TTMessageTextField *toField = [[[TTMessageTextField alloc] initWithTitle:
-											TTLocalizedString(@"To:", @"") required:YES] autorelease];
-			
-			TTMessageSubjectField *subjectField = [[[TTMessageSubjectField alloc] initWithTitle:
-													TTLocalizedString(@"Subject:", @"") required:NO] autorelease];
-			
-			controller.fields = [[NSArray alloc] initWithObjects:toField, subjectField, nil];
-
-			controller.delegate = (id <TTMessageControllerDelegate>)self;	
-			controller.navigationBarTintColor = self.navigationBarTintColor;
-			controller.navigationController.navigationBar.tintColor = self.navigationBarTintColor;
-
-			[controller setText:message.author forFieldAtIndex:0];
-			[controller setSubject:[NSString stringWithFormat:@"RE: %@", message.subject]];
-			*/
-            CreateMessage *controller = [[CreateMessage alloc] init];
-            controller.subject = [NSString stringWithFormat:@"RE: %@", message.subject];
-            controller.to = message.author;
-            controller.delegate = self;
-			UINavigationController* navController = [[[UINavigationController alloc] init] autorelease];
-			[navController pushViewController:controller animated:NO];
-
-            [self presentViewController:navController animated:YES completion:nil];
-		}
-	}
-
-	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    RedditMessage *message = [_dataSource messageAtIndex:indexPath.row];
+    _controller = [[CreateMessage alloc] init];
+    _controller.subject = [NSString stringWithFormat:@"RE: %@", message.subject];
+    _controller.to = message.author;
+    _controller.delegate = self;
+    UINavigationController* navController = [[[UINavigationController alloc] init] autorelease];
+    navController.navigationBar.tintColor = self.navigationBar.tintColor;
+    [navController pushViewController:_controller animated:NO];
+    _controller.title = _controller.subject;
+    [self presentViewController:navController animated:YES completion:nil];
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// TTMessageControllerDelegate
-
-- (void)composeController:(CreateMessage *)controller didSendFields:(NSArray*)fields
-{
+- (void)composeController:(CreateMessage *)controller didSendFields:(NSArray*)fields {
 	NSString *toField = [fields objectAtIndex:0];
 	NSString *subjectField = [fields objectAtIndex:1];
 	NSString *messageBody = [fields objectAtIndex:2];
@@ -140,51 +115,52 @@
     NSString *captchaText = [fields objectAtIndex:4];
 	NSString *url = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditComposeMessageAPIString];
 	
-	activeRequest = [TTURLRequest requestWithURL:url delegate:self];
-	activeRequest.cacheExpirationAge = 0;
-    activeRequest.cachePolicy = TTURLRequestCachePolicyNoCache;
-    activeRequest.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
-	activeRequest.httpMethod = @"POST";
-	activeRequest.contentType = @"application/x-www-form-urlencoded";
-	activeRequest.httpBody = 	 [[NSString stringWithFormat:@"id=%@&uh=%@&to=%@&subject=%@&text=%@&iden=%@&captcha=%@",
-								   @"%23compose-message",
-								   [[LoginController sharedLoginController] modhash],
-								   [[toField stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
-								   [[subjectField stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
-								   [[messageBody stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
-                                   [[captchaID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
-                                   [[captchaText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]
-								   ] dataUsingEncoding:NSASCIIStringEncoding];
-   	activeRequest.response = [[[TTURLDataResponse alloc] init] autorelease];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+    [request setHTTPShouldHandleCookies:[[LoginController sharedLoginController] isLoggedIn] ? YES : NO];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPMethod:@"POST"];
+    [request setHTTPBody:[[NSString stringWithFormat:@"id=%@&uh=%@&to=%@&subject=%@&text=%@&iden=%@&captcha=%@",
+                           @"%23compose-message",
+                           [[LoginController sharedLoginController] modhash],
+                           [[toField stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+                           [[subjectField stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+                           [[messageBody stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+                           [[captchaID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+                           [[captchaText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]
+                           ] dataUsingEncoding:NSASCIIStringEncoding]];
+    NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:self];
+    [connection start];
 
-	[activeRequest send];
-
-    [controller dismissViewControllerAnimated:YES completion:nil];
+    
 }
-
-// for the message composer!
-- (void)requestDidFinishLoad:(TTURLRequest*)request
-{
-    NSString *responseBody = [[NSString alloc] initWithData:((TTURLDataResponse *)request.response).data encoding:NSUTF8StringEncoding];
-
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    _responseData = [[NSMutableData data] retain];
+}
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    [_responseData appendData:data];
+}
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    NSString *responseBody = [[NSString alloc] initWithData:_responseData encoding:NSUTF8StringEncoding];
+    
     if([responseBody rangeOfString:@"error"].location != NSNotFound)
     {
-        [[[[UIAlertView alloc] initWithTitle:@"Error Sending Message" 
-                           message:@"Could not send your message at this time. Please try again later." 
-                           delegate:nil 
-						   cancelButtonTitle:@"OK" 
+        [[[[UIAlertView alloc] initWithTitle:@"Error Sending Message"
+                                     message:@"Could not send your message at this time. Please try again later."
+                                    delegate:nil
+						   cancelButtonTitle:@"OK"
 						   otherButtonTitles:nil] autorelease] show];
+        [_controller newCaptcha];
+    } else {
+        [_controller dismissViewControllerAnimated:YES completion:nil];
     }
     
     [responseBody release];
     
-    activeRequest = nil;
+    _connection = nil;
 }
-
-// for the message composer!
-- (void)request:(TTURLRequest*)request didFailLoadWithError:(NSError*)error
-{
-    activeRequest = nil;
+-(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    _connection = nil;
     
     [[[[UIAlertView alloc] initWithTitle:@"Error Sending Message" 
                            message:@"Could not send your message at this time. Please try again later." 
@@ -196,7 +172,7 @@
 // for the message composer!
 - (void)requestDidCancelLoad:(TTURLRequest*)request
 {
-	activeRequest = nil;
+	_connection = nil;
 }
 
 

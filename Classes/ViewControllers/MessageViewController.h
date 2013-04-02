@@ -8,12 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import "DTCoreText.h"
-#import <Three20/Three20.h>
 #import "CreateMessage.h"
+#import "MessageCell.h"
 
-@interface MessageViewController : TTTableViewController <CreateMessageDelegate>
-{
-	TTURLRequest *activeRequest;
-}
+@interface MessageViewController : UIViewController <CreateMessageDelegate,UITableViewDataSource,UITableViewDelegate, NSURLConnectionDataDelegate>
 
 @end

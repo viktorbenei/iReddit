@@ -114,7 +114,7 @@ iRedditAppDelegate *sharedAppDelegate;
     if([[LoginController sharedLoginController] isLoggedIn] && !messageDataSource && !messageTimer)
     {
         messageDataSource = [[MessageDataSource alloc] init];
-        [messageDataSource.model load:TTURLRequestCachePolicyNoCache more:NO];
+        [messageDataSource loadMore:NO];
         
         messageTimer = [[NSTimer scheduledTimerWithTimeInterval:60.0
                                                          target:self
@@ -136,7 +136,7 @@ iRedditAppDelegate *sharedAppDelegate;
 
 - (void)reloadMessages
 {
-    [messageDataSource.model load:TTURLRequestCachePolicyNoCache more:NO];
+    [messageDataSource loadMore:NO];
 }
 
 - (void)loadRandomData

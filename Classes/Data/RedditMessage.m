@@ -20,12 +20,16 @@
 {			
     RedditMessage *aMessage = [[[RedditMessage alloc] init] autorelease];
 	NSString *messageBody = (NSString *)[dict objectForKey:@"body_html"];
+    //NSLog(@"$%@",messageBody);
     messageBody = [messageBody stringByReplacingOccurrencesOfString:@"&lt;" withString:@"<"];
     messageBody = [messageBody stringByReplacingOccurrencesOfString:@"&gt;" withString:@">"];
+    messageBody = [messageBody stringByReplacingOccurrencesOfString:@"&amp;lt;" withString:@"&lt;"];
+    messageBody = [messageBody stringByReplacingOccurrencesOfString:@"&amp;gt;" withString:@"&gt;"];
+    
+    //NSLog(@"$%@",messageBody);
     NSData *data = [messageBody dataUsingEncoding:NSUTF8StringEncoding];
     NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
- 	aMessage.body = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
-    //NSLog(@"%@",aMessage.body);
+ 	aMessage.body = [[[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL] autorelease];
 	aMessage.author = (NSString *)[dict objectForKey:@"author"];
 	aMessage.subject = (NSString *)[dict objectForKey:@"subject"];
 	aMessage.destination = (NSString *)[dict objectForKey:@"destination"];
@@ -42,7 +46,8 @@
     [_formatter setDateFormat:@"yyyy.MM.dd HH:mm:ss"];
 
     aMessage.created =[_formatter stringFromDate:date];
-    NSLog(@"%@\t%0.0f",aMessage.created,[NSDate timeIntervalSinceReferenceDate]);
+    [_formatter release];
+    //NSLog(@"%@\t%0.0f",aMessage.created,[NSDate timeIntervalSinceReferenceDate]);
 	aMessage.isNew = [(NSNumber *)[dict objectForKey:@"new"] boolValue];
 	aMessage.isCommentReply = [(NSNumber *)[dict objectForKey:@"was_comment"] boolValue];
 

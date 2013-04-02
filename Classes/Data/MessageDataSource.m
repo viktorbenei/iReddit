@@ -12,6 +12,11 @@
 #import "MessageCell.h"
 #import "LoginController.h"
 
+@interface MessageDataSource ()
+@property (nonatomic, retain) NSMutableArray *items;
+@property (nonatomic, retain) NSMutableData  *receivedData;
+@end
+
 @implementation MessageDataSource
 
 - (id)init
@@ -19,11 +24,17 @@
 	if (self = [super init])
 	{
 		canLoadMore = YES;
+        _items = [[NSMutableArray array] retain];
 	}
 
 	return self;
 }
-
+-(NSInteger)count {
+    return _items.count;
+}
+-(RedditMessage *)messageAtIndex:(NSInteger)index {
+    return [_items objectAtIndex:index];
+}
 - (void)dealloc
 {	
 	[self cancel];	
@@ -63,13 +74,8 @@
 
 - (void)cancel
 {
-	[activeRequest cancel];
-	activeRequest = nil;
-}
 
-#pragma mark TTDataSource
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// TTDataSource
+}
 
 - (void)didStartLoad
 {
@@ -106,66 +112,42 @@
 	return [self.items count];
 }
 
+- (void)loadMore:(BOOL)more {	
+	NSString *loadURL = [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditMessagesAPIString];
 
-#pragma mark table view data source 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// TTTableViewDataSource
-
-- (NSString *)fullURL
-{
-    return [NSString stringWithFormat:@"%@%@", RedditBaseURLString, RedditMessagesAPIString];	
-}
-
-- (void)load:(TTURLRequestCachePolicy)cachePolicy more:(BOOL)more
-{	
-	NSString *loadURL = [self fullURL];
-
-	if (more)
-	{
+	if (more) {
 		id object = [self.items lastObject];
-		
-		if ([object isKindOfClass:[TTTableMoreButton class]])
-			object = [self.items objectAtIndex:[self.items count] - 2];
 		
 		RedditMessage *lastMessage = (RedditMessage *)object;
 		loadURL = [NSString stringWithFormat:@"%@&after=%@", loadURL, lastMessage.name];
-	}
-	else
-	{
+	} else {
 		// remove any previous items
 		[self.items removeAllObjects];
 		unreadMessageCount = 0;		
 	}
-	
-    activeRequest = [TTURLRequest requestWithURL:loadURL delegate:self];
-    activeRequest.shouldHandleCookies = [[LoginController sharedLoginController] isLoggedIn] ? YES : NO;
-    activeRequest.cacheExpirationAge = 0;
-    activeRequest.cachePolicy = TTURLRequestCachePolicyNoCache;
-    activeRequest.response = [[[TTURLDataResponse alloc] init] autorelease];
-    activeRequest.httpMethod = @"GET";
-
-    [activeRequest send];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:loadURL]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+    [request setHTTPShouldHandleCookies:[[LoginController sharedLoginController] isLoggedIn] ? YES : NO];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPMethod:@"GET"];
+    NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:self];
+    [connection start];
 }
 
 #pragma mark url request delegate
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// TTURLRequestDelegate
-
-- (void)requestDidStartLoad:(TTURLRequest*)request
-{
-    [self didStartLoad];
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    isLoading = YES;
+    _receivedData = [[NSMutableData data] retain];
 }
-
-- (void)requestDidFinishLoad:(TTURLRequest*)request
-{
-	activeRequest = nil;
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    [_receivedData appendData:data];
+}
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	canLoadMore = NO;
 
 	int totalCount = [self.items count];
 
-    TTURLDataResponse *response = request.response;
-	NSDictionary *json = [NSJSONSerialization JSONObjectWithData:response.data options:NSJSONReadingMutableContainers error:nil];
+	NSDictionary *json = [NSJSONSerialization JSONObjectWithData:_receivedData options:NSJSONReadingMutableContainers error:nil];
     
 	if (![json isKindOfClass:[NSDictionary class]])
 	{
@@ -175,9 +157,6 @@
 
     NSArray *results = [[json objectForKey:@"data"] objectForKey:@"children"];	
 	
-	if ([self.items count] && [[self.items lastObject] isKindOfClass:[TTTableMoreButton class]])
-		[self.items removeLastObject];
-
 	unreadMessageCount = 0;
     for (NSDictionary *result in results) 
 	{     
@@ -197,42 +176,4 @@
     
 	[[NSNotificationCenter defaultCenter] postNotificationName:MessageCountDidChangeNotification object:nil];
 }
-
-- (void)request:(TTURLRequest*)request didFailLoadWithError:(NSError*)error
-{
-	activeRequest = nil;
-    [self didFailLoadWithError:error];
-}
-
-- (void)requestDidCancelLoad:(TTURLRequest*)request
-{
-	activeRequest = nil;
-    [self didCancelLoad];
-}
-
-#pragma mark table view delegate stuff
-
-- (void)tableView:(UITableView *)tableView cell:(UITableViewCell *)cell willAppearAtIndexPath:(NSIndexPath *)indexPath 
-{ 
-	id object = [self tableView:tableView objectForRowAtIndexPath:indexPath];
-	
-	if ([cell isKindOfClass:[MessageCell class]])
-	{
-		MessageCell *messageCell = (MessageCell *)cell;
-		messageCell.message = (RedditMessage *)object;
-		
-		messageCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    }
-	else
-        [super tableView:tableView cell:cell willAppearAtIndexPath:indexPath]; 
-} 
-
-- (Class)tableView:(UITableView *)tableView cellClassForObject:(id)object 
-{
-	if ([object isKindOfClass:[RedditMessage class]])
-		return [MessageCell class];
-	else
-		return [super tableView:tableView cellClassForObject:object]; 
-} 
-
 @end

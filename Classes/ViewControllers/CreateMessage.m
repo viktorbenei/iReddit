@@ -39,14 +39,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
- //   _toLabel.layer.borderColor = [[UIColor lightGrayColor] CGColor];
- //   _toLabel.layer.borderWidth = 1.0f;
     _subjectLabel.layer.borderColor = [[UIColor lightGrayColor] CGColor];
     _subjectLabel.layer.borderWidth = 1.0f;
-    NSLog(@"11111%@",_subject);
     if (_subject) {
         [_subjectField setText:_subject];
-//        _subjectField.text = _subject;
     }
     
     _toField.text = _to;
@@ -55,6 +51,17 @@
 
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Send" style:UIBarButtonItemStyleBordered target:self action:@selector(send:)]];
 
+}
+-(void)newCaptcha {
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://www.reddit.com/api/new_captcha"]];
+    [request setHTTPBody:[@"api_type=json" dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setHTTPMethod:@"POST"];
+    NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:self];
+    if (connection) {
+        _receivedData = [[NSMutableData data] retain];
+    } else {
+        NSLog(@"Error");
+    }
 }
 -(void)send:(id)sender {
     GIDAAlertView *gav = [[GIDAAlertView alloc] initWithImage:_captchaImage andPrompt:@"" cancelButtonTitle:@"cancel" acceptButtonTitle:@"accept"];
@@ -72,7 +79,6 @@
 }
 -(void)connectionDidFinishLoading:(NSURLConnection *)connection {
     id dict = [NSJSONSerialization JSONObjectWithData:_receivedData options:NSJSONReadingMutableContainers error:nil];
-    NSLog(@"%@",dict);
     if ([dict isKindOfClass:[NSDictionary class]]) {
         _captchaID = [dict[@"json"][@"data"][@"iden"] retain];
         _captchaImage = [[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.reddit.com/captcha/%@.png",_captchaID]]]] retain];
@@ -81,7 +87,6 @@
 -(void)alertOnClicked:(GIDAAlertView *)alertView {
     if ([alertView accepted]) {
     NSArray *array = [NSArray arrayWithObjects:_toField.text, _subjectField.text, _body.text, _captchaID, [alertView enteredText], nil];
-        NSLog(@"%@",array);
         [self.delegate composeController:self didSendFields:array];
     }
 }
