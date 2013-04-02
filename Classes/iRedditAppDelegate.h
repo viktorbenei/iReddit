@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SubredditDataSource.h"
+#import "SubredditData.h"
 #import "MessageDataSource.h"
 #import "PocketAPI.h"
 #import "RootViewController.h"
@@ -22,7 +22,7 @@
     UIWindow *window;
 	UINavigationController *navController;
 	
-	SubredditDataSource *randomDataSource;
+	SubredditData *randomData;
     StoryViewController *randomController;
 	
 	MessageDataSource *messageDataSource;

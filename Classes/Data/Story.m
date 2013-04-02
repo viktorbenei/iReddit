@@ -8,7 +8,7 @@
 
 #import "Story.h"
 #import "SettingsViewController.h"
-#import "SubredditDataSource.h"
+#import "SubredditData.h"
 #import "Constants.h"
 
 NSMutableArray	*visitedArray;

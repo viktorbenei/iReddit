@@ -7,13 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Three20/Three20.h"
+#import "Constants.h"
+#import "Story.h"
+#import "LoginController.h"
 
-@interface SubredditDataModel : TTURLRequestModel// NSURLRequest
-{
+@interface SubredditData : NSObject {
     NSString *_subreddit;
     NSMutableArray *_stories;
-    
     int newsModeIndex;
     
     BOOL canLoadMore;
@@ -23,11 +23,14 @@
 @property (nonatomic, readonly) NSMutableArray *stories;
 
 @property (nonatomic, assign) int newsModeIndex;
-
+- (Story *)storyWithIndex:(int)anIndex;
+-(void)removeStory:(Story *)story;
+- (void)loadMore:(BOOL)more;
 - (id)initWithSubreddit:(NSString *)subreddit;
 - (NSString *)newsModeString;
 - (NSUInteger)totalStories;
 - (NSString *)fullURL;
 - (BOOL)canLoadMore;
-
+- (BOOL)isLoaded;
+- (void)invalidate:(BOOL)erase;
 @end

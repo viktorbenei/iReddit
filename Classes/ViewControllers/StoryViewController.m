@@ -13,7 +13,7 @@
 #import "Constants.h"
 #import "LoginController.h"
 #import "LoginViewController.h"
-#import "SubredditDataSource.h"
+#import "SubredditData.h"
 #import "SubredditViewController.h"
 #import "RedditWebView.h"
 #import "PocketAPI.h"
@@ -142,7 +142,7 @@
 	[titleView setTextAlignment:NSTextAlignmentCenter];
 	[titleView setAdjustsFontSizeToFitWidth:YES];
 	
-	self.view = [[[UIView alloc] initWithFrame:TTApplicationFrame()] autorelease];
+	self.view = [[[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame] ] autorelease];
 	self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	
 	webview = [[RedditWebView alloc] initWithFrame:self.view.bounds];
@@ -594,8 +594,8 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     if ([viewControllers count] > 2 && [[viewControllers objectAtIndex:[viewControllers count] - 2] isKindOfClass:[SubredditViewController class]])
     {
         SubredditViewController *controller = (SubredditViewController *)[viewControllers objectAtIndex:[viewControllers count] - 2];
-        SubredditDataSource *ds = (SubredditDataSource *)controller.dataSource;
-        [ds.items removeObject:self.story];
+       SubredditData *ds = (SubredditData *)controller.dataSource;
+       [ds removeStory:self.story];
     }
 }
 

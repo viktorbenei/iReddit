@@ -170,12 +170,6 @@
 }
 
 // for the message composer!
-- (void)requestDidCancelLoad:(TTURLRequest*)request
-{
-	_connection = nil;
-}
-
-
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];

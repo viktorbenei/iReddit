@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "RedditMessage.h"
-//#import <Three20/Three20.h>
 
 @interface MessageDataSource : NSObject <NSURLConnectionDataDelegate>
 {	

@@ -7,9 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Three20/Three20.h>
+#import "SubredditData.h"
+#import "StoryViewController.h"
+#import "iRedditAppDelegate.h"
+#import "Constants.h"
+#import "StoryCell.h"
+#import "CommentAccessoryView.h"
 
-@interface SubredditViewController : TTTableViewController
+@interface SubredditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 {
 	BOOL                showTabBar;
 	NSDictionary        *subredditItem;
@@ -17,9 +22,7 @@
     NSIndexPath         *savedLocation;
 
 }
-
+@property (nonatomic, retain) SubredditData *dataSource;
 - (id)initWithField:(NSDictionary *)anItem;
-
-- (void)didSelectAccessoryForObject:(id)object atIndexPath:(NSIndexPath*)indexPath;
 
 @end

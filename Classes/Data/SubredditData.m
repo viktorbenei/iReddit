@@ -6,12 +6,10 @@
 
 //
 
-#import "SubredditDataModel.h"
-#import "Constants.h"
-#import "Story.h"
-#import "LoginController.h"
+#import "SubredditData.h"
 
-@implementation SubredditDataModel
+
+@implementation SubredditData
 @synthesize subreddit = _subreddit, stories = _stories;
 @synthesize newsModeIndex;
 
@@ -26,7 +24,12 @@
 	
 	return self;
 }
-
+-(Story *)storyWithIndex:(int)anIndex {
+    return [_stories objectAtIndex:anIndex];
+}
+-(void)removeStory:(Story *)story {
+    [_stories removeObject:story];
+}
 - (BOOL)canLoadMore
 {
     return canLoadMore;
@@ -37,16 +40,12 @@
     return [_stories count] > 0;
 }
 
-- (void)load:(TTURLRequestCachePolicy)cachePolicy more:(BOOL)more
-{	
+- (void)loadMore:(BOOL)more
+{
     NSString *loadURL = [self fullURL];
     if(more) 
     {
         id object = [self.stories lastObject];
-
-        //rb what the fuck is this doing?
-        if ([object isKindOfClass:[TTTableMoreButton class]])
-             object = [self.stories objectAtIndex:[self.stories count] - 2];
 
         Story *story = (Story *)object;
         NSString *lastItemID = story.name;
@@ -58,38 +57,27 @@
         // clear the stories for this subreddit
         [self.stories removeAllObjects];
     }
-    	
-    TTURLRequest *activeRequest = [TTURLRequest requestWithURL:loadURL delegate:self];
-	activeRequest.cacheExpirationAge = 0;
-    activeRequest.cachePolicy = TTURLRequestCachePolicyNoCache;
-    activeRequest.shouldHandleCookies = ([[LoginController sharedLoginController] isLoggedIn] || [[LoginController sharedLoginController] isLoggingIn]) ? YES : NO;
     
-    id<TTURLResponse> response = [[TTURLDataResponse alloc] init];
-    activeRequest.response = response;
-    TT_RELEASE_SAFELY(response);
-
-    activeRequest.httpMethod = @"GET";
-    [activeRequest send];
-}
-
-- (void)requestDidFinishLoad:(TTURLRequest*)request
-{        
-    NSInteger totalCount = [_stories count];
-	canLoadMore = NO;
-		
-    TTURLDataResponse *response = request.response;
-    // parse the JSON data that we retrieved from the server
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:response.data options:NSJSONReadingMutableContainers error:nil];
-        
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:loadURL]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPMethod:@"GET"];
+    NSURLResponse *response = nil;
+    NSError *error = nil;
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    if (error) {
+        NSLog(@"%@",error.description);
+        return;
+    }
+       // parse the JSON data that we retrieved from the server
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+    NSInteger totalCount = 0;
     // drill down into the JSON object to get the part 
     // that we're actually interested in.
-	
 	if (![json isKindOfClass:[NSDictionary class]])
 	{
-	    [self didFinishLoad];
 		return;
 	}
-
     NSDictionary *resultSet = [json objectForKey:@"data"];
     NSArray *results = [resultSet objectForKey:@"children"];
     
@@ -104,11 +92,9 @@
 	}
     
 	canLoadMore = [_stories count] > totalCount;
-    [super requestDidFinishLoad:request];
+    
 }
-
-- (NSString *)fullURL
-{
+- (NSString *)fullURL {
 	return [NSString stringWithFormat:@"%@%@%@%@", RedditBaseURLString, self.subreddit, [self newsModeString], RedditAPIExtensionString];
 }
 
@@ -141,8 +127,9 @@
 
 - (void)dealloc
 {
-    TT_RELEASE_SAFELY(_stories);
-    TT_RELEASE_SAFELY(_subreddit);
+    [_stories removeAllObjects];
+    [_stories release];
+    [_subreddit release];
     [super dealloc];
 }
 

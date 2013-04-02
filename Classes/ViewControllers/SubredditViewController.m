@@ -7,28 +7,33 @@
 //
 
 #import "SubredditViewController.h"
-#import "SubredditDataSource.h"
-#import "StoryViewController.h"
-#import "iRedditAppDelegate.h"
-#import "Constants.h"
-#import "SubredditTableViewDelegate.h" 
 
 
+@interface SubredditViewController ()
+@property (assign) BOOL gettingMore;
+@property (nonatomic, retain) UITableView *tableView;
+@property (nonatomic, retain) UIView *updating;
+
+//@property (nonatomic, retain) NSArray *headers;
+@property (nonatomic, retain) UINavigationBar *navigationBar;
+
+@end
 
 @implementation SubredditViewController
 
-- (void)dealloc 
+- (void)dealloc
 {
 	//[self.dataSource cancel];
 	[subredditItem release];
 	[tabBar release];
 	[savedLocation release];
-
+    
     [super dealloc];
 }
 
 - (id)initWithField:(NSDictionary *)anItem {
     if (self = [super init]) {
+        
 		subredditItem = [anItem retain];
 		showTabBar = ![subredditItem[@"url"] isEqual:@"/saved/"] && ![subredditItem[@"url"] isEqual:@"/recommended/"];
 		
@@ -39,31 +44,91 @@
 			[[NSUserDefaults standardUserDefaults] setObject:self.title forKey:initialRedditTitleKey];
 			[[NSUserDefaults standardUserDefaults] synchronize];
 		}
-
+        
 		self.hidesBottomBarWhenPushed = YES;
-		self.variableHeightRows = YES;
-		
-		self.navigationBarTintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+		self.navigationBar = [[UINavigationBar alloc] init];
+		self.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+        self.navigationController.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+        [self.view addSubview:self.navigationBar];
+        [self createModel];
+        
 	}
-
+    
 	return self;
+}
+
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [_dataSource totalStories];
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [StoryCell tableView:tableView rowHeightForObject:[_dataSource storyWithIndex:indexPath.row]];
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    StoryCell *storyCell = [self.tableView dequeueReusableCellWithIdentifier:@"subreddit"];
+    if (!storyCell) {
+        storyCell = [[StoryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"subreddit"];
+    }
+    Story *story =  [_dataSource storyWithIndex:indexPath.row];
+    ((StoryCell *)storyCell).story =story;
+    //   [[cell textLabel] setText:@"Something"];
+
+     CommentAccessoryView *accessory = nil;
+     
+     if (!storyCell.accessoryView)
+     {
+     accessory = [[[CommentAccessoryView alloc] initWithFrame:CGRectMake(0.0, 0.0, 30.0, 30.0)] autorelease];
+     storyCell.accessoryView = accessory;
+     }
+     else
+     {
+     accessory = (CommentAccessoryView *)storyCell.accessoryView;
+     }
+     
+     NSUInteger commentCount = storyCell.story.totalComments;
+     
+     // a somewhat hacky way to determine width, *but* much faster than sizeWithFont: on every cell
+     CGRect accessoryFrame = accessory.frame;
+     accessoryFrame.size.width = commentCount > 999 ? 36.0 : 30.0;
+     accessory.frame = accessoryFrame;
+     
+     [accessory setCommentCount:commentCount];
+     
+     [accessory addTarget:self action:@selector(accessoryViewTapped:) forControlEvents:UIControlEventTouchUpInside];
+     accessory.story = story;
+     
+     //storyCell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+
+    return storyCell;
+}
+- (void)accessoryViewTapped:(id)sender {
+    StoryCell *cell = (StoryCell *)[((CommentAccessoryView *)sender) superview];
+    NSIndexPath *indexPath = [_tableView indexPathForCell:cell];
+    Story *object = [_dataSource storyWithIndex:indexPath.row];
+    StoryViewController *controller = [[StoryViewController alloc] initForComments];
+    [[self navigationController] pushViewController:controller animated:YES];
+    
+    controller.story = object;
+    [controller release];
 }
 
 - (void)loadView
 {
 	[super loadView];
-
+    
     // create the tableview
 	CGRect applicationFrame = [[UIScreen mainScreen] applicationFrame];
     self.view = [[[UIView alloc] initWithFrame:applicationFrame] autorelease];
     self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
+    
 	if (tabBar)
 	{
 		[tabBar release];
 		tabBar = nil;
 	}
-			
+    
 	if (showTabBar)
 	{
         tabBar = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Hot",@"New",@"Top",@"Controversial", nil]];
@@ -76,7 +141,7 @@
         [tabBar setTintColor:[iRedditAppDelegate redditNavigationBarTintColor]];
         [tabBar addTarget:self action:@selector(toolBarButton:) forControlEvents:UIControlEventValueChanged];
 	}
-
+    tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	CGRect aFrame = self.view.frame;
 	
 	aFrame.origin.y = tabBar ? CGRectGetHeight(tabBar.frame) : 0.0;
@@ -84,41 +149,62 @@
 	
 	//UIView *wrapper = [[[UIView alloc] initWithFrame:aFrame] autorelease];
     //wrapper.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
+    
 	//aFrame.origin.y	= 0;
-	
+ 	
 	self.tableView = [[[UITableView alloc] initWithFrame:aFrame style:UITableViewStylePlain] autorelease];
     self.tableView.rowHeight = 80.f;
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     //self.tableView.tableHeaderView = tabBar;
-	
+	self.tableView.dataSource = self;
+    self.tableView.delegate = self;
 	//[wrapper addSubview:self.tableView];
     
     UIBarButtonItem *reloadItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"refresh.png"]
-                                                           style:UIBarButtonItemStylePlain
-                                                           target:self
-                                                           action:@selector(refresh:)];
+                                                                   style:UIBarButtonItemStylePlain
+                                                                  target:self
+                                                                  action:@selector(refresh:)];
     reloadItem.width = 25.0;
     self.navigationItem.rightBarButtonItem = reloadItem;
     [reloadItem release];
 	
 	if (tabBar)
 		[self.view addSubview:tabBar];
+    
+    [self.view addSubview:self.tableView];
+    self.updating = [[UIView alloc] initWithFrame:CGRectMake(0, _tableView.frame.size.height, _tableView.frame.size.width, 30)];
+    [self.updating setBackgroundColor:[UIColor blackColor]];
+    [self.updating setAlpha:0.8];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake((_tableView.frame.size.width-100)/2, 0, 100, 30)];
+    [label setText:@"Updating"];
+    [label setTextColor:[UIColor whiteColor]];
+    [label setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin];
+    [label setBackgroundColor:[UIColor clearColor]];
+    [label setTextAlignment:UITextAlignmentCenter];
+    UIActivityIndicatorView *aic = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    [aic setFrame:CGRectMake((_tableView.frame.size.width-150)/2, 0, 30, 30)];
+    [aic setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin];
+    [aic startAnimating];
 
-    [self.view addSubview:self.tableView]; 
+    [self.updating addSubview:aic];
+    [self.updating addSubview:label];
+    
+   // [self.updating setBackgroundColor:[UIColor redColor]];
+
+    self.updating.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:self.updating];
+    [self.updating setHidden:YES];
 }
 
 - (void)refresh:(id)sender
 {
-    [self.dataSource.model load:TTURLRequestCachePolicyNoCache more:NO];
+    [self.dataSource invalidate:YES];
+    ;
+    [self.tableView reloadData];
+    [self.dataSource loadMore:NO];
+    ;
+    [self.tableView reloadData];
 }
-/*- (void)unloadView
-{
-	[tabBar release];
-	tabBar = nil;
-	
-	[super unloadView];
-}*/
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -126,17 +212,10 @@
 	[self.tableView reloadData];
 }
 
-- (void)createModel 
+- (void)createModel
 {
-    SubredditDataSource *source = [[SubredditDataSource alloc] initWithSubreddit:subredditItem[@"url"]];
-    source.viewController = self;
-    self.dataSource = source;
-    [source release];
-}
-
-- (id)createDelegate
-{
-    return [[[SubredditTableViewDelegate alloc] initWithController:self] autorelease]; 
+    self.dataSource = [[[SubredditData alloc] initWithSubreddit:subredditItem[@"url"]] retain];
+    [self.dataSource loadMore:NO];
 }
 
 - (NSString *)titleForError:(NSError*)error
@@ -166,54 +245,54 @@
 
 #pragma mark tab bar stuff
 -(void)toolBarButton:(UISegmentedControl *)sender {
-    [self.dataSource cancel];
 	[self.dataSource invalidate:YES];
-    
-    ((SubredditDataModel *)((SubredditDataSource *)self.dataSource).model).newsModeIndex = sender.selectedSegmentIndex;
-    [self reload];
+    ((SubredditData *)self.dataSource).newsModeIndex = sender.selectedSegmentIndex;
+    [self.dataSource loadMore:NO];
+    [self.tableView reloadData];
 }
 #pragma mark orientation
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : UIInterfaceOrientationIsPortrait(interfaceOrientation) ; 
+    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : UIInterfaceOrientationIsPortrait(interfaceOrientation) ;
 }
 
 #pragma mark Table view methods
-
-- (void)didSelectObject:(id)object atIndexPath:(NSIndexPath*)indexPath
-{
-	[super didSelectObject:object atIndexPath:indexPath];
-
-	if ([object isKindOfClass:[Story class]])
-	{
-		[savedLocation release];
-		savedLocation = [indexPath retain];
-		
-		StoryViewController *controller = [[StoryViewController alloc] init];
-		[[self navigationController] pushViewController:controller animated:YES];
-
-		controller.story = object;
-		[controller release];
-
-		[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
-	}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    Story *object = ((StoryCell *)[tableView cellForRowAtIndexPath:indexPath]).story;
+    [savedLocation release];
+    savedLocation = [indexPath retain];
+    
+    StoryViewController *controller = [[StoryViewController alloc] init];
+    [[self navigationController] pushViewController:controller animated:YES];
+    
+    controller.story = object;
+    [controller release];
+    
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
-
-- (void)didSelectAccessoryForObject:(id)object atIndexPath:(NSIndexPath*)indexPath 
-{
-	if ([object isKindOfClass:[Story class]])
-	{
-		StoryViewController *controller = [[StoryViewController alloc] initForComments];
-		[[self navigationController] pushViewController:controller animated:YES];
-		
-		controller.story = object;
-		[controller release];
-		
-		[self.tableView reloadData];
-	}
+-(void)loadMore {
+    [_dataSource loadMore:YES];
+    [_tableView reloadData];
+    _gettingMore = NO;
+    [_updating setHidden:YES];
 }
-
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGPoint offset = scrollView.contentOffset;
+    CGRect bounds = scrollView.bounds;
+    CGSize size = scrollView.contentSize;
+    UIEdgeInsets inset = scrollView.contentInset;
+    float y = offset.y + bounds.size.height - inset.bottom;
+    float h = size.height;
+    
+    float reload_distance = 10;
+    if(y > h + reload_distance && !_gettingMore) {
+        _gettingMore = YES;
+        [_updating setHidden:NO];
+        [self performSelectorInBackground:@selector(loadMore) withObject:nil];
+        
+    }
+}
 
 @end
 

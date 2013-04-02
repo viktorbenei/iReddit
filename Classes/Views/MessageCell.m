@@ -85,7 +85,11 @@
 	}
 	
 	[subjectLabel setText:message.subject];
-	[bodyLabel setAttributedText:message.body];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0) {
+        [bodyLabel setAttributedText:message.body];
+    } else {
+        [bodyLabel setText:message.body.string];
+    }
 	[fromLabel setText:message.author];
 	[dateLabel setText:[NSString stringWithFormat:@"%@ ago", message.created]];
 	

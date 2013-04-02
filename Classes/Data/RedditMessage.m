@@ -60,7 +60,16 @@
     // sets up the TTStyledText's width, which allows "height" to do the proper calculation (for body only)
     CGSize constrainedSize = CGSizeMake(280, 1000);
   //  aMessage.body.size.width = constrainedSize.width;
-    CGRect frame = [aMessage.body boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil];
+    CGRect frame;
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0) {
+        frame = [aMessage.body boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil];
+    } else {
+        CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)aMessage.body);
+        CGSize targetSize = CGSizeMake(320, CGFLOAT_MAX);
+        frame = CGRectZero;
+        frame.size = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, [aMessage.body length]), NULL, targetSize, NULL);
+        CFRelease(framesetter);
+    }
 	height = frame.size.height;
 	height += (CGFloat)([aMessage.subject sizeWithFont:subjectFont constrainedToSize:constrainedSize lineBreakMode:NSLineBreakByTruncatingTail]).height;
 	height += 18.0 + 12.0 + 12.0;
@@ -68,7 +77,15 @@
 	[aMessage setHeight:height forIndex:PORTRAIT_INDEX];
 
     constrainedSize = CGSizeMake(440, 1000);
-    frame = [aMessage.body boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0) {
+        frame = [aMessage.body boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil];
+    } else {
+        CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)aMessage.body);
+        CGSize targetSize = CGSizeMake(320, CGFLOAT_MAX);
+        frame = CGRectZero;
+        frame.size = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, [aMessage.body length]), NULL, targetSize, NULL);
+        CFRelease(framesetter);
+    }
 	height = frame.size.height;
     height += (CGFloat)([aMessage.subject sizeWithFont:subjectFont constrainedToSize:constrainedSize lineBreakMode:NSLineBreakByTruncatingTail]).height;
 	height += 18.0 + 12.0 + 12.0;

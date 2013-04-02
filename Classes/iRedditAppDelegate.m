@@ -56,6 +56,7 @@ iRedditAppDelegate *sharedAppDelegate;
     self.navController = [[[UINavigationController alloc] initWithRootViewController:[[[RootViewController alloc] init] autorelease]] autorelease];
 	self.navController.delegate = (id <UINavigationControllerDelegate>)self;
 	navController.toolbarHidden = NO;
+    navController.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
     self.window.rootViewController = navController;
     //	[window addSubview:navController.view];
 	
@@ -83,7 +84,7 @@ iRedditAppDelegate *sharedAppDelegate;
                                                  name:DeviceDidShakeNotification
                                                object:nil];
 	
-    randomDataSource = [[SubredditDataSource alloc] initWithSubreddit:@"/randomrising/"];
+    randomData = [[SubredditData alloc] initWithSubreddit:@"/randomrising/"];
     [self loadRandomData];
 }
 
@@ -141,7 +142,7 @@ iRedditAppDelegate *sharedAppDelegate;
 
 - (void)loadRandomData
 {
-	[randomDataSource.model load:TTURLRequestCachePolicyNoCache more:NO];
+	[randomData loadMore:NO];
     [self performSelector:@selector(loadRandomData) withObject:nil afterDelay:60.0];
 }
 
@@ -182,7 +183,7 @@ iRedditAppDelegate *sharedAppDelegate;
 
 - (void)showRandomStory
 {
-	if (!randomDataSource || ![randomDataSource.model isLoaded])
+	if (!randomData || ![randomData isLoaded])
 		return;
     
 	if (!randomController)
@@ -191,7 +192,7 @@ iRedditAppDelegate *sharedAppDelegate;
 		//[[Beacon shared] startSubBeaconWithName:@"serendipityTime" timeSession:YES];
 	}
 	
-    NSInteger count = [(SubredditDataModel *)randomDataSource.model totalStories];
+    NSInteger count = [randomData totalStories];
 	NSInteger randomIndex = count > 0 ? arc4random() % count : 0;
 	
 	Story *story = nil;
@@ -199,7 +200,7 @@ iRedditAppDelegate *sharedAppDelegate;
 	int i=0;
 	while (!story && i++ < count)
 	{
-		story = [randomDataSource storyWithIndex:(randomIndex++)%count];
+		story = [randomData storyWithIndex:(randomIndex++)%count];
         
 		if ([story visited] && i < count - 1)
 			story = nil;
@@ -207,7 +208,7 @@ iRedditAppDelegate *sharedAppDelegate;
 	
 	if (!story)
 	{
-		[randomDataSource.model load:TTURLRequestCachePolicyDefault more:YES];
+		[randomData loadMore:YES];
 		return;
 	}
     

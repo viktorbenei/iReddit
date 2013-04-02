@@ -37,7 +37,7 @@
 - (IBAction)save:(id)sender
 {
 	NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-	TTTableControlCell *cell = (TTTableControlCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+	UITableViewCell *cell = (UITableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
 	UITextField *textField = (UITextField *)cell.accessoryView;
 	if (textField)
 	{
