@@ -12,7 +12,8 @@
 @interface SubredditViewController ()
 @property (assign) BOOL gettingMore;
 @property (nonatomic, retain) UITableView *tableView;
-@property (nonatomic, retain) UIView *updating;
+@property (nonatomic, retain) UIView *updatingView;
+@property (nonatomic, retain) UIView *loadingView;
 
 //@property (nonatomic, retain) NSArray *headers;
 @property (nonatomic, retain) UINavigationBar *navigationBar;
@@ -27,12 +28,12 @@
 	[subredditItem release];
 	[tabBar release];
 	[savedLocation release];
-    
     [super dealloc];
 }
 
 - (id)initWithField:(NSDictionary *)anItem {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         
 		subredditItem = [anItem retain];
 		showTabBar = ![subredditItem[@"url"] isEqual:@"/saved/"] && ![subredditItem[@"url"] isEqual:@"/recommended/"];
@@ -46,11 +47,11 @@
 		}
         
 		self.hidesBottomBarWhenPushed = YES;
-		self.navigationBar = [[UINavigationBar alloc] init];
+		self.navigationBar = [[[UINavigationBar alloc] init] autorelease];
 		self.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
         self.navigationController.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
         [self.view addSubview:self.navigationBar];
-        [self createModel];
+        
         
 	}
     
@@ -69,7 +70,7 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     StoryCell *storyCell = [self.tableView dequeueReusableCellWithIdentifier:@"subreddit"];
     if (!storyCell) {
-        storyCell = [[StoryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"subreddit"];
+        storyCell = [[[StoryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"subreddit"] autorelease];
     }
     Story *story =  [_dataSource storyWithIndex:indexPath.row];
     ((StoryCell *)storyCell).story =story;
@@ -172,49 +173,76 @@
 		[self.view addSubview:tabBar];
     
     [self.view addSubview:self.tableView];
-    self.updating = [[UIView alloc] initWithFrame:CGRectMake(0, _tableView.frame.size.height, _tableView.frame.size.width, 30)];
-    [self.updating setBackgroundColor:[UIColor blackColor]];
-    [self.updating setAlpha:0.8];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake((_tableView.frame.size.width-100)/2, 0, 100, 30)];
+    UILabel *label = nil;
+    UIActivityIndicatorView *aic = nil;
+    
+    _loadingView = [[UIView alloc] initWithFrame:aFrame];
+    [_loadingView setBackgroundColor:[UIColor whiteColor]];
+    label = [[UILabel alloc] initWithFrame:CGRectMake((_tableView.frame.size.width-100)/2, (_tableView.frame.size.height-30)/2, 100, 30)];
+    [label setTextAlignment:UITextAlignmentCenter];
+    [label setText:@"Loading..."];
+    [label setContentMode:UIViewContentModeCenter];
+    [label setBackgroundColor:[UIColor clearColor]];
+    aic = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    [aic setFrame:CGRectMake((_tableView.frame.size.width-200)/2, (_tableView.frame.size.height-100)/2, 100, 100)];
+    [aic startAnimating];
+    
+    [_loadingView addSubview:aic];
+    [_loadingView addSubview:label];
+    [self.view addSubview:_loadingView];
+    [label release];
+    [aic release];
+    
+    self.updatingView = [[[UIView alloc] initWithFrame:CGRectMake(0, _tableView.frame.size.height, _tableView.frame.size.width, 30)] autorelease];
+    [self.updatingView setBackgroundColor:[UIColor blackColor]];
+    [self.updatingView setAlpha:0.8];
+    label = [[UILabel alloc] initWithFrame:CGRectMake((_tableView.frame.size.width-100)/2, 0, 100, 30)];
     [label setText:@"Updating"];
     [label setTextColor:[UIColor whiteColor]];
     [label setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin];
     [label setBackgroundColor:[UIColor clearColor]];
     [label setTextAlignment:UITextAlignmentCenter];
-    UIActivityIndicatorView *aic = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    aic = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     [aic setFrame:CGRectMake((_tableView.frame.size.width-150)/2, 0, 30, 30)];
     [aic setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin];
     [aic startAnimating];
 
-    [self.updating addSubview:aic];
-    [self.updating addSubview:label];
-    
+    [self.updatingView addSubview:aic];
+    [self.updatingView addSubview:label];
+    [label release];
+    [aic release];
    // [self.updating setBackgroundColor:[UIColor redColor]];
 
-    self.updating.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:self.updating];
-    [self.updating setHidden:YES];
+    self.updatingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:self.updatingView];
+    [self.updatingView setHidden:YES];
 }
 
 - (void)refresh:(id)sender
 {
     [self.dataSource invalidate:YES];
-    ;
     [self.tableView reloadData];
     [self.dataSource loadMore:NO];
-    ;
     [self.tableView reloadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	[self.tableView reloadData];
+//	[self.tableView reloadData];
+    [self performSelectorInBackground:@selector(loading) withObject:nil];
+}
+
+-(void)loading {
+    [self createModel];
+    [_tableView reloadData];
+    
+    [_loadingView setHidden:YES];
 }
 
 - (void)createModel
 {
-    self.dataSource = [[[SubredditData alloc] initWithSubreddit:subredditItem[@"url"]] retain];
+    self.dataSource = [[[SubredditData alloc] initWithSubreddit:subredditItem[@"url"]] autorelease];
     [self.dataSource loadMore:NO];
 }
 
@@ -275,7 +303,7 @@
     [_dataSource loadMore:YES];
     [_tableView reloadData];
     _gettingMore = NO;
-    [_updating setHidden:YES];
+    [_updatingView setHidden:YES];
 }
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint offset = scrollView.contentOffset;
@@ -288,9 +316,8 @@
     float reload_distance = 10;
     if(y > h + reload_distance && !_gettingMore) {
         _gettingMore = YES;
-        [_updating setHidden:NO];
+        [_updatingView setHidden:NO];
         [self performSelectorInBackground:@selector(loadMore) withObject:nil];
-        
     }
 }
 

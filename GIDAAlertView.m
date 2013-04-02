@@ -573,11 +573,11 @@
     self = [super initWithTitle:@"\n\n\n\n\n" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:nil];
     if (self) {
         withSpinnerOrImage = YES;
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(100, 35, 80, 80)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(100, 35, 100, 80)];
         [label setText:character];
-        [label setFont:[UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:90]];
+        [label setFont:[UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:80]];
         [label setTextColor:[UIColor whiteColor]];
-        [label setTextAlignment:NSTextAlignmentCenter];
+        [label setTextAlignment:UITextAlignmentCenter];
         [label setBackgroundColor:[UIColor clearColor]];
         [self addSubview:label];
         
@@ -595,8 +595,8 @@
     }
     return self;
 }
--(id)initWithCheckAndMessage:(NSString *)message {
-    self = [self initWithCharacter:@"\u2714" andMessage:message];
+-(id)initWithCheckMarkAndMessage:(NSString *)message {
+    self = [self initWithCharacter:[NSString stringWithCString:"\u2714" encoding:NSUTF8StringEncoding] andMessage:message];
     if (self) {
         alertType = GIDAAlertViewCheck;
     }

@@ -153,12 +153,13 @@
                     // The user logged in successfully, your app can now make requests.
                     // [API username] will return the logged-in user’s username
                     // and API.loggedIn will == YES
-                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithCheckAndMessage:@"Logged in to Pocket"];
+                    
+                    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:usePocket];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithCheckMarkAndMessage:@"Logged in to Pocket"];
                     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
                     [gav presentAlertFor:1.08];
                     [gav release];
-                    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:usePocket];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
                 }
             }];
         }

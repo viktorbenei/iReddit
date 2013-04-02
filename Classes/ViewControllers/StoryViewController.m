@@ -543,11 +543,10 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
                     // present some UI to notify if necessary
                 }else{
                     
-                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithCheckAndMessage:@"Saved to Pocket"];
+                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithCheckMarkAndMessage:@"Saved to Pocket"];
                     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
                     [gav presentAlertFor:1.07];
                     [gav release];
-                    NSLog(@"saved\u2713");
                     // the URL was saved successfully
                 }
             }];

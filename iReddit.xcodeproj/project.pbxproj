@@ -287,8 +287,8 @@
 		BEC679C41705E0F300B4E82E /* CreateMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateMessage.h; sourceTree = "<group>"; };
 		BEC679C51705E0F300B4E82E /* CreateMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateMessage.m; sourceTree = "<group>"; };
 		BEC679C61705E0F300B4E82E /* CreateMessage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CreateMessage.xib; path = ViewControllers/CreateMessage.xib; sourceTree = "<group>"; };
-		BECC89F216F864E200CF00A4 /* GIDAAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GIDAAlertView.h; sourceTree = "<group>"; };
-		BECC89F316F864E200CF00A4 /* GIDAAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GIDAAlertView.m; sourceTree = "<group>"; };
+		BECC89F216F864E200CF00A4 /* GIDAAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GIDAAlertView.h; path = ../../GIDAAlertView.h; sourceTree = "<group>"; };
+		BECC89F316F864E200CF00A4 /* GIDAAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GIDAAlertView.m; path = ../../GIDAAlertView.m; sourceTree = "<group>"; };
 		E566C63412BEF9FC00E3E04E /* iReddit-Free-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iReddit-Free-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		E58C100C12B49244004D2070 /* SubredditData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubredditData.h; sourceTree = "<group>"; };
 		E58C100D12B49244004D2070 /* SubredditData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubredditData.m; sourceTree = "<group>"; };
@@ -337,8 +337,6 @@
 			isa = PBXGroup;
 			children = (
 				BE7DBCC2170454A50012B6D1 /* DTCoreText.xcodeproj */,
-				BECC89F216F864E200CF00A4 /* GIDAAlertView.h */,
-				BECC89F316F864E200CF00A4 /* GIDAAlertView.m */,
 				BE2773E516F7CF59009D445C /* Pocket-ObjC-SDK */,
 				BE0910EF16F7C47900EE6296 /* Default-568h@2x.png */,
 				ADFB53350FEAC3EA0067CEC1 /* Classes */,
@@ -478,6 +476,8 @@
 		ADFB53680FEAC3EA0067CEC1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BECC89F216F864E200CF00A4 /* GIDAAlertView.h */,
+				BECC89F316F864E200CF00A4 /* GIDAAlertView.m */,
 				ADFB53690FEAC3EA0067CEC1 /* AlienProgressView.h */,
 				ADFB536A0FEAC3EA0067CEC1 /* AlienProgressView.m */,
 				ADFB536B0FEAC3EA0067CEC1 /* CommentAccessoryView.h */,
@@ -810,7 +810,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iReddit_Prefix.pch;
 				INFOPLIST_FILE = "iReddit-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = iReddit;
 				SDKROOT = iphoneos;
@@ -828,7 +828,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iReddit_Prefix.pch;
 				INFOPLIST_FILE = "iReddit-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = iReddit;
 				SDKROOT = iphoneos;
@@ -848,7 +848,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
@@ -869,7 +869,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iReddit_Prefix.pch;
 				INFOPLIST_FILE = "iReddit-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = iReddit;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -890,7 +890,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
@@ -911,7 +911,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

@@ -52,7 +52,7 @@ typedef enum {
 - (id)initWithTitle:(NSString *)title cancelButtonTitle:(NSString *)cancelTitle acceptButtonTitle:(NSString *)acceptTitle andMessage:(NSString *)message;
 - (id)initWithProgressBarAndMessage:(NSString *)message andTime:(NSInteger)seconds;
 - (id)initWithProgressBarAndMessage:(NSString *)message andURL:(NSURL *)url;
-- (id)initWithCheckAndMessage:(NSString *)message;
+- (id)initWithCheckMarkAndMessage:(NSString *)message;
 -(id)initWithXMarkAndMessage:(NSString *)message;
 
 - (void)setColor:(UIColor *)color;
