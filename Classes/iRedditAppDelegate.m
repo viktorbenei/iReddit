@@ -144,7 +144,7 @@ iRedditAppDelegate *sharedAppDelegate;
 - (void)loadRandomData
 {
 	[randomData loadMore:NO];
-    [self performSelector:@selector(loadRandomData) withObject:nil afterDelay:60.0];
+   // [self performSelector:@selector(loadRandomData) withObject:nil afterDelay:60.0];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -222,13 +222,10 @@ iRedditAppDelegate *sharedAppDelegate;
 	}
 	
 	[randomController setStory:story];
-    
-	//[[Beacon shared] startSubBeaconWithName:@"shakeForStory" timeSession:NO];
 }
 
 - (void)dismissRandomViewController
 {
-	//[[Beacon shared] endSubBeaconWithName:@"serendipityTime"];
 	
 	[messageDataSource release];
 	messageDataSource = nil;
