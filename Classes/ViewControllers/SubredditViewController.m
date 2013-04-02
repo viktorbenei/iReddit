@@ -219,12 +219,12 @@
     self.updatingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:self.updatingView];
     [self.updatingView setHidden:YES];
+    [self performSelectorInBackground:@selector(loading) withObject:nil];
 }
 
 - (void)refresh:(id)sender
 {
     [self.dataSource invalidate:YES];
-    [self.tableView reloadData];
     [self.dataSource loadMore:NO];
     [self.tableView reloadData];
 }
@@ -233,7 +233,6 @@
 {
 	[super viewWillAppear:animated];
 //	[self.tableView reloadData];
-    [self performSelectorInBackground:@selector(loading) withObject:nil];
 }
 
 -(void)loading {

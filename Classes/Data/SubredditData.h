@@ -20,7 +20,7 @@
     NSUInteger totalStories;
 }
 @property (nonatomic, readonly) NSString *subreddit;
-@property (nonatomic, readonly) NSMutableArray *stories;
+@property (atomic, readonly) NSMutableArray *stories;
 
 @property (nonatomic, assign) int newsModeIndex;
 - (Story *)storyWithIndex:(int)anIndex;
