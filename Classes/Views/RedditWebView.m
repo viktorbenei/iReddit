@@ -11,10 +11,14 @@
 #import "LoginController.h"
 #import "LoginViewController.h"
 
+@interface RedditWebView ()
+@property (nonatomic, retain) id<UIWebViewDelegate> realDelegate;
+@end
+
 @implementation RedditWebView
 @synthesize currentNavigationType;
 
-id _realDelegate;
+
 
 + (NSString *)storyIDForURL:(NSURL *)aURL
 {
@@ -40,7 +44,7 @@ id _realDelegate;
 
 		NSArray  *components = [remainder componentsSeparatedByString:@"/"];
 		NSString *lastComponent = [components lastObject];
-				
+
 		if (stringPtr)
 			*stringPtr = lastComponent;		
 				
@@ -63,6 +67,7 @@ id _realDelegate;
 	{
         currentNavigationType = UIWebViewNavigationTypeLinkClicked;
 		[super setDelegate:(id<UIWebViewDelegate>)self];
+        _realDelegate = nil;
 	}
 	
 	return self;
@@ -71,7 +76,7 @@ id _realDelegate;
 
 - (void)setDelegate:(id)delegate
 {
-	_realDelegate = delegate;
+	_realDelegate = [delegate retain];
 }
 
 - (id)delegate
@@ -111,9 +116,10 @@ id _realDelegate;
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
 	[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-
-	if (_realDelegate && [_realDelegate respondsToSelector:@selector(webView:didFailLoadWithError:)])
-		[_realDelegate webView:webView didFailLoadWithError:error];
+  //  NSLog(@"%@",error.description);
+    if (_realDelegate && [_realDelegate respondsToSelector:@selector(webView:didFailLoadWithError:)]){
+        [_realDelegate webView:webView didFailLoadWithError:error];
+    }
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
@@ -121,8 +127,11 @@ id _realDelegate;
     currentNavigationType = navigationType;
     
 	BOOL response = YES;
-	if (_realDelegate && [_realDelegate respondsToSelector:@selector(webView:shouldStartLoadWithRequest:navigationType:)])
-		response = [_realDelegate webView:webView shouldStartLoadWithRequest:request navigationType:navigationType];
+    if (_realDelegate) {
+        if ([_realDelegate respondsToSelector:@selector(webView:shouldStartLoadWithRequest:navigationType:)]) {
+            response = [_realDelegate webView:webView shouldStartLoadWithRequest:request navigationType:navigationType];
+        }
+    }
 
 	if (!response)
 		return NO;
@@ -225,6 +234,8 @@ id _realDelegate;
 
 - (void)dealloc 
 {
+ //   [_realDelegate release];
+    _realDelegate = nil;
 	super.delegate = nil;
     [super dealloc];
 }

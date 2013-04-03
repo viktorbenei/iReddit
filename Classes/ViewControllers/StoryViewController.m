@@ -639,9 +639,9 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     //[[Beacon shared] startSubBeaconWithName:@"usedSegmentNav" timeSession:NO];
 }
 
-- (void)webViewDidStartLoad:(RedditWebView *)webView
+- (void)webViewDidStartLoad:(UIWebView *)webView
 {
-    if(webView.currentNavigationType != UIWebViewNavigationTypeOther)
+    if(((RedditWebView *)webView).currentNavigationType != UIWebViewNavigationTypeOther)
     {
         [loadingView setHidden:NO];
         [loadingView startAnimating];
@@ -666,7 +666,9 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     
     [(UILabel *)(self.navigationItem.titleView) setText:[webView stringByEvaluatingJavaScriptFromString:@"document.title"]];
 }
-
+-(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    NSLog(@"Errow in webView",error.description);
+}
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
@@ -699,10 +701,13 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
 
 - (void)viewDidUnload
 {
-    [webview setDelegate:nil];
     [webview stopLoading];
+    [webview setDelegate:nil];
     [webview removeFromSuperview];
+    [webview release];
     self.webview = nil;
+    [self.story release];
+    self.story = nil;
     self.scoreItem = nil;
     self.commentCountItem = nil;
     self.toggleButtonItem = nil;

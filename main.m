@@ -8,8 +8,21 @@
 
 #import <UIKit/UIKit.h>
 
-int main(int argc, char *argv[]) 
-{    
+#ifdef DEBUG
+void eHandler(NSException *);
+
+void eHandler(NSException *exception) {
+    NSLog(@"%@", exception);
+    NSLog(@"%@", [exception callStackSymbols]);
+}
+#endif
+
+int main(int argc, char *argv[]) {
+    
+#ifdef DEBUG
+    NSSetUncaughtExceptionHandler(&eHandler);
+#endif
+   
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     int retVal = UIApplicationMain(argc, argv, nil, nil);
     [pool release];
