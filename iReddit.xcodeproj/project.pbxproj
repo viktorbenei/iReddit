@@ -287,8 +287,8 @@
 		BEC679C41705E0F300B4E82E /* CreateMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateMessage.h; sourceTree = "<group>"; };
 		BEC679C51705E0F300B4E82E /* CreateMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateMessage.m; sourceTree = "<group>"; };
 		BEC679C61705E0F300B4E82E /* CreateMessage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CreateMessage.xib; path = ViewControllers/CreateMessage.xib; sourceTree = "<group>"; };
-		BECC89F216F864E200CF00A4 /* GIDAAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GIDAAlertView.h; path = ../../GIDAAlertView.h; sourceTree = "<group>"; };
-		BECC89F316F864E200CF00A4 /* GIDAAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GIDAAlertView.m; path = ../../GIDAAlertView.m; sourceTree = "<group>"; };
+		BECC89F216F864E200CF00A4 /* GIDAAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GIDAAlertView.h; sourceTree = "<group>"; };
+		BECC89F316F864E200CF00A4 /* GIDAAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GIDAAlertView.m; sourceTree = "<group>"; };
 		E566C63412BEF9FC00E3E04E /* iReddit-Free-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iReddit-Free-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		E58C100C12B49244004D2070 /* SubredditData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubredditData.h; sourceTree = "<group>"; };
 		E58C100D12B49244004D2070 /* SubredditData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubredditData.m; sourceTree = "<group>"; };
