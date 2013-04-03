@@ -227,11 +227,16 @@
     [self performSelectorInBackground:@selector(loading) withObject:nil];
 }
 
-- (void)refresh:(id)sender
-{
+- (void)refresh:(id)sender {
+    [self.loadingView setHidden:NO];
+    [self performSelectorInBackground:@selector(newData) withObject:nil];
+}
+- (void)newData {
     [self.dataSource invalidate:YES];
     [self.dataSource loadMore:NO];
     [self.tableView reloadData];
+    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    [self.loadingView setHidden:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -243,7 +248,6 @@
 -(void)loading {
     [self createModel];
     [_tableView reloadData];
-    
     [_loadingView setHidden:YES];
 }
 
@@ -280,13 +284,12 @@
 
 #pragma mark tab bar stuff
 -(void)toolBarButton:(UISegmentedControl *)sender {
-	[self.dataSource invalidate:YES];
     ((SubredditData *)self.dataSource).newsModeIndex = sender.selectedSegmentIndex;
-    [self.dataSource loadMore:NO];
-    [self.tableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:NO];
-    [self.tableView reloadData];
+    [_loadingView setHidden:NO];
+	[self.dataSource invalidate:YES];
+    [self performSelectorInBackground:@selector(newData) withObject:nil];
 //    [self.tableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:NO];
-    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    
 }
 #pragma mark orientation
 
