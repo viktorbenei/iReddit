@@ -694,11 +694,6 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
         [self.navigationController setToolbarHidden:NO animated:YES];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : UIInterfaceOrientationIsPortrait(interfaceOrientation);
-}
-
 - (void)viewDidUnload
 {
     [webview stopLoading];
@@ -726,5 +721,10 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     [super dealloc];
 }
 
-
+-(BOOL)shouldAutorotate {
+    return YES;
+}
+-(NSUInteger)supportedInterfaceOrientations {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? UIInterfaceOrientationMaskAll : UIInterfaceOrientationMaskPortrait;
+}
 @end

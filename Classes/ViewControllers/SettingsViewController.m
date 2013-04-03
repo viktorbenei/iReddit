@@ -292,6 +292,14 @@
     
     
 }
-
+-(BOOL)shouldAutorotate {
+    return YES;
+}
+-(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+    return (toInterfaceOrientation == UIInterfaceOrientationPortrait);
+}
+-(NSUInteger)supportedInterfaceOrientations {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? UIInterfaceOrientationMaskAll : UIInterfaceOrientationMaskPortrait;
+}
 
 @end

@@ -284,8 +284,8 @@
 		BE7DBCDE170455FA0012B6D1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		BE7DBCE0170456100012B6D1 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		BE7DBCE2170456190012B6D1 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		BEC679C41705E0F300B4E82E /* CreateMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateMessage.h; sourceTree = "<group>"; };
-		BEC679C51705E0F300B4E82E /* CreateMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateMessage.m; sourceTree = "<group>"; };
+		BEC679C41705E0F300B4E82E /* CreateMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateMessage.h; path = ../ViewControllers/CreateMessage.h; sourceTree = "<group>"; };
+		BEC679C51705E0F300B4E82E /* CreateMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CreateMessage.m; path = ../ViewControllers/CreateMessage.m; sourceTree = "<group>"; };
 		BEC679C61705E0F300B4E82E /* CreateMessage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CreateMessage.xib; path = ViewControllers/CreateMessage.xib; sourceTree = "<group>"; };
 		BECC89F216F864E200CF00A4 /* GIDAAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GIDAAlertView.h; sourceTree = "<group>"; };
 		BECC89F316F864E200CF00A4 /* GIDAAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GIDAAlertView.m; sourceTree = "<group>"; };
@@ -436,6 +436,8 @@
 		ADFB53420FEAC3EA0067CEC1 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				BEC679C41705E0F300B4E82E /* CreateMessage.h */,
+				BEC679C51705E0F300B4E82E /* CreateMessage.m */,
 				ADFB53430FEAC3EA0067CEC1 /* LoginController.h */,
 				ADFB53440FEAC3EA0067CEC1 /* LoginController.m */,
 				ADFB53450FEAC3EA0067CEC1 /* RedditMessage.h */,
@@ -457,8 +459,6 @@
 				ADFB535D0FEAC3EA0067CEC1 /* LoginViewController.m */,
 				ADFB535E0FEAC3EA0067CEC1 /* MessageViewController.h */,
 				ADFB535F0FEAC3EA0067CEC1 /* MessageViewController.m */,
-				BEC679C41705E0F300B4E82E /* CreateMessage.h */,
-				BEC679C51705E0F300B4E82E /* CreateMessage.m */,
 				ADFB53600FEAC3EA0067CEC1 /* RootViewController.h */,
 				ADFB53610FEAC3EA0067CEC1 /* RootViewController.m */,
 				ADFB53620FEAC3EA0067CEC1 /* SettingsViewController.h */,

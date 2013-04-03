@@ -451,13 +451,15 @@
         customSubreddits = data;
     }
 }
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : UIInterfaceOrientationIsPortrait(interfaceOrientation) ;
+-(BOOL)shouldAutorotate {
+    return YES;
 }
-
-
-
+-(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+    return (toInterfaceOrientation == UIInterfaceOrientationPortrait);
+}
+-(NSUInteger)supportedInterfaceOrientations {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? UIInterfaceOrientationMaskAll : UIInterfaceOrientationMaskPortrait;
+}
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath
 {
 	if ([indexPath section] == 1 && [[LoginController sharedLoginController] isLoggedIn] && [[NSUserDefaults standardUserDefaults] boolForKey:useCustomRedditListKey])
