@@ -204,9 +204,10 @@
 	}
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation  {
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
     // this interface is portrait only, but allow it to operate in *either* portrait
-    return UIInterfaceOrientationIsPortrait(interfaceOrientation); 
+    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : (interfaceOrientation == UIInterfaceOrientationPortrait) ? YES : NO ;
 }
 
 -(BOOL)shouldAutorotate {

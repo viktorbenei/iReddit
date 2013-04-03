@@ -70,9 +70,10 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     // self.navigationBarTintColor = [iRedditAppDelegate redditNavigationBarTintColor];
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+	//if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        [self.tableView setBackgroundView:nil];
 		self.tableView.backgroundColor = [UIColor colorWithRed:229.0/255.0 green:238.0/255.0 blue:1 alpha:1];
-	}
+	//}
 	self.tableView.allowsSelectionDuringEditing = NO;
 	self.tableView.editing = NO;
     
@@ -454,8 +455,10 @@
 -(BOOL)shouldAutorotate {
     return YES;
 }
--(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
-    return (toInterfaceOrientation == UIInterfaceOrientationPortrait);
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    // this interface is portrait only, but allow it to operate in *either* portrait
+    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : (interfaceOrientation == UIInterfaceOrientationPortrait) ? YES : NO ;
 }
 -(NSUInteger)supportedInterfaceOrientations {
     return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? UIInterfaceOrientationMaskAll : UIInterfaceOrientationMaskPortrait;

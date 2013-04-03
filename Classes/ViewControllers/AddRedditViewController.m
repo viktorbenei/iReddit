@@ -90,6 +90,8 @@
     self.tableView = [[[UITableView alloc] initWithFrame:CGRectMake(0.0, 75.0, self.view.bounds.size.width, self.view.bounds.size.height - 75.0)
                                                    style:UITableViewStyleGrouped] autorelease];
 	self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    [self.tableView setBackgroundView:nil];
 	self.tableView.backgroundColor = [UIColor colorWithRed:229.0/255.0 green:238.0/255.0 blue:1 alpha:1];
 	
 	self.tableView.allowsSelectionDuringEditing = NO;
@@ -97,6 +99,8 @@
 	self.tableView.scrollEnabled = NO;
     self.tableView.dataSource = self;
     self.tableView.delegate =self;
+    [self.navigationBar setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+        [self.tableView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 	[self.view addSubview:self.navigationBar];
     [self.view addSubview:self.tableView];
     [self createModel];
@@ -248,7 +252,7 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // this interface is portrait only, but allow it to operate in *either* portrait
-    return UIInterfaceOrientationIsPortrait(interfaceOrientation);
+    return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : (interfaceOrientation == UIInterfaceOrientationPortrait) ? YES : NO ;
 }
 
 - (void)dealloc
