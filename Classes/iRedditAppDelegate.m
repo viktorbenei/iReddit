@@ -26,7 +26,9 @@ iRedditAppDelegate *sharedAppDelegate;
 }
 
 @synthesize window, navController, messageDataSource;
-
+-(void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+}
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {
 	sharedAppDelegate = self;

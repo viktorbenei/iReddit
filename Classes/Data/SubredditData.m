@@ -111,9 +111,11 @@
 			return SubRedditNewsModeHot;
 		case 1:
 			return SubRedditNewsModeNew;
-		case 2:
-			return SubRedditNewsModeTop;
+        case 2:
+            return SubRedditNewsModeRising;
 		case 3:
+			return SubRedditNewsModeTop;
+		case 4:
 			return SubRedditNewsModeControversial;
 	}
 	

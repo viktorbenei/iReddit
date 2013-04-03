@@ -278,7 +278,7 @@
                            [[LoginController sharedLoginController] modhash], story.name]
                           dataUsingEncoding:NSASCIIStringEncoding]];
     NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:nil];
-    [connection start];    
+    [connection start];
 	
 	story.likes = !story.likes;
 	story.dislikes = NO;
@@ -354,13 +354,13 @@
 		currentSheet = nil;
 	} else {
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"usePocket"] boolValue]) {
-		currentSheet = [[UIActionSheet alloc]
-						initWithTitle:@""
-						delegate:(id <UIActionSheetDelegate>)self
-						cancelButtonTitle:@"Cancel"
-						destructiveButtonTitle:nil
-                        //						otherButtonTitles:@"E-mail Link", @"Open Link in Safari", @"Hide on reddit", @"Save on reddit", @"Save on Instapaper", @"Save on Pocket", nil];
-                        otherButtonTitles:@"E-mail Link", @"Open Link in browser", @"Hide on reddit", @"Save on reddit", @"Save on Pocket", nil];
+            currentSheet = [[UIActionSheet alloc]
+                            initWithTitle:@""
+                            delegate:(id <UIActionSheetDelegate>)self
+                            cancelButtonTitle:@"Cancel"
+                            destructiveButtonTitle:nil
+                            //						otherButtonTitles:@"E-mail Link", @"Open Link in Safari", @"Hide on reddit", @"Save on reddit", @"Save on Instapaper", @"Save on Pocket", nil];
+                            otherButtonTitles:@"E-mail Link", @"Open Link in browser", @"Hide on reddit", @"Save on reddit", @"Save on Pocket", nil];
 		} else {
             currentSheet = [[UIActionSheet alloc]
                             initWithTitle:@""
@@ -369,7 +369,7 @@
                             destructiveButtonTitle:nil
                             //						otherButtonTitles:@"E-mail Link", @"Open Link in Safari", @"Hide on reddit", @"Save on reddit", @"Save on Instapaper", @"Save on Pocket", nil];
                             otherButtonTitles:@"E-mail Link", @"Open Link in browser", @"Hide on reddit", @"Save on reddit", nil];
-
+            
         }
 		currentSheet.actionSheetStyle = UIActionSheetStyleDefault;
 		
@@ -439,10 +439,10 @@
                 NSString *appName =
                 [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
                 url = [NSString stringWithFormat:
-                                             @"googlechrome-x-callback://x-callback-url/open/?x-source=%@&x-success=%@&url=%@&create-new-tab",
-                                             encodeByAddingPercentEscapes(appName),
-                                             encodeByAddingPercentEscapes(@"ireddit://"),
-                                             encodeByAddingPercentEscapes(url)];
+                       @"googlechrome-x-callback://x-callback-url/open/?x-source=%@&x-success=%@&url=%@&create-new-tab",
+                       encodeByAddingPercentEscapes(appName),
+                       encodeByAddingPercentEscapes(@"ireddit://"),
+                       encodeByAddingPercentEscapes(url)];
             }
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
             break;
@@ -491,6 +491,7 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
 {
     [controller dismissViewControllerAnimated:YES completion:nil];
+    
 }
 
 - (void)saveOnInstapaper:(id)sender
@@ -521,9 +522,9 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     [request setValue:password forKey:@"password"];
     [request setValue:url forKey:@"url"];
     [request setValue:(story.title ? story.title : @"no title") forKey:@"title"];
-  
+    
     [request setHTTPMethod:@"POST"];
-   
+    
     NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:nil];
     [connection start];
     
@@ -586,15 +587,15 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
                           dataUsingEncoding:NSASCIIStringEncoding]];
     NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:nil];
     [connection start];
-
+    
     
     NSArray *viewControllers = self.navigationController.viewControllers;
     
     if ([viewControllers count] > 2 && [[viewControllers objectAtIndex:[viewControllers count] - 2] isKindOfClass:[SubredditViewController class]])
     {
         SubredditViewController *controller = (SubredditViewController *)[viewControllers objectAtIndex:[viewControllers count] - 2];
-       SubredditData *ds = (SubredditData *)controller.dataSource;
-       [ds removeStory:self.story];
+        SubredditData *ds = (SubredditData *)controller.dataSource;
+        [ds removeStory:self.story];
     }
 }
 
@@ -667,7 +668,6 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     [(UILabel *)(self.navigationItem.titleView) setText:[webView stringByEvaluatingJavaScriptFromString:@"document.title"]];
 }
 -(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    NSLog(@"Errow in webView",error.description);
 }
 - (void)viewWillDisappear:(BOOL)animated
 {
@@ -713,6 +713,7 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     self.toggleButtonItem = nil;
     self.segmentedControl = nil;
     self.loadingView = nil;
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
     [super viewDidUnload];
 }
 

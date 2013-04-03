@@ -23,6 +23,7 @@ NSString *const SubRedditNewsModeHot;
 NSString *const SubRedditNewsModeNew;
 NSString *const SubRedditNewsModeTop;
 NSString *const SubRedditNewsModeControversial;
+NSString *const SubRedditNewsModeRising;
 
 NSString *const showStoryThumbnailKey;
 NSString *const redditUsernameKey;

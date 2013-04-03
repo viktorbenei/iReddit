@@ -75,33 +75,33 @@
     Story *story =  [_dataSource storyWithIndex:indexPath.row];
     ((StoryCell *)storyCell).story =story;
     //   [[cell textLabel] setText:@"Something"];
-
-     CommentAccessoryView *accessory = nil;
-     
-     if (!storyCell.accessoryView)
-     {
-     accessory = [[[CommentAccessoryView alloc] initWithFrame:CGRectMake(0.0, 0.0, 30.0, 30.0)] autorelease];
-     storyCell.accessoryView = accessory;
-     }
-     else
-     {
-     accessory = (CommentAccessoryView *)storyCell.accessoryView;
-     }
-     
-     NSUInteger commentCount = storyCell.story.totalComments;
-     
-     // a somewhat hacky way to determine width, *but* much faster than sizeWithFont: on every cell
-     CGRect accessoryFrame = accessory.frame;
-     accessoryFrame.size.width = commentCount > 999 ? 36.0 : 30.0;
-     accessory.frame = accessoryFrame;
-     
-     [accessory setCommentCount:commentCount];
-     
-     [accessory addTarget:self action:@selector(accessoryViewTapped:) forControlEvents:UIControlEventTouchUpInside];
-     accessory.story = story;
-     
-     //storyCell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-
+    
+    CommentAccessoryView *accessory = nil;
+    
+    if (!storyCell.accessoryView)
+    {
+        accessory = [[[CommentAccessoryView alloc] initWithFrame:CGRectMake(0.0, 0.0, 30.0, 30.0)] autorelease];
+        storyCell.accessoryView = accessory;
+    }
+    else
+    {
+        accessory = (CommentAccessoryView *)storyCell.accessoryView;
+    }
+    
+    NSUInteger commentCount = storyCell.story.totalComments;
+    
+    // a somewhat hacky way to determine width, *but* much faster than sizeWithFont: on every cell
+    CGRect accessoryFrame = accessory.frame;
+    accessoryFrame.size.width = commentCount > 999 ? 36.0 : 30.0;
+    accessory.frame = accessoryFrame;
+    
+    [accessory setCommentCount:commentCount];
+    
+    [accessory addTarget:self action:@selector(accessoryViewTapped:) forControlEvents:UIControlEventTouchUpInside];
+    accessory.story = story;
+    
+    //storyCell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+    
     return storyCell;
 }
 - (void)accessoryViewTapped:(id)sender {
@@ -132,18 +132,23 @@
     
 	if (showTabBar)
 	{
-        tabBar = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Hot",@"New",@"Top",@"Controversial", nil]];
+        tabBar = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Hot",@"New",@"Rising",@"Top",@"Controversial", nil]];
         [tabBar setSelectedSegmentIndex:0];
-        UIFont *font = [UIFont boldSystemFontOfSize:11.0f];
+        UIFont *font = nil;
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            font = [UIFont boldSystemFontOfSize:13.0f];
+        } else {
+            font = [UIFont boldSystemFontOfSize:9.0f];
+        }
         NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:UITextAttributeFont];
         [tabBar setTitleTextAttributes:attributes forState:UIControlStateNormal];
-        [tabBar setFrame:CGRectMake(0, 0, applicationFrame.size.width, 30)];
+        [tabBar setFrame:CGRectMake(0, 0, applicationFrame.size.width, 35)];
         [tabBar setSegmentedControlStyle:UISegmentedControlStyleBar];
         [tabBar setTintColor:[iRedditAppDelegate redditNavigationBarTintColor]];
         [tabBar addTarget:self action:@selector(toolBarButton:) forControlEvents:UIControlEventValueChanged];
 	}
     tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	CGRect aFrame = self.view.frame;
+	CGRect aFrame = [[UIScreen mainScreen] applicationFrame];
 	
 	aFrame.origin.y = tabBar ? CGRectGetHeight(tabBar.frame) : 0.0;
 	aFrame.size.height -= aFrame.origin.y;
@@ -196,7 +201,7 @@
     [label release];
     [aic release];
     
-    self.updatingView = [[[UIView alloc] initWithFrame:CGRectMake(0, _tableView.frame.size.height, _tableView.frame.size.width, 30)] autorelease];
+    self.updatingView = [[[UIView alloc] initWithFrame:CGRectMake(0, aFrame.size.height+5, aFrame.size.width, 30)] autorelease];
     [self.updatingView setBackgroundColor:[UIColor blackColor]];
     [self.updatingView setAlpha:0.8];
     label = [[UILabel alloc] initWithFrame:CGRectMake((_tableView.frame.size.width-100)/2, 0, 100, 30)];
@@ -209,13 +214,13 @@
     [aic setFrame:CGRectMake((_tableView.frame.size.width-150)/2, 0, 30, 30)];
     [aic setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin];
     [aic startAnimating];
-
+    
     [self.updatingView addSubview:aic];
     [self.updatingView addSubview:label];
     [label release];
     [aic release];
-   // [self.updating setBackgroundColor:[UIColor redColor]];
-
+    // [self.updating setBackgroundColor:[UIColor redColor]];
+    
     self.updatingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:self.updatingView];
     [self.updatingView setHidden:YES];
@@ -278,7 +283,10 @@
 	[self.dataSource invalidate:YES];
     ((SubredditData *)self.dataSource).newsModeIndex = sender.selectedSegmentIndex;
     [self.dataSource loadMore:NO];
+    [self.tableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:NO];
     [self.tableView reloadData];
+//    [self.tableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:NO];
+    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
 }
 #pragma mark orientation
 

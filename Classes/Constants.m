@@ -24,6 +24,7 @@ NSString *const SubRedditNewsModeHot			= @"";
 NSString *const SubRedditNewsModeNew			= @"new/";
 NSString *const SubRedditNewsModeTop			= @"top/";
 NSString *const SubRedditNewsModeControversial	= @"controversial/";
+NSString *const SubRedditNewsModeRising         = @"rising/";
 
 NSString *const InstapaperAPIString = @"https://www.instapaper.com/api/add";
 
