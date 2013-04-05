@@ -28,6 +28,10 @@
 	[subredditItem release];
 	[tabBar release];
 	[savedLocation release];
+    [_dataSource release];
+    [_tableView release];
+    [_updatingView release];
+    [_loadingView release];
     [super dealloc];
 }
 
@@ -232,10 +236,12 @@
     [self performSelectorInBackground:@selector(newData) withObject:nil];
 }
 - (void)newData {
+    if ([self.dataSource totalStories]>0) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    }
     [self.dataSource invalidate:YES];
     [self.dataSource loadMore:NO];
     [self.tableView reloadData];
-    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
     [self.loadingView setHidden:YES];
 }
 

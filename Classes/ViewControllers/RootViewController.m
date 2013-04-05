@@ -41,7 +41,8 @@
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
+	[_sections release];
+    [_dataSource release];
 	[customSubreddits release];
     if (_connection) {
         [_connection cancel];
@@ -353,18 +354,18 @@
 }
 
 - (NSArray *)topItems{
-    NSDictionary *homeField = [NSDictionary dictionaryWithObjectsAndKeys:@"reddit Front Page",   @"text", @"/", @"url", nil];
+    NSDictionary *homeField = [[[NSDictionary alloc] initWithObjectsAndKeys:@"reddit Front Page",   @"text", @"/", @"url", nil] autorelease];
 	if ([[LoginController sharedLoginController] isLoggedIn]) {
 		unsigned int count = [[iRedditAppDelegate sharedAppDelegate].messageDataSource unreadMessageCount];
 		NSString *mailboxString = count > 0 ? [NSString stringWithFormat:@"Inbox (%u)", count] : @"Inbox";
-        NSDictionary *saved = [NSDictionary dictionaryWithObjectsAndKeys:@"Saved",   @"text", @"/saved/", @"url", nil];
-        NSDictionary *mailboxField = [NSDictionary dictionaryWithObjectsAndKeys:mailboxString,   @"text", @"/messages/", @"url", nil];
+        NSDictionary *saved = [[[NSDictionary alloc] initWithObjectsAndKeys:@"Saved",   @"text", @"/saved/", @"url", nil] autorelease];
+        NSDictionary *mailboxField = [[[NSDictionary alloc] initWithObjectsAndKeys:mailboxString,   @"text", @"/messages/", @"url", nil] autorelease];
         
-		return [NSArray arrayWithObjects:homeField, mailboxField, saved, nil];
+		return [[[NSArray alloc] initWithObjects:homeField, mailboxField, saved, nil] autorelease];
 	}
 	else
     {
-        return [NSArray arrayWithObject:homeField];
+        return [[[NSArray alloc] initWithObjects:homeField,nil] autorelease];
     }
 }
 
@@ -393,9 +394,9 @@
 	NSArray *topItems   = [self topItems];
 	NSArray *subreddits = [self subreddits];
 	NSArray *extra      = [self extraItems];
-	NSArray *settingsItems = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Settings",   @"text", @"/settings/", @"url", nil]];
-    _sections = [[NSArray arrayWithObjects:@"",@"reddits",@"",@"", nil] retain];
-	_dataSource = [[NSMutableArray arrayWithObjects:topItems,subreddits,extra,settingsItems, nil] retain];
+	NSArray *settingsItems = [[[NSArray alloc] initWithObjects:[NSDictionary dictionaryWithObjectsAndKeys:@"Settings", @"text", @"/settings/", @"url", nil],nil] autorelease];
+    _sections = [[NSArray alloc] initWithObjects:@"",@"reddits",@"",@"", nil];
+	_dataSource = [[NSMutableArray alloc] initWithObjects:topItems,subreddits,extra,settingsItems, nil];
     [self.tableView reloadData];
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -404,26 +405,27 @@
     switch (indexPath.section) {
         case 0:
             if ([cell[@"url"] isEqualToString:@"/messages/"]) {
-                controller = [[[MessageViewController alloc] init] autorelease];
+                controller = [[MessageViewController alloc] init];
             } else {
-                controller = [[[SubredditViewController alloc] initWithField:cell] autorelease];
+                controller = [[SubredditViewController alloc] initWithField:cell];
             }
             break;
         case 2:
             if ([cell[@"url"] isEqualToString:@"/other/"]) {
                 [self presentViewController:[[[AddRedditViewController alloc] initForViewing] autorelease] animated:YES completion:nil];
             } else {
-                controller = [[[SubredditViewController alloc] initWithField:cell] autorelease];
+                controller = [[SubredditViewController alloc] initWithField:cell];
             }
             break;
         case 3:
-            controller = [[[SettingsViewController alloc] init] autorelease];
+            controller = [[SettingsViewController alloc] init];
             break;
         default:
-            controller = [[[SubredditViewController alloc] initWithField:cell] autorelease];
+            controller = [[SubredditViewController alloc] initWithField:cell];
             break;
     }
     [[self navigationController] pushViewController:controller animated:YES];
+    [controller release];
 }
 -(NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath {
     if (sourceIndexPath.section != proposedDestinationIndexPath.section) {

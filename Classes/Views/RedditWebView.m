@@ -234,7 +234,7 @@
 
 - (void)dealloc 
 {
- //   [_realDelegate release];
+    [_realDelegate release];
     _realDelegate = nil;
 	super.delegate = nil;
     [super dealloc];

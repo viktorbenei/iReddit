@@ -26,7 +26,7 @@ typedef enum {
 }GIDAAlertViewType;
 
 @interface ProgressBar : UIView
-@property (retain, nonatomic) UIColor *color;
+-(id)initWithFrame:(CGRect)frame andProgressBarColor:(UIColor *)pcolor;
 @end
 
 @class GIDAAlertView;
@@ -39,7 +39,6 @@ typedef enum {
 
 @interface GIDAAlertView : UIAlertView <NSURLConnectionDataDelegate, UIAlertViewDelegate>
 @property (nonatomic, retain) NSString *identifier;
-@property (nonatomic, retain) UIColor *progressBarColor;
 @property (readonly) GIDAAlertViewType type;
 @property (readonly) BOOL accepted;
 @property (nonatomic, retain) id <GIDAAlertViewDelegate> gavdelegate;
@@ -52,6 +51,7 @@ typedef enum {
 - (id)initWithTitle:(NSString *)title cancelButtonTitle:(NSString *)cancelTitle acceptButtonTitle:(NSString *)acceptTitle andMessage:(NSString *)message;
 - (id)initWithProgressBarAndMessage:(NSString *)message andTime:(NSInteger)seconds;
 - (id)initWithProgressBarAndMessage:(NSString *)message andURL:(NSURL *)url;
+- (id)initWithProgressBarAndMessage:(NSString *)message andURL:(NSURL *)url andProgressBarColor:(UIColor *)pcolor;
 - (id)initWithCheckMarkAndMessage:(NSString *)message;
 -(id)initWithXMarkAndMessage:(NSString *)message;
 

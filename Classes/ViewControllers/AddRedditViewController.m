@@ -179,10 +179,9 @@
 {
 
     NSString *url = [NSString stringWithFormat:@"%@/r/%@/.json", RedditBaseURLString, redditURL];
-    GIDAAlertView *gav = [[[GIDAAlertView alloc] initWithProgressBarAndMessage:@"Loading reddit" andURL:[NSURL URLWithString:url]] autorelease];
+    GIDAAlertView *gav = [[[GIDAAlertView alloc] initWithProgressBarAndMessage:@"Loading reddit" andURL:[NSURL URLWithString:url] andProgressBarColor:[UIColor blueColor]] autorelease];
     [gav setDelegate:self];
     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
-    [gav setProgressBarColor:[UIColor blueColor]];
     [gav progresBarStartDownload];
 }
 -(BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -257,6 +256,8 @@
 
 - (void)dealloc
 {
+    [_dataSource release];
+    [_section release];
     self.tableView = nil;
     self.navigationBar = nil;
     [super dealloc];

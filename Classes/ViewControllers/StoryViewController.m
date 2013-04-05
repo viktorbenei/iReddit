@@ -18,6 +18,8 @@
 #import "RedditWebView.h"
 #import "PocketAPI.h"
 
+@interface StoryViewController ()
+@end
 @implementation StoryViewController
 
 @synthesize story, scoreItem, commentCountItem, segmentedControl, loadingView, toggleButtonItem, webview;
@@ -34,6 +36,7 @@
 
 - (void)loadView
 {
+        
 	self.navigationController.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
 	self.hidesBottomBarWhenPushed = NO;
     
@@ -673,6 +676,10 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
 {
     [super viewWillDisappear:animated];
     [webview stopLoading];
+    [webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    [self.webview setDelegate:nil];
+    [self.webview removeFromSuperview];
+
     if (![self.navigationController.topViewController isKindOfClass:[StoryViewController class]])
     {
         CGRect frame = self.webview.frame;
@@ -681,6 +688,7 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
         
         [self.navigationController setToolbarHidden:YES animated:YES];
     }
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -694,14 +702,19 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
         [self.navigationController setToolbarHidden:NO animated:YES];
 }
 
-- (void)viewDidUnload
-{
-    [webview stopLoading];
+-(void)viewDidUnload {
+    [super viewDidUnload];
+    [currentSheet release];
+    [moreButtonItem release];
     [webview setDelegate:nil];
     [webview removeFromSuperview];
     [webview release];
+    [story release];
+    [loadingView release];
+    [segmentedControl release];
+    [scoreItem release];
+    [commentCountItem release];
     self.webview = nil;
-    [self.story release];
     self.story = nil;
     self.scoreItem = nil;
     self.commentCountItem = nil;
@@ -709,16 +722,6 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     self.segmentedControl = nil;
     self.loadingView = nil;
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
-    [super viewDidUnload];
-}
-
-- (void)dealloc
-{
-    self.story = nil;
-    [currentSheet release];
-    [moreButtonItem release];
-    
-    [super dealloc];
 }
 
 -(BOOL)shouldAutorotate {

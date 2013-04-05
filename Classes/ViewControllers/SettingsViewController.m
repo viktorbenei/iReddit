@@ -291,6 +291,11 @@
     
     
 }
+-(void)dealloc {
+    [_sections release];
+    [_options release];
+    [super dealloc];
+}
 -(BOOL)shouldAutorotate {
     return YES;
 }

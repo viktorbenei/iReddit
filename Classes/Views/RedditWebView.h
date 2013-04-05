@@ -9,9 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Story.h"
 
-@interface RedditWebView : UIWebView 
-{
-	id _realDelegate;
+@interface RedditWebView : UIWebView {
     UIWebViewNavigationType currentNavigationType;
 }
 @property (nonatomic, readonly) UIWebViewNavigationType currentNavigationType;
