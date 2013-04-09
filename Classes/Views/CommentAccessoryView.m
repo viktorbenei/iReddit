@@ -38,11 +38,6 @@
 	[self setTitle:[NSString stringWithFormat:@"%u", aCount] forState:UIControlStateNormal];
 }
 
-- (void)dealloc
-{
-	self.story = nil;
-    [super dealloc];
-}
 
 
 @end

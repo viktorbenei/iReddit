@@ -36,19 +36,19 @@
 	BOOL isSelfReddit;
 
 	NSString *subreddit;
-	SubredditDataSource *subredditDataSource;
+	SubredditDataSource *__weak subredditDataSource;
 }
 
-@property (nonatomic, retain) NSString *title;
-@property (nonatomic, retain) NSString *author;
-@property (nonatomic, retain) NSString *domain;
-@property (nonatomic, retain) NSString *identifier;
-@property (nonatomic, retain) NSString *name;
-@property (nonatomic, retain) NSString *URL;
-@property (nonatomic, retain) NSString *kind;
-@property (nonatomic, retain) NSString *created;
-@property (nonatomic, assign) SubredditDataSource *subredditDataSource;
-@property (nonatomic, retain) NSString *subreddit;
+@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSString *author;
+@property (nonatomic, strong) NSString *domain;
+@property (nonatomic, strong) NSString *identifier;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *URL;
+@property (nonatomic, strong) NSString *kind;
+@property (nonatomic, strong) NSString *created;
+@property (nonatomic, weak) SubredditDataSource *subredditDataSource;
+@property (nonatomic, strong) NSString *subreddit;
 @property (nonatomic, assign) unsigned int totalComments;
 @property (nonatomic, assign) unsigned int downs;
 @property (nonatomic, assign) unsigned int ups;
@@ -56,13 +56,13 @@
 @property (nonatomic, assign) BOOL likes;
 @property (nonatomic, assign) BOOL dislikes;
 @property (nonatomic, assign) BOOL isSelfReddit;
-@property (nonatomic, retain) NSString *thumbnailURL;
-@property (nonatomic, retain) NSString *commentID;
+@property (nonatomic, strong) NSString *thumbnailURL;
+@property (nonatomic, strong) NSString *commentID;
 
 //dynamic properties
 @property (nonatomic, assign) int score;
 @property (nonatomic, assign) BOOL visited;
-@property (nonatomic, assign) NSString *commentsURL;
+@property (nonatomic, weak) NSString *commentsURL;
 
 //public
 + (Story *)storyWithDictionary:(NSDictionary *)dict inReddit:(id)reddit;

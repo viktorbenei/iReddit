@@ -34,14 +34,14 @@
 - (void)setHeight:(CGFloat)aHeight forIndex:(int)anIndex;
 
 
-@property (nonatomic, retain) NSAttributedString	*body;
-@property (nonatomic, retain) NSString	*name;
-@property (nonatomic, retain) NSString	*identifier;
-@property (nonatomic, retain) NSString	*author;
-@property (nonatomic, retain) NSString	*destination;
-@property (nonatomic, retain) NSString	*subject;
-@property (nonatomic, retain) NSString	*context;
-@property (nonatomic, retain) NSString	*created;
+@property (nonatomic, strong) NSAttributedString	*body;
+@property (nonatomic, strong) NSString	*name;
+@property (nonatomic, strong) NSString	*identifier;
+@property (nonatomic, strong) NSString	*author;
+@property (nonatomic, strong) NSString	*destination;
+@property (nonatomic, strong) NSString	*subject;
+@property (nonatomic, strong) NSString	*context;
+@property (nonatomic, strong) NSString	*created;
 @property (nonatomic, assign) BOOL		isCommentReply;
 @property (nonatomic, assign) BOOL		isNew;
 

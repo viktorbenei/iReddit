@@ -9,9 +9,9 @@
 #import "CreateMessage.h"
 
 @interface CreateMessage ()
-@property (nonatomic, retain) NSMutableData *receivedData;
-@property (nonatomic, retain) NSString *captchaID;
-@property (nonatomic, retain) UIImage  *captchaImage;
+@property (nonatomic, strong) NSMutableData *receivedData;
+@property (nonatomic, strong) NSString *captchaID;
+@property (nonatomic, strong) UIImage  *captchaImage;
 @end
 
 @implementation CreateMessage
@@ -27,7 +27,7 @@
         [request setHTTPMethod:@"POST"];
         NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:self];
         if (connection) {
-            _receivedData = [[NSMutableData data] retain];
+            _receivedData = [NSMutableData data];
         } else {
             NSLog(@"Error");
         }
@@ -58,7 +58,7 @@
     [request setHTTPMethod:@"POST"];
     NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:self];
     if (connection) {
-        _receivedData = [[NSMutableData data] retain];
+        _receivedData = [NSMutableData data];
     } else {
         NSLog(@"Error");
     }
@@ -80,8 +80,8 @@
 -(void)connectionDidFinishLoading:(NSURLConnection *)connection {
     id dict = [NSJSONSerialization JSONObjectWithData:_receivedData options:NSJSONReadingMutableContainers error:nil];
     if ([dict isKindOfClass:[NSDictionary class]]) {
-        _captchaID = [dict[@"json"][@"data"][@"iden"] retain];
-        _captchaImage = [[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.reddit.com/captcha/%@.png",_captchaID]]]] retain];
+        _captchaID = dict[@"json"][@"data"][@"iden"];
+        _captchaImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.reddit.com/captcha/%@.png",_captchaID]]]];
     }
 }
 -(void)alertOnClicked:(GIDAAlertView *)alertView {
@@ -99,14 +99,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)dealloc {
-    [_toLabel release];
-    [_subjectLabel release];
-    [_subjectField release];
-    [_toField release];
-    [_body release];
-    [super dealloc];
-}
 - (void)viewDidUnload {
     [self setToLabel:nil];
     [self setSubjectLabel:nil];

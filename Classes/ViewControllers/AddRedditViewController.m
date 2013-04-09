@@ -20,10 +20,10 @@
 - (IBAction)save:(id)sender;
 - (void)loadReddit:(NSString *)redditURL;
 - (void)requestFailed;
-@property (retain) NSArray *dataSource;
-@property (retain) NSArray *section;
-@property (nonatomic, retain) IBOutlet UINavigationBar *navigationBar;
-@property (nonatomic, retain) IBOutlet UITableView *tableView;
+@property (strong) NSArray *dataSource;
+@property (strong) NSArray *section;
+@property (nonatomic, strong) IBOutlet UINavigationBar *navigationBar;
+@property (nonatomic, strong) IBOutlet UITableView *tableView;
 @end
 
 @implementation AddRedditViewController
@@ -60,35 +60,35 @@
     
     [super loadView];
     
-	self.navigationBar = [[[UINavigationBar alloc] init] autorelease];
+	self.navigationBar = [[UINavigationBar alloc] init];
 	
 	[self.navigationBar sizeToFit];
 	
 	UINavigationItem *item = nil;
 	if (shouldViewOnly)
 	{
-		item = [[[UINavigationItem alloc] initWithTitle:@"view reddit"] autorelease];
+		item = [[UINavigationItem alloc] initWithTitle:@"view reddit"];
 		item.prompt = @"View any reddit by entering a URL";
 	}
 	else
 	{
-		item = [[[UINavigationItem alloc] initWithTitle:@"add reddit"] autorelease];
+		item = [[UINavigationItem alloc] initWithTitle:@"add reddit"];
 		item.prompt = @"Subscribe to a new reddit by entering a URL";
 	}
 	
-	item.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+	item.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                             target:self
-                                                                            action:@selector(cancel:)] autorelease];
-	item.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                            action:@selector(cancel:)];
+	item.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                              target:self
-                                                                             action:@selector(save:)] autorelease];
+                                                                             action:@selector(save:)];
     
 	self.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
 	
 	[self.navigationBar pushNavigationItem:item animated:NO];
     
-    self.tableView = [[[UITableView alloc] initWithFrame:CGRectMake(0.0, 75.0, self.view.bounds.size.width, self.view.bounds.size.height - 75.0)
-                                                   style:UITableViewStyleGrouped] autorelease];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0.0, 75.0, self.view.bounds.size.width, self.view.bounds.size.height - 75.0)
+                                                   style:UITableViewStyleGrouped];
 	self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     [self.tableView setBackgroundView:nil];
@@ -124,7 +124,7 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     id cell = [tableView dequeueReusableCellWithIdentifier:@"settings"];
     if (!cell) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"settings"] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"settings"];
     }
     
     [cell setAccessoryView:nil];
@@ -138,7 +138,6 @@
         [cell setAccessoryView:switchview];
         [switchview addTarget:self action:@selector(valueChange:) forControlEvents:UIControlEventValueChanged];
         
-        [switchview release];
     } else {
         if ([cellData[@"type"] isEqualToString:@"check"]) {
             if ([cellData[@"value"] boolValue]) {
@@ -163,7 +162,6 @@
                 }
                 [textField becomeFirstResponder];
                 [cell setAccessoryView:textField];
-                [textField release];
             }
         }
     }
@@ -179,7 +177,7 @@
 {
 
     NSString *url = [NSString stringWithFormat:@"%@/r/%@/.json", RedditBaseURLString, redditURL];
-    GIDAAlertView *gav = [[[GIDAAlertView alloc] initWithProgressBarAndMessage:@"Loading reddit" andURL:[NSURL URLWithString:url] andProgressBarColor:[UIColor blueColor]] autorelease];
+    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithProgressBarAndMessage:@"Loading reddit" andURL:[NSURL URLWithString:url] andProgressBarColor:[UIColor blueColor]];
     [gav setDelegate:self];
     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
     [gav progresBarStartDownload];
@@ -237,7 +235,7 @@
 
 - (void)requestFailed
 {
-    GIDAAlertView *gav = [[[GIDAAlertView alloc] initWithTitle:@"Whoops!" message:@"This is not the reddit you were looking for. We couldn't find anything at that URL. Try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease];
+    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithTitle:@"Whoops!" message:@"This is not the reddit you were looking for. We couldn't find anything at that URL. Try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
     [gav show];
 }
@@ -254,14 +252,6 @@
     return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : (interfaceOrientation == UIInterfaceOrientationPortrait) ? YES : NO ;
 }
 
-- (void)dealloc
-{
-    [_dataSource release];
-    [_section release];
-    self.tableView = nil;
-    self.navigationBar = nil;
-    [super dealloc];
-}
 
 -(BOOL)shouldAutorotate {
     return YES;

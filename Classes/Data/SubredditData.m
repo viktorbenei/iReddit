@@ -18,7 +18,7 @@
 	if (self = [super init])
 	{
         self.newsModeIndex = 0;
-		_subreddit = [subreddit retain];
+		_subreddit = subreddit;
         _stories = [[NSMutableArray alloc] init];
     }
 	
@@ -130,9 +130,6 @@
 - (void)dealloc
 {
     [_stories removeAllObjects];
-    [_stories release];
-    [_subreddit release];
-    [super dealloc];
 }
 
 

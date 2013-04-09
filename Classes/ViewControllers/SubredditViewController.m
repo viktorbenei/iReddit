@@ -11,12 +11,12 @@
 
 @interface SubredditViewController ()
 @property (assign) BOOL gettingMore;
-@property (nonatomic, retain) UITableView *tableView;
-@property (nonatomic, retain) UIView *updatingView;
-@property (nonatomic, retain) UIView *loadingView;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) UIView *updatingView;
+@property (nonatomic, strong) UIView *loadingView;
 
 //@property (nonatomic, retain) NSArray *headers;
-@property (nonatomic, retain) UINavigationBar *navigationBar;
+@property (nonatomic, strong) UINavigationBar *navigationBar;
 
 @end
 
@@ -24,22 +24,15 @@
 
 - (void)dealloc
 {
+    NSLog(@"SUBREDDIT DEALLOC");
 	//[self.dataSource cancel];
-	[subredditItem release];
-	[tabBar release];
-	[savedLocation release];
-    [_dataSource release];
-    [_tableView release];
-    [_updatingView release];
-    [_loadingView release];
-    [super dealloc];
 }
 
 - (id)initWithField:(NSDictionary *)anItem {
     self = [super init];
     if (self) {
         
-		subredditItem = [anItem retain];
+		subredditItem = anItem;
 		showTabBar = ![subredditItem[@"url"] isEqual:@"/saved/"] && ![subredditItem[@"url"] isEqual:@"/recommended/"];
 		
         self.title = [anItem[@"url"] isEqual:@"/"] ? @"Front Page" : anItem[@"text"];
@@ -51,7 +44,7 @@
 		}
         
 		self.hidesBottomBarWhenPushed = YES;
-		self.navigationBar = [[[UINavigationBar alloc] init] autorelease];
+		self.navigationBar = [[UINavigationBar alloc] init];
 		self.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
         self.navigationController.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
         [self.view addSubview:self.navigationBar];
@@ -74,7 +67,7 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     StoryCell *storyCell = [self.tableView dequeueReusableCellWithIdentifier:@"subreddit"];
     if (!storyCell) {
-        storyCell = [[[StoryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"subreddit"] autorelease];
+        storyCell = [[StoryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"subreddit"];
     }
     Story *story =  [_dataSource storyWithIndex:indexPath.row];
     ((StoryCell *)storyCell).story =story;
@@ -84,7 +77,7 @@
     
     if (!storyCell.accessoryView)
     {
-        accessory = [[[CommentAccessoryView alloc] initWithFrame:CGRectMake(0.0, 0.0, 30.0, 30.0)] autorelease];
+        accessory = [[CommentAccessoryView alloc] initWithFrame:CGRectMake(0.0, 0.0, 30.0, 30.0)];
         storyCell.accessoryView = accessory;
     }
     else
@@ -116,7 +109,6 @@
     [[self navigationController] pushViewController:controller animated:YES];
     
     controller.story = object;
-    [controller release];
 }
 
 - (void)loadView
@@ -125,12 +117,11 @@
     
     // create the tableview
 	CGRect applicationFrame = [[UIScreen mainScreen] applicationFrame];
-    self.view = [[[UIView alloc] initWithFrame:applicationFrame] autorelease];
+    self.view = [[UIView alloc] initWithFrame:applicationFrame];
     self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
 	if (tabBar)
 	{
-		[tabBar release];
 		tabBar = nil;
 	}
     
@@ -162,7 +153,7 @@
     
 	//aFrame.origin.y	= 0;
  	
-	self.tableView = [[[UITableView alloc] initWithFrame:aFrame style:UITableViewStylePlain] autorelease];
+	self.tableView = [[UITableView alloc] initWithFrame:aFrame style:UITableViewStylePlain];
     self.tableView.rowHeight = 80.f;
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     //self.tableView.tableHeaderView = tabBar;
@@ -176,7 +167,6 @@
                                                                   action:@selector(refresh:)];
     reloadItem.width = 25.0;
     self.navigationItem.rightBarButtonItem = reloadItem;
-    [reloadItem release];
 	
 	if (tabBar)
 		[self.view addSubview:tabBar];
@@ -202,10 +192,8 @@
     [_loadingView addSubview:aic];
     [_loadingView addSubview:label];
     [self.view addSubview:_loadingView];
-    [label release];
-    [aic release];
     
-    self.updatingView = [[[UIView alloc] initWithFrame:CGRectMake(0, aFrame.size.height+5, aFrame.size.width, 30)] autorelease];
+    self.updatingView = [[UIView alloc] initWithFrame:CGRectMake(0, aFrame.size.height+5, aFrame.size.width, 30)];
     [self.updatingView setBackgroundColor:[UIColor blackColor]];
     [self.updatingView setAlpha:0.8];
     label = [[UILabel alloc] initWithFrame:CGRectMake((_tableView.frame.size.width-100)/2, 0, 100, 30)];
@@ -221,8 +209,6 @@
     
     [self.updatingView addSubview:aic];
     [self.updatingView addSubview:label];
-    [label release];
-    [aic release];
     // [self.updating setBackgroundColor:[UIColor redColor]];
     
     self.updatingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin;
@@ -259,7 +245,7 @@
 
 - (void)createModel
 {
-    self.dataSource = [[[SubredditData alloc] initWithSubreddit:subredditItem[@"url"]] autorelease];
+    self.dataSource = [[SubredditData alloc] initWithSubreddit:subredditItem[@"url"]];
     [self.dataSource loadMore:NO];
 }
 
@@ -301,14 +287,12 @@
 #pragma mark Table view methods
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     Story *object = ((StoryCell *)[tableView cellForRowAtIndexPath:indexPath]).story;
-    [savedLocation release];
-    savedLocation = [indexPath retain];
+    savedLocation = indexPath;
     
     StoryViewController *controller = [[StoryViewController alloc] init];
     [[self navigationController] pushViewController:controller animated:YES];
     
     controller.story = object;
-    [controller release];
     
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }

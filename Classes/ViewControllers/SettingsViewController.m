@@ -16,8 +16,8 @@
     NSInteger selectedRow;
     BOOL changed;
 }
-@property (retain) NSArray *sections;
-@property (retain) NSMutableArray *options;
+@property (strong) NSArray *sections;
+@property (strong) NSMutableArray *options;
 
 @end
 @implementation SettingsViewController
@@ -58,7 +58,7 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     id cell = [tableView dequeueReusableCellWithIdentifier:@"settings"];
     if (!cell) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"settings"] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"settings"];
     }
     
     [cell setAccessoryView:nil];
@@ -71,7 +71,6 @@
         [cell setAccessoryView:switchview];
         [switchview addTarget:self action:@selector(valueChange:) forControlEvents:UIControlEventValueChanged];
         
-        [switchview release];
     } else {
         if ([cellData[@"type"] isEqualToString:@"check"]) {
             if ([cellData[@"value"] boolValue]) {
@@ -95,7 +94,6 @@
                     [textField setSecureTextEntry:YES];
                 }
                 [cell setAccessoryView:textField];
-                [textField release];
             }
         }
     }
@@ -149,7 +147,6 @@
                     GIDAAlertView *gav = [[GIDAAlertView alloc] initWithXMarkAndMessage:@"Could not log in to Pocket"];
                     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
                     [gav presentAlertFor:1.08];
-                    [gav release];
                     
                 }
                 else
@@ -163,7 +160,6 @@
                     GIDAAlertView *gav = [[GIDAAlertView alloc] initWithCheckMarkAndMessage:@"Logged in to Pocket"];
                     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
                     [gav presentAlertFor:1.08];
-                    [gav release];
                 }
             }];
         }
@@ -217,11 +213,9 @@
 -(void)createModel
 {
     if (_options) {
-        [_options release];
         _options = nil;
     }
     if (_sections) {
-        [_sections release];
         _sections = nil;
     }
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -277,8 +271,6 @@
                  [NSDictionary dictionaryWithObjectsAndKeys:@"Allow Landscape",@"title",[NSNumber numberWithBool:[defaults boolForKey:allowLandscapeOrientationKey]],@"value",allowLandscapeOrientationKey, @"key", @"switch", @"type", nil],
                  nil],
                 nil];
-    [_sections retain];
-    [_options retain];
 }
 - (void)viewWillDisappear:(BOOL)animated{
     [[[[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]] accessoryView] resignFirstResponder];
@@ -290,11 +282,6 @@
     }
     
     
-}
--(void)dealloc {
-    [_sections release];
-    [_options release];
-    [super dealloc];
 }
 -(BOOL)shouldAutorotate {
     return YES;

@@ -28,7 +28,7 @@ LoginController *SharedLoginController = nil;
         if ([defaults boolForKey:hasModHash]) {
             NSDate *last = [defaults objectForKey:@"lastLoginTime"];
             NSDate *now = [NSDate date];
-            NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]autorelease];
+            NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
             NSDateComponents *components = [calendar components:NSDayCalendarUnit fromDate:last toDate:now options:0];
             if ([components day] < 7) {
                 SharedLoginController.modhash = [defaults objectForKey:redditModHash];
@@ -42,13 +42,6 @@ LoginController *SharedLoginController = nil;
 	return SharedLoginController;
 }
 
-- (void)dealloc
-{
-	self.modhash = nil;
-	self.lastLoginTime = nil;
-    
-	[super dealloc];
-}
 
 - (BOOL)isLoggedIn {
     if (lastLoginTime == nil) {
@@ -57,7 +50,7 @@ LoginController *SharedLoginController = nil;
             id last = [defaults objectForKey:@"lastLoginTime"];
             if ([last isKindOfClass:[NSDate class]]) {
                 NSDate *now = [NSDate date];
-                NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]autorelease];
+                NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
                 NSDateComponents *components = [calendar components:NSDayCalendarUnit fromDate:last toDate:now options:0];
                 if ([components day] < 7) {
                     lastLoginTime = [defaults objectForKey:@"lastLoginTime"];

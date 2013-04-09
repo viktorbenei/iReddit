@@ -18,7 +18,7 @@
 
 + (RedditMessage *)messageWithDictionary:(NSDictionary *)dict
 {			
-    RedditMessage *aMessage = [[[RedditMessage alloc] init] autorelease];
+    RedditMessage *aMessage = [[RedditMessage alloc] init];
 	NSString *messageBody = (NSString *)[dict objectForKey:@"body_html"];
     //NSLog(@"$%@",messageBody);
     messageBody = [messageBody stringByReplacingOccurrencesOfString:@"&lt;" withString:@"<"];
@@ -29,7 +29,7 @@
     //NSLog(@"$%@",messageBody);
     NSData *data = [messageBody dataUsingEncoding:NSUTF8StringEncoding];
     NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
- 	aMessage.body = [[[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL] autorelease];
+ 	aMessage.body = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
 	aMessage.author = (NSString *)[dict objectForKey:@"author"];
 	aMessage.subject = (NSString *)[dict objectForKey:@"subject"];
 	aMessage.destination = (NSString *)[dict objectForKey:@"destination"];
@@ -46,7 +46,6 @@
     [_formatter setDateFormat:@"yyyy.MM.dd HH:mm:ss"];
 
     aMessage.created =[_formatter stringFromDate:date];
-    [_formatter release];
     //NSLog(@"%@\t%0.0f",aMessage.created,[NSDate timeIntervalSinceReferenceDate]);
 	aMessage.isNew = [(NSNumber *)[dict objectForKey:@"new"] boolValue];
 	aMessage.isCommentReply = [(NSNumber *)[dict objectForKey:@"was_comment"] boolValue];
@@ -64,7 +63,7 @@
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0) {
         frame = [aMessage.body boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil];
     } else {
-        CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)aMessage.body);
+        CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)aMessage.body);
         CGSize targetSize = CGSizeMake(320, CGFLOAT_MAX);
         frame = CGRectZero;
         frame.size = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, [aMessage.body length]), NULL, targetSize, NULL);
@@ -80,7 +79,7 @@
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0) {
         frame = [aMessage.body boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil];
     } else {
-        CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)aMessage.body);
+        CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)aMessage.body);
         CGSize targetSize = CGSizeMake(320, CGFLOAT_MAX);
         frame = CGRectZero;
         frame.size = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, [aMessage.body length]), NULL, targetSize, NULL);
@@ -109,18 +108,5 @@
 		return heights[LANDSCAPE_INDEX];
 }
 
-- (void)dealloc
-{	
-	self.body = nil;
-	self.name = nil; 
-	self.created = nil; 
-	self.subject = nil;
-	self.identifier = nil; 
-	self.destination = nil;
-	self.author = nil;
-	self.context = nil; 
-
-	[super dealloc];
-}
 
 @end

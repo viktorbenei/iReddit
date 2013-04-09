@@ -19,14 +19,14 @@
 
 @interface CreateMessage : UIViewController <NSURLConnectionDataDelegate, GIDAAlertViewDelegate>
 -(void)newCaptcha;
-@property (retain, nonatomic) id<CreateMessageDelegate> delegate;
-@property (retain, nonatomic) NSString *subject;
-@property (retain, nonatomic) NSString *to;
-@property (retain, nonatomic) IBOutlet UILabel *toLabel;
-@property (retain, nonatomic) IBOutlet UILabel *subjectLabel;
-@property (retain, nonatomic) IBOutlet UITextField *subjectField;
-@property (retain, nonatomic) IBOutlet UITextField *toField;
-@property (retain, nonatomic) IBOutlet UITextView *body;
+@property (strong, nonatomic) id<CreateMessageDelegate> delegate;
+@property (strong, nonatomic) NSString *subject;
+@property (strong, nonatomic) NSString *to;
+@property (strong, nonatomic) IBOutlet UILabel *toLabel;
+@property (strong, nonatomic) IBOutlet UILabel *subjectLabel;
+@property (strong, nonatomic) IBOutlet UITextField *subjectField;
+@property (strong, nonatomic) IBOutlet UITextField *toField;
+@property (strong, nonatomic) IBOutlet UITextView *body;
 
 @end
 

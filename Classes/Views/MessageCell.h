@@ -12,10 +12,10 @@
 @interface MessageCell : UITableViewCell 
 + (float)tableView:(UITableView *)aTableView rowHeightForObject:(RedditMessage *)aMessage;
 
-@property (nonatomic,retain) RedditMessage *message;
-@property (nonatomic,retain) UILabel *fromLabel;
-@property (nonatomic,retain) UILabel *subjectLabel;
-@property (nonatomic,retain) UILabel *bodyLabel;
-@property (nonatomic,retain) UILabel *dateLabel;
+@property (nonatomic,strong) RedditMessage *message;
+@property (nonatomic,strong) UILabel *fromLabel;
+@property (nonatomic,strong) UILabel *subjectLabel;
+@property (nonatomic,strong) UILabel *bodyLabel;
+@property (nonatomic,strong) UILabel *dateLabel;
 
 @end

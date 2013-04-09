@@ -17,6 +17,6 @@
 }
 
 - (void)setCommentCount:(unsigned)aCount;
-@property (nonatomic, retain) Story *story;
+@property (nonatomic, strong) Story *story;
 
 @end

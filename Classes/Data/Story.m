@@ -38,7 +38,7 @@ NSMutableDictionary *storyDictionary;
 
 + (Story *)storyWithDictionary:(NSDictionary *)dict inReddit:(id)reddit
 {			
-	Story *aStory = [[[Story alloc] init] autorelease];
+	Story *aStory = [[Story alloc] init];
 
 	aStory.title = (NSString *)[dict objectForKey:@"title"];
 	aStory.author = (NSString *)[dict objectForKey:@"author"];
@@ -161,22 +161,6 @@ NSMutableDictionary *storyDictionary;
 	return [NSString stringWithFormat:@"%@ - %@ %d", [super description], self.identifier, self.visited];
 }
 
-- (void)dealloc
-{	
-	[author release];
-	[domain release];
-	[identifier release];
-	[name release];
-	[subreddit release];
-	[URL release];
-	[kind release];
-	[thumbnailURL release];
-	[created release];
-	[title release];
-	[commentID release];
-
-	[super dealloc];
-}
 
 @end
 

@@ -20,9 +20,9 @@
   //  UIButton    *virtualAccessory;
 }
 + (float)tableView:(UITableView *)aTableView rowHeightForObject:(Story *)aStory;
-@property (nonatomic,retain) Story *story;
-@property (nonatomic,retain) UILabel *storyTitleView;
-@property (nonatomic,retain) UILabel *storyDescriptionView;
-@property (nonatomic,retain) UIImageView *storyImage;
+@property (nonatomic,strong) Story *story;
+@property (nonatomic,strong) UILabel *storyTitleView;
+@property (nonatomic,strong) UILabel *storyDescriptionView;
+@property (nonatomic,strong) UIImageView *storyImage;
 
 @end

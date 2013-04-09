@@ -134,17 +134,6 @@
 	secondaryDescriptionView.frame = CGRectMake(labelRect.origin.x, CGRectGetHeight(contentRect) - 24.0, labelRect.size.width, 16);
 }
 
-- (void)dealloc 
-{
-	[story release];
-	[storyTitleView release];
-	[storyDescriptionView release];
-	
-	if (storyImage)
-		[storyImage release];
-	
-    [super dealloc];
-}
 
 - (void)setHighlighted:(BOOL)selected animated:(BOOL)animated
 {
@@ -167,8 +156,7 @@
 
 - (void)setStory:(Story *)aStory 
 {		
-	[story autorelease];
-	story = [aStory retain];
+	story = aStory;
 
 	if (!story)
 	{

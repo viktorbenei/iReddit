@@ -12,10 +12,10 @@
 #import "Constants.h"
 
 @interface LoginViewController () 
-@property (nonatomic, retain) UITableView *tableView;
-@property (nonatomic, retain) NSArray *dataSource;
-@property (nonatomic, retain) NSArray *headers;
-@property (nonatomic, retain) UINavigationBar *navigationBar;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) NSArray *dataSource;
+@property (nonatomic, strong) NSArray *headers;
+@property (nonatomic, strong) UINavigationBar *navigationBar;
 @end
 
 @implementation LoginViewController
@@ -23,7 +23,7 @@
 @synthesize delegate, context;
 
 + (void)presentWithDelegate:(id <LoginViewControllerDelegate>)aDelegate context:(id)aContext {
-	LoginViewController *controller = [[[self alloc] init] autorelease];
+	LoginViewController *controller = [[self alloc] init];
 	
 	controller.delegate = aDelegate;
 	controller.context = aContext;
@@ -35,11 +35,8 @@
 }
 
 - (void)dealloc {
-	self.delegate = nil;
-	self.context = nil;
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 
-	[super dealloc];
 }
 
 - (void)loadView {
@@ -48,19 +45,19 @@
 	self.title = @"Login";
 	self.navigationController.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
     
-    self.navigationBar = [[[UINavigationBar alloc] init] autorelease];
+    self.navigationBar = [[UINavigationBar alloc] init];
 	
 	[self.navigationBar sizeToFit];
 	
 	UINavigationItem *item = nil;
-    item = [[[UINavigationItem alloc] initWithTitle:@"Login"] autorelease];
+    item = [[UINavigationItem alloc] initWithTitle:@"Login"];
 
 	self.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
 	
 	[self.navigationBar pushNavigationItem:item animated:NO];
     [self.view addSubview:_navigationBar];
-	self.tableView = [[[UITableView alloc] initWithFrame:CGRectMake(0.0, 44.0, self.view.bounds.size.width, self.view.bounds.size.height - 44.0)
-                                                   style:UITableViewStyleGrouped] autorelease];
+	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0.0, 44.0, self.view.bounds.size.width, self.view.bounds.size.height - 44.0)
+                                                   style:UITableViewStyleGrouped];
 	self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	self.tableView.backgroundColor = [UIColor colorWithRed:229.0/255.0 green:238.0/255.0 blue:1 alpha:1];
     self.tableView.delegate = self;
@@ -72,7 +69,7 @@
 	
 	[self.tableView addSubview:cancelButton];
 	
-	loginButton = [[UIButton buttonWithType:UIButtonTypeRoundedRect] retain];
+	loginButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
 	loginButton.frame = CGRectMake(CGRectGetMaxX(cancelButton.frame) + 10.0, 150.0, ([[UIScreen mainScreen] applicationFrame].size.width -30.0) / 2.0, 40.0);
 	[loginButton setTitle:@"Login" forState:UIControlStateNormal];
 	[loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
@@ -128,7 +125,7 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     id cell = [tableView dequeueReusableCellWithIdentifier:@"settings"];
     if (!cell) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"settings"] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"settings"];
     }
     
     [cell setAccessoryView:nil];
@@ -141,7 +138,6 @@
         [cell setAccessoryView:switchview];
         [switchview addTarget:self action:@selector(valueChange:) forControlEvents:UIControlEventValueChanged];
         
-        [switchview release];
     } else {
         if ([cellData[@"type"] isEqualToString:@"check"]) {
             if ([cellData[@"value"] boolValue]) {
@@ -164,7 +160,6 @@
                     [textField setSecureTextEntry:YES];
                 }
                 [cell setAccessoryView:textField];
-                [textField release];
             }
         }
     }

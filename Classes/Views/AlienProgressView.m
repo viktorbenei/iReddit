@@ -98,13 +98,6 @@
 	return isAnimating;
 }
 
-- (void)dealloc 
-{
-	[imageView release];
-	[images release];
-
-    [super dealloc];
-}
 
 
 @end

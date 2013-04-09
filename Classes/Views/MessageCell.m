@@ -71,8 +71,7 @@
 
 - (void)setMessage:(RedditMessage *)aMessage 
 {		
-	[message autorelease];
-	message = [aMessage retain];
+	message = aMessage;
 	
 	if (!message)
 	{
@@ -157,13 +156,8 @@
 
 - (void)dealloc 
 {
-	self.fromLabel = nil;
-	self.subjectLabel = nil;
-	self.bodyLabel = nil;
 	self.message = nil;
-	self.dateLabel = nil;
 
-    [super dealloc];
 }
 
 

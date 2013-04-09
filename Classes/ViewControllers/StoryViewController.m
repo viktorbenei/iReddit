@@ -47,9 +47,9 @@
 	UIImage *voteUpImage = [UIImage imageNamed:@"voteUp.png"];
 	UIImage *voteDownImage = [UIImage imageNamed:@"voteDown.png"];
 	
-	[items addObject:[[[UIBarButtonItem alloc] initWithImage:voteUpImage style:UIBarButtonItemStylePlain target:self action:@selector(voteUp:)] autorelease]];
+	[items addObject:[[UIBarButtonItem alloc] initWithImage:voteUpImage style:UIBarButtonItemStylePlain target:self action:@selector(voteUp:)]];
 	
-	scoreItem = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+	scoreItem = [UIButton buttonWithType:UIButtonTypeCustom];
 	scoreItem.titleLabel.font = [UIFont boldSystemFontOfSize:18.0];
 	scoreItem.showsTouchWhenHighlighted = NO;
 	scoreItem.adjustsImageWhenHighlighted = NO;
@@ -58,10 +58,10 @@
 	
 	scoreItem.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
 	
-	[items addObject:[[[UIBarButtonItem alloc] initWithCustomView:scoreItem] autorelease]];
-	[items addObject:[[[UIBarButtonItem alloc] initWithImage:voteDownImage style:UIBarButtonItemStylePlain target:self action:@selector(voteDown:)] autorelease]];
+	[items addObject:[[UIBarButtonItem alloc] initWithCustomView:scoreItem]];
+	[items addObject:[[UIBarButtonItem alloc] initWithImage:voteDownImage style:UIBarButtonItemStylePlain target:self action:@selector(voteDown:)]];
 	
-	[items addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+	[items addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
     
 	if (!isForComments)
 	{
@@ -74,18 +74,18 @@
         
 		commentCountItem.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
 		
-		[items addObject:[[[UIBarButtonItem alloc] initWithCustomView:commentCountItem] autorelease]];
+		[items addObject:[[UIBarButtonItem alloc] initWithCustomView:commentCountItem]];
 		
-		[items addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"commentBubble.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showComments:)] autorelease]];
+		[items addObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"commentBubble.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showComments:)]];
 	}
 	else
 	{
-		[items addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemBookmarks target:self action:@selector(showStory:)] autorelease]];
+		[items addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemBookmarks target:self action:@selector(showStory:)]];
 	}
 	
 	self.toggleButtonItem = [items lastObject];
     
-	[items addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+	[items addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
 	if (!moreButtonItem)
 		moreButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share:)];
 	[items addObject:moreButtonItem];
@@ -119,12 +119,12 @@
 	
 	segmentedControl.tintColor = self.navigationController.navigationBar.tintColor;
     
-	UIBarButtonItem *segmentBarItem = [[[UIBarButtonItem alloc] initWithCustomView:segmentedControl] autorelease];
+	UIBarButtonItem *segmentBarItem = [[UIBarButtonItem alloc] initWithCustomView:segmentedControl];
 	self.navigationItem.rightBarButtonItem = segmentBarItem;
     
 	CGRect navBarFrame = self.navigationController.navigationBar.frame;
 	
-	UILabel *titleView = [[[UILabel alloc] initWithFrame:CGRectMake(0, 2, navBarFrame.size.height > 40 ? 120 : 280, CGRectGetHeight(navBarFrame) - 4.0)] autorelease];
+	UILabel *titleView = [[UILabel alloc] initWithFrame:CGRectMake(0, 2, navBarFrame.size.height > 40 ? 120 : 280, CGRectGetHeight(navBarFrame) - 4.0)];
 	self.navigationItem.titleView = titleView;
 	
 	[titleView setBackgroundColor:[UIColor clearColor]];
@@ -145,7 +145,7 @@
 	[titleView setTextAlignment:NSTextAlignmentCenter];
 	[titleView setAdjustsFontSizeToFitWidth:YES];
 	
-	self.view = [[[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame] ] autorelease];
+	self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame] ];
 	self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	
 	webview = [[RedditWebView alloc] initWithFrame:self.view.bounds];
@@ -174,8 +174,7 @@
 	if (aStory == story)
 		return;
     
-	[story release];
-	story = [aStory retain];
+	story = aStory;
 	
 	if (!story)
 		return;
@@ -216,13 +215,12 @@
 	{
 		self.toggleButtonItem.enabled = NO;
 		
-		aStory = [[[Story alloc] init] autorelease];
+		aStory = [[Story alloc] init];
 		aStory.identifier = storyID;
 		aStory.commentID = commentID;
 		aStory.URL = aURL;
         
 		self.story = aStory;
-        
 		[self loadStoryComments];
 	}
 }
@@ -332,7 +330,6 @@
 	[[self navigationController] pushViewController:commentsController animated:YES];
     
 	[commentsController setStory:story];
-	[commentsController release];
 }
 
 - (IBAction)showStory:(id)sender
@@ -346,14 +343,12 @@
 	[[self navigationController] pushViewController:storyController animated:YES];
 	
 	[storyController setStory:story];
-	[storyController release];
 }
 
 
 - (IBAction)share:(id)sender {
 	if (currentSheet) {
 		[currentSheet dismissWithClickedButtonIndex:currentSheet.cancelButtonIndex animated:YES];
-		[currentSheet release];
 		currentSheet = nil;
 	} else {
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"usePocket"] boolValue]) {
@@ -386,13 +381,11 @@
 
 - (void)actionSheetCancel:(id)sender
 {
-	[currentSheet release];
 	currentSheet = nil;
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-	[currentSheet release];
 	currentSheet = nil;
 	NSString *url = story.URL;
 	if (isForComments && story.commentsURL)
@@ -422,17 +415,16 @@
                                     isHTML:NO];
                 
                 [self presentViewController:controller animated:YES completion:nil];
-                [controller release];
                 
                 //[[Beacon shared] startSubBeaconWithName:@"emailedStory" timeSession:NO];
             }
             else
             {
-                [[[[UIAlertView alloc] initWithTitle:@"E-mail Error"
+                [[[UIAlertView alloc] initWithTitle:@"E-mail Error"
                                              message:@"Your device is not configured to send mail. Update your mail information in the Settings application and try again."
                                             delegate:nil
                                    cancelButtonTitle:@"OK"
-                                   otherButtonTitles:nil] autorelease] show];
+                                   otherButtonTitles:nil] show];
             }
             break;
         case 1:
@@ -482,13 +474,13 @@
 
 static NSString * encodeByAddingPercentEscapes(NSString *input) {
     NSString *encodedValue =
-    (NSString *)CFURLCreateStringByAddingPercentEscapes(
+    (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
                                                         kCFAllocatorDefault,
                                                         (CFStringRef)input,
                                                         NULL,
                                                         (CFStringRef)@"!*'();:@&=+$,/?%#[]",
-                                                        kCFStringEncodingUTF8);
-    return [encodedValue autorelease];
+                                                        kCFStringEncodingUTF8));
+    return encodedValue;
 }
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
@@ -507,11 +499,11 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     
     if (!username || [username isEqual:@""])
     {
-        [[[[UIAlertView alloc] initWithTitle:@"Instapaper Error"
+        [[[UIAlertView alloc] initWithTitle:@"Instapaper Error"
                                      message:@"You must provide an Instapaper username to save stories with Instapaper. You can add a username in the iReddit settings."
                                     delegate:nil
                            cancelButtonTitle:@"OK"
-                           otherButtonTitles:nil] autorelease] show];
+                           otherButtonTitles:nil] show];
         return;
     }
     
@@ -550,7 +542,6 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
                     GIDAAlertView *gav = [[GIDAAlertView alloc] initWithCheckMarkAndMessage:@"Saved to Pocket"];
                     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
                     [gav presentAlertFor:1.07];
-                    [gav release];
                     // the URL was saved successfully
                 }
             }];
@@ -677,8 +668,6 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     [super viewWillDisappear:animated];
     [webview stopLoading];
     [webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-    [self.webview setDelegate:nil];
-    [self.webview removeFromSuperview];
 
     if (![self.navigationController.topViewController isKindOfClass:[StoryViewController class]])
     {
@@ -687,8 +676,12 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
         self.webview.frame = frame;
         
         [self.navigationController setToolbarHidden:YES animated:YES];
+        [webview setDelegate:nil];
+        [webview removeFromSuperview];
+        [[NSURLCache sharedURLCache] removeAllCachedResponses];
+    } else {
+        [self loadStory];
     }
-    [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -704,16 +697,8 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
 
 -(void)viewDidUnload {
     [super viewDidUnload];
-    [currentSheet release];
-    [moreButtonItem release];
     [webview setDelegate:nil];
     [webview removeFromSuperview];
-    [webview release];
-    [story release];
-    [loadingView release];
-    [segmentedControl release];
-    [scoreItem release];
-    [commentCountItem release];
     self.webview = nil;
     self.story = nil;
     self.scoreItem = nil;

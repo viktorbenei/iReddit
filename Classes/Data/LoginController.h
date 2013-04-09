@@ -16,8 +16,8 @@
     BOOL isLoggingIn;
 }
 
-@property (nonatomic, retain) NSString *modhash;
-@property (nonatomic, retain) NSDate *lastLoginTime;
+@property (nonatomic, strong) NSString *modhash;
+@property (nonatomic, strong) NSDate *lastLoginTime;
 
 + (id)sharedLoginController;
 

@@ -38,10 +38,10 @@ typedef enum {
 @end
 
 @interface GIDAAlertView : UIAlertView <NSURLConnectionDataDelegate, UIAlertViewDelegate>
-@property (nonatomic, retain) NSString *identifier;
+@property (nonatomic, strong) NSString *identifier;
 @property (readonly) GIDAAlertViewType type;
 @property (readonly) BOOL accepted;
-@property (nonatomic, retain) id <GIDAAlertViewDelegate> gavdelegate;
+@property (nonatomic, strong) id <GIDAAlertViewDelegate> gavdelegate;
 
 - (id)initWithMessage:(NSString *)someMessage andAlertImage:(UIImage *)someImage;
 - (id) initWithSpinnerAndMessage:(NSString *)message;

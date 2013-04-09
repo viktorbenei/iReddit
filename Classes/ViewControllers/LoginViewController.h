@@ -23,8 +23,8 @@
 	UILabel *statusLabel;
 }
 
-@property (nonatomic, retain) id <LoginViewControllerDelegate>delegate;
-@property (nonatomic, retain) id context;
+@property (nonatomic, strong) id <LoginViewControllerDelegate>delegate;
+@property (nonatomic, strong) id context;
 
 + (void)presentWithDelegate:(id <LoginViewControllerDelegate>)aDelegate context:(id)aContext;
 

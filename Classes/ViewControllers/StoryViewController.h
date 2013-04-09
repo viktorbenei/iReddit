@@ -28,14 +28,14 @@
 	Story	*story;
 }
 
-@property (nonatomic, retain) IBOutlet UIWebView			*webview;
-@property (nonatomic, retain) IBOutlet UIButton				*scoreItem;
-@property (nonatomic, retain) IBOutlet UIButton				*commentCountItem;
-@property (nonatomic, retain) IBOutlet UIBarButtonItem		*toggleButtonItem;	
-@property (nonatomic, retain) IBOutlet UISegmentedControl	*segmentedControl;
-@property (nonatomic, retain) IBOutlet AlienProgressView	*loadingView;
+@property (nonatomic, strong) IBOutlet UIWebView			*webview;
+@property (nonatomic, strong) IBOutlet UIButton				*scoreItem;
+@property (nonatomic, strong) IBOutlet UIButton				*commentCountItem;
+@property (nonatomic, strong) IBOutlet UIBarButtonItem		*toggleButtonItem;	
+@property (nonatomic, strong) IBOutlet UISegmentedControl	*segmentedControl;
+@property (nonatomic, strong) IBOutlet AlienProgressView	*loadingView;
 
-@property (nonatomic, retain) Story *story;
+@property (nonatomic, strong) Story *story;
 
 - (void)setStoryID:(NSString *)storyID commentID:(NSString *)commentID URL:(NSString *)aURL;
 - (id)initForComments;

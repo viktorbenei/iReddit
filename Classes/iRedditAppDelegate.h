@@ -34,8 +34,8 @@
 
 - (void)showRandomStory;
 
-@property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) UINavigationController *navController;
-@property (nonatomic, retain) MessageDataSource *messageDataSource;
+@property (nonatomic, strong) IBOutlet UIWindow *window;
+@property (nonatomic, strong) UINavigationController *navController;
+@property (nonatomic, strong) MessageDataSource *messageDataSource;
 
 @end

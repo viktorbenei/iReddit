@@ -14,12 +14,12 @@
 #import "RedditWebView.h"
 
 @interface MessageViewController ()
-@property (nonatomic, retain) MessageDataSource *dataSource;
-@property (nonatomic, retain) UINavigationBar *navigationBar;
-@property (nonatomic, retain) UITableView *tableView;
-@property (retain) NSMutableData* responseData;
-@property (retain, nonatomic) NSURLConnection *connection;
-@property (retain, nonatomic) CreateMessage *controller;
+@property (nonatomic, strong) MessageDataSource *dataSource;
+@property (nonatomic, strong) UINavigationBar *navigationBar;
+@property (nonatomic, strong) UITableView *tableView;
+@property (strong) NSMutableData* responseData;
+@property (strong, nonatomic) NSURLConnection *connection;
+@property (strong, nonatomic) CreateMessage *controller;
 @end
 
 @implementation MessageViewController
@@ -34,7 +34,7 @@
 	
 	//self.variableHeightRows = YES;
 
-	self.tableView = [[[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain] autorelease];
+	self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
 	self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     self.tableView.dataSource = self;
@@ -42,7 +42,7 @@
 	
 	[self.view addSubview:self.tableView];
 	
-	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(compose:)] autorelease];
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(compose:)];
     [self messageCountChanged:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageCountChanged:) name:MessageCountDidChangeNotification object:nil];
 }
@@ -75,7 +75,7 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     id cell = [tableView dequeueReusableCellWithIdentifier:@"message"];
     if (!cell) {
-        cell = [[[MessageCell alloc] init] autorelease];
+        cell = [[MessageCell alloc] init];
     }
     [(MessageCell *)cell setMessage:[_dataSource messageAtIndex:indexPath.row]];
     return cell;
@@ -86,7 +86,7 @@
     _controller.subject = @"";
     _controller.to = @"";
     _controller.delegate = self;
-    UINavigationController* navController = [[[UINavigationController alloc] init] autorelease];
+    UINavigationController* navController = [[UINavigationController alloc] init];
     navController.navigationBar.tintColor = self.navigationBar.tintColor;
     _controller.title = @"New Message";
     [navController pushViewController:_controller animated:NO];
@@ -99,7 +99,7 @@
     _controller.subject = [NSString stringWithFormat:@"RE: %@", message.subject];
     _controller.to = message.author;
     _controller.delegate = self;
-    UINavigationController* navController = [[[UINavigationController alloc] init] autorelease];
+    UINavigationController* navController = [[UINavigationController alloc] init];
     navController.navigationBar.tintColor = self.navigationBar.tintColor;
     [navController pushViewController:_controller animated:NO];
     _controller.title = _controller.subject;
@@ -135,7 +135,7 @@
     
 }
 -(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-    _responseData = [[NSMutableData data] retain];
+    _responseData = [NSMutableData data];
 }
 -(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
     [_responseData appendData:data];
@@ -145,35 +145,33 @@
     
     if([responseBody rangeOfString:@"error"].location != NSNotFound)
     {
-        [[[[UIAlertView alloc] initWithTitle:@"Error Sending Message"
+        [[[UIAlertView alloc] initWithTitle:@"Error Sending Message"
                                      message:@"Could not send your message at this time. Please try again later."
                                     delegate:nil
 						   cancelButtonTitle:@"OK"
-						   otherButtonTitles:nil] autorelease] show];
+						   otherButtonTitles:nil] show];
         [_controller newCaptcha];
     } else {
         [_controller dismissViewControllerAnimated:YES completion:nil];
     }
     
-    [responseBody release];
     
     _connection = nil;
 }
 -(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     _connection = nil;
     
-    [[[[UIAlertView alloc] initWithTitle:@"Error Sending Message" 
+    [[[UIAlertView alloc] initWithTitle:@"Error Sending Message" 
                            message:@"Could not send your message at this time. Please try again later." 
                            delegate:nil 
 						   cancelButtonTitle:@"OK" 
-						   otherButtonTitles:nil] autorelease] show];
+						   otherButtonTitles:nil] show];
 }
 
 // for the message composer!
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [super dealloc];
 }
 
 -(BOOL)shouldAutorotate {

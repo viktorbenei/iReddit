@@ -13,8 +13,8 @@
 #import "LoginController.h"
 
 @interface MessageDataSource ()
-@property (nonatomic, retain) NSMutableArray *items;
-@property (nonatomic, retain) NSMutableData  *receivedData;
+@property (nonatomic, strong) NSMutableArray *items;
+@property (nonatomic, strong) NSMutableData  *receivedData;
 @end
 
 @implementation MessageDataSource
@@ -24,7 +24,7 @@
 	if (self = [super init])
 	{
 		canLoadMore = YES;
-        _items = [[NSMutableArray array] retain];
+        _items = [NSMutableArray array];
 	}
 
 	return self;
@@ -38,8 +38,6 @@
 - (void)dealloc
 {	
 	[self cancel];	
-    [lastLoadedTime release];
-	[super dealloc];
 }
 
 - (BOOL)canLoadMore
@@ -86,8 +84,7 @@
 {
     isLoading = NO;
     isLoadingMore = NO;
-    [lastLoadedTime release];
-    lastLoadedTime = [[NSDate date] retain];
+    lastLoadedTime = [NSDate date];
 }
 
 - (void)didFailLoadWithError:(NSError*)error
@@ -137,7 +134,7 @@
 #pragma mark url request delegate
 -(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
     isLoading = YES;
-    _receivedData = [[NSMutableData data] retain];
+    _receivedData = [NSMutableData data];
 }
 -(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
     [_receivedData appendData:data];

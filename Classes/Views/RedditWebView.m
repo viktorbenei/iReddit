@@ -12,7 +12,7 @@
 #import "LoginViewController.h"
 
 @interface RedditWebView ()
-@property (nonatomic, retain) id<UIWebViewDelegate> realDelegate;
+@property (nonatomic, strong) id<UIWebViewDelegate> realDelegate;
 @end
 
 @implementation RedditWebView
@@ -49,7 +49,7 @@
 			*stringPtr = lastComponent;		
 				
 		if (storyID) 
-			return [[storyID retain] autorelease];
+			return storyID;
 	}
 	
 	return nil;
@@ -76,7 +76,7 @@
 
 - (void)setDelegate:(id)delegate
 {
-	_realDelegate = [delegate retain];
+	_realDelegate = delegate;
 }
 
 - (id)delegate
@@ -202,7 +202,6 @@
 	NSURL *url = [[NSURL alloc] initWithScheme:@"file" host:@"localhost" path:path];
 	NSURLRequest *request = [NSURLRequest requestWithURL:url];
 	
-	[url release];
 	
 	[self loadRequest:request];		
 }
@@ -227,17 +226,13 @@
 	NSURL *url = [[NSURL alloc] initWithScheme:@"file" host:@"localhost" path:path];
 	NSURLRequest *request = [NSURLRequest requestWithURL:url];
 	
-	[url release];
 	
 	[self loadRequest:request];	
 }
 
 - (void)dealloc 
 {
-    [_realDelegate release];
-    _realDelegate = nil;
 	super.delegate = nil;
-    [super dealloc];
 }
 
 @end

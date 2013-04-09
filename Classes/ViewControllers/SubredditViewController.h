@@ -22,7 +22,7 @@
     NSIndexPath         *savedLocation;
 
 }
-@property (nonatomic, retain) SubredditData *dataSource;
+@property (nonatomic, strong) SubredditData *dataSource;
 - (id)initWithField:(NSDictionary *)anItem;
 
 @end

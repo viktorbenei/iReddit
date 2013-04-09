@@ -34,7 +34,7 @@ iRedditAppDelegate *sharedAppDelegate;
 {
     int cacheSizeMemory = 4*1024*1024; // 4MB
     int cacheSizeDisk = 32*1024*1024; // 32MB
-    NSURLCache *sharedCache = [[[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"] autorelease];
+    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
     [NSURLCache setSharedURLCache:sharedCache];
 
 	sharedAppDelegate = self;
@@ -61,7 +61,7 @@ iRedditAppDelegate *sharedAppDelegate;
      ];
     self.window.frame = [[UIScreen mainScreen] bounds];
 	
-    self.navController = [[[UINavigationController alloc] initWithRootViewController:[[[RootViewController alloc] init] autorelease]] autorelease];
+    self.navController = [[UINavigationController alloc] initWithRootViewController:[[RootViewController alloc] init]];
 	self.navController.delegate = (id <UINavigationControllerDelegate>)self;
 	navController.toolbarHidden = NO;
     navController.navigationBar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
@@ -71,8 +71,8 @@ iRedditAppDelegate *sharedAppDelegate;
 	NSString *initialRedditURL = [[NSUserDefaults standardUserDefaults] stringForKey:initialRedditURLKey];
 	NSString *initialRedditTitle = [[NSUserDefaults standardUserDefaults] stringForKey:initialRedditTitleKey];
 	
-	SubredditViewController *controller = [[[SubredditViewController alloc] initWithField:
-                                            [NSDictionary dictionaryWithObjectsAndKeys:initialRedditTitle, @"text", initialRedditURL, @"url", nil]] autorelease];
+	SubredditViewController *controller = [[SubredditViewController alloc] initWithField:
+                                            [NSDictionary dictionaryWithObjectsAndKeys:initialRedditTitle, @"text", initialRedditURL, @"url", nil]];
 	[navController pushViewController:controller animated:NO];
     
 	
@@ -116,7 +116,6 @@ iRedditAppDelegate *sharedAppDelegate;
     NSString *text = [[url host] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     alertView = [[UIAlertView alloc] initWithTitle:@"Text" message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [alertView show];
-    [alertView release];
     return YES;
 }
 - (void)didEndLogin:(NSNotification *)notif
@@ -126,20 +125,18 @@ iRedditAppDelegate *sharedAppDelegate;
         messageDataSource = [[MessageDataSource alloc] init];
         [messageDataSource loadMore:NO];
         
-        messageTimer = [[NSTimer scheduledTimerWithTimeInterval:60.0
+        messageTimer = [NSTimer scheduledTimerWithTimeInterval:60.0
                                                          target:self
                                                        selector:@selector(reloadMessages)
                                                        userInfo:nil
-                                                        repeats:YES] retain];
+                                                        repeats:YES];
     }
     else
     {
         [messageDataSource cancel];
-        [messageDataSource release];
         messageDataSource = nil;
         
         [messageTimer invalidate];
-        [messageTimer release];
         messageTimer = nil;
     }
 }
@@ -180,14 +177,9 @@ iRedditAppDelegate *sharedAppDelegate;
 
 - (void)dealloc
 {
-	self.navController = nil;
-	self.messageDataSource = nil;
 	
     [messageTimer invalidate];
-    [messageTimer release];
     
-	[window release];
-    [super dealloc];
 }
 
 - (void)showRandomStory
@@ -235,10 +227,8 @@ iRedditAppDelegate *sharedAppDelegate;
 - (void)dismissRandomViewController
 {
 	
-	[messageDataSource release];
 	messageDataSource = nil;
 	
-	[randomController release];
 	randomController = nil;
 }
 
@@ -246,7 +236,6 @@ iRedditAppDelegate *sharedAppDelegate;
 {
 	if (![navigationController.viewControllers containsObject:randomController])
 	{
-		[randomController release];
 		randomController = nil;
 	}
 }
