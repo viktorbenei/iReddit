@@ -196,8 +196,11 @@
 	
 	UIColor *titleColor = story.visited ? [UIColor colorWithRed:85.0/255.0 green:26.0/255.0 blue:139.0/255.0 alpha:1.0] : [UIColor blueColor];
 	[storyTitleView setTextColor:titleColor];
-	
+	story.title = [story.title stringByReplacingOccurrencesOfString:@"&lt;" withString:@"<"];
+    story.title = [story.title stringByReplacingOccurrencesOfString:@"&gt;" withString:@">"];
+    story.title = [story.title stringByReplacingOccurrencesOfString:@"&amp;" withString:@"&"];
 	[storyTitleView setText:story.title];
+    
 	[storyTitleView setNeedsDisplay];
 	
 	[storyDescriptionView setText:[NSString stringWithFormat:@"%@", story.domain]];
