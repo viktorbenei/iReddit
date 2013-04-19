@@ -24,7 +24,9 @@
 
 - (void)dealloc
 {
-    NSLog(@"SUBREDDIT DEALLOC");
+    _tableView    = nil;
+    _updatingView = nil;
+    _loadingView  = nil;
 	//[self.dataSource cancel];
 }
 

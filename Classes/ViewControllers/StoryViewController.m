@@ -663,26 +663,7 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
 }
 -(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 }
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    [webview stopLoading];
-    [webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
 
-    if (![self.navigationController.topViewController isKindOfClass:[StoryViewController class]])
-    {
-        CGRect frame = self.webview.frame;
-        frame.size.height += self.navigationController.toolbar.frame.size.height;
-        self.webview.frame = frame;
-        
-        [self.navigationController setToolbarHidden:YES animated:YES];
-        [webview setDelegate:nil];
-        [webview removeFromSuperview];
-        [[NSURLCache sharedURLCache] removeAllCachedResponses];
-    } else {
-        [self loadStory];
-    }
-}
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -697,8 +678,6 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
 
 -(void)viewDidUnload {
     [super viewDidUnload];
-    [webview setDelegate:nil];
-    [webview removeFromSuperview];
     self.webview = nil;
     self.story = nil;
     self.scoreItem = nil;
@@ -706,6 +685,12 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     self.toggleButtonItem = nil;
     self.segmentedControl = nil;
     self.loadingView = nil;
+    
+    [webview stopLoading];
+    [webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    
+    [webview setDelegate:nil];
+    [webview removeFromSuperview];
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
