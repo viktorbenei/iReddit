@@ -93,10 +93,10 @@
 		ADFB549B0FEAC6FB0067CEC1 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ADFB549A0FEAC6FB0067CEC1 /* AddressBook.framework */; };
 		ADFB556C0FEACC5C0067CEC1 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = ADFB556B0FEACC5C0067CEC1 /* Default.png */; };
 		BE0910F016F7C47900EE6296 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0910EF16F7C47900EE6296 /* Default-568h@2x.png */; };
-		BE27743716F7CF59009D445C /* PocketAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27741916F7CF59009D445C /* PocketAPI.m */; };
-		BE27743816F7CF59009D445C /* PocketAPILogin.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27741B16F7CF59009D445C /* PocketAPILogin.m */; };
-		BE27743916F7CF59009D445C /* PocketAPIOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27741D16F7CF59009D445C /* PocketAPIOperation.m */; };
-		BE27743A16F7CF59009D445C /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27742016F7CF59009D445C /* SFHFKeychainUtils.m */; };
+		BE27743716F7CF59009D445C /* PocketAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27741916F7CF59009D445C /* PocketAPI.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		BE27743816F7CF59009D445C /* PocketAPILogin.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27741B16F7CF59009D445C /* PocketAPILogin.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		BE27743916F7CF59009D445C /* PocketAPIOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27741D16F7CF59009D445C /* PocketAPIOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		BE27743A16F7CF59009D445C /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BE27742016F7CF59009D445C /* SFHFKeychainUtils.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		BE27744316F7CF99009D445C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE27744216F7CF99009D445C /* Security.framework */; };
 		BE7DBCDD170455E70012B6D1 /* libDTCoreText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7DBCD3170454A50012B6D1 /* libDTCoreText.a */; };
 		BE7DBCDF170455FA0012B6D1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7DBCDE170455FA0012B6D1 /* ImageIO.framework */; };
