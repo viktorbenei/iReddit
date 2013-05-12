@@ -280,9 +280,8 @@
         [[LoginController sharedLoginController] logOut];
         [[LoginController sharedLoginController] loginWithUsername:[defaults stringForKey:redditUsernameKey] password:[defaults stringForKey:redditPasswordKey]];
     }
-    
-    
 }
+
 -(BOOL)shouldAutorotate {
     return YES;
 }

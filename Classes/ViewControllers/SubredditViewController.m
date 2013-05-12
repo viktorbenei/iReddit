@@ -300,9 +300,15 @@
 }
 -(void)loadMore {
     [_dataSource loadMore:YES];
-    [_tableView reloadData];
     _gettingMore = NO;
     [_updatingView setHidden:YES];
+    [_tableView reloadData];
+}
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    if([self isMovingFromParentViewController]) {
+        _dataSource = nil;
+    }
 }
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint offset = scrollView.contentOffset;

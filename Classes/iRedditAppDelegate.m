@@ -27,13 +27,13 @@ iRedditAppDelegate *sharedAppDelegate;
 
 @synthesize window, navController, messageDataSource;
 -(void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
-    NSLog(@"Memory Warning");
+    NSLog(@"Memory Warning!!!!!!");
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {
     int cacheSizeMemory = 4*1024*1024; // 4MB
-    int cacheSizeDisk = 32*1024*1024; // 32MB
+    int cacheSizeDisk = 5*1024*1024; // 32MB
     NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
     [NSURLCache setSharedURLCache:sharedCache];
 

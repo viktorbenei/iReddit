@@ -15,27 +15,7 @@
 
 
 @interface StoryViewController : UIViewController <UIWebViewDelegate>
-{
-	BOOL		isForComments;
-	UIWebView	*webview;
-	UIButton	*scoreItem;
-	UIButton	*commentCountItem;
-	UIBarButtonItem	*toggleButtonItem;
-	UIBarButtonItem *moreButtonItem;
-	UISegmentedControl *segmentedControl;
-	AlienProgressView  *loadingView;
-	UIActionSheet *currentSheet;
-	Story	*story;
-}
-
-@property (nonatomic, strong) IBOutlet UIWebView			*webview;
-@property (nonatomic, strong) IBOutlet UIButton				*scoreItem;
-@property (nonatomic, strong) IBOutlet UIButton				*commentCountItem;
-@property (nonatomic, strong) IBOutlet UIBarButtonItem		*toggleButtonItem;	
-@property (nonatomic, strong) IBOutlet UISegmentedControl	*segmentedControl;
-@property (nonatomic, strong) IBOutlet AlienProgressView	*loadingView;
-
-@property (nonatomic, strong) Story *story;
+@property (nonatomic,strong) Story *story;
 
 - (void)setStoryID:(NSString *)storyID commentID:(NSString *)commentID URL:(NSString *)aURL;
 - (id)initForComments;

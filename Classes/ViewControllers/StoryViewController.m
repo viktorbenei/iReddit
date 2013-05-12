@@ -18,11 +18,23 @@
 #import "RedditWebView.h"
 #import "PocketAPI.h"
 
-@interface StoryViewController ()
+@interface StoryViewController () {
+    BOOL		isForComments;
+}
+
+@property (strong) UIWebView		  *webview;
+@property (weak)   UIButton			  *scoreItem;
+@property (weak)   UIButton			  *commentCountItem;
+@property (weak)   UIBarButtonItem	  *toggleButtonItem;
+@property (strong) UIBarButtonItem	  *moreButtonItem;
+@property (strong) UISegmentedControl *segmentedControl;
+@property (strong) AlienProgressView  *loadingView;
+@property (strong) UIActionSheet      *currentSheet;
+
 @end
 @implementation StoryViewController
 
-@synthesize story, scoreItem, commentCountItem, segmentedControl, loadingView, toggleButtonItem, webview;
+@synthesize story;
 
 - (id)initForComments
 {
@@ -33,14 +45,14 @@
 	
 	return self;
 }
-
-- (void)loadView
-{
-        
-	self.navigationController.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+-(void)viewDidLoad{
+    [super viewDidLoad];
+    
+    self.navigationItem.leftBarButtonItem.action = @selector(backButtonDidPressed:);
+    
+    self.navigationController.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
 	self.hidesBottomBarWhenPushed = NO;
     
-	[super loadView];
 	
 	NSMutableArray *items = [NSMutableArray array];
 	
@@ -49,16 +61,16 @@
 	
 	[items addObject:[[UIBarButtonItem alloc] initWithImage:voteUpImage style:UIBarButtonItemStylePlain target:self action:@selector(voteUp:)]];
 	
-	scoreItem = [UIButton buttonWithType:UIButtonTypeCustom];
-	scoreItem.titleLabel.font = [UIFont boldSystemFontOfSize:18.0];
-	scoreItem.showsTouchWhenHighlighted = NO;
-	scoreItem.adjustsImageWhenHighlighted = NO;
-	[scoreItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-	[scoreItem setTitleShadowColor:[UIColor blackColor] forState:UIControlStateNormal];
+	_scoreItem = [UIButton buttonWithType:UIButtonTypeCustom];
+	_scoreItem.titleLabel.font = [UIFont boldSystemFontOfSize:18.0];
+	_scoreItem.showsTouchWhenHighlighted = NO;
+	_scoreItem.adjustsImageWhenHighlighted = NO;
+	[_scoreItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+	[_scoreItem setTitleShadowColor:[UIColor blackColor] forState:UIControlStateNormal];
 	
-	scoreItem.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
+	_scoreItem.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
 	
-	[items addObject:[[UIBarButtonItem alloc] initWithCustomView:scoreItem]];
+	[items addObject:[[UIBarButtonItem alloc] initWithCustomView:_scoreItem]];
 	[items addObject:[[UIBarButtonItem alloc] initWithImage:voteDownImage style:UIBarButtonItemStylePlain target:self action:@selector(voteDown:)]];
 	
 	[items addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
@@ -66,15 +78,15 @@
 	if (!isForComments)
 	{
 		self.commentCountItem = [UIButton buttonWithType:UIButtonTypeCustom];
-		commentCountItem.titleLabel.font = [UIFont boldSystemFontOfSize:18.0];
-		commentCountItem.showsTouchWhenHighlighted = NO;
-		commentCountItem.adjustsImageWhenHighlighted = NO;
-		[commentCountItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-		[commentCountItem setTitleShadowColor:[UIColor blackColor] forState:UIControlStateNormal];
+		_commentCountItem.titleLabel.font = [UIFont boldSystemFontOfSize:18.0];
+		_commentCountItem.showsTouchWhenHighlighted = NO;
+		_commentCountItem.adjustsImageWhenHighlighted = NO;
+		[_commentCountItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+		[_commentCountItem setTitleShadowColor:[UIColor blackColor] forState:UIControlStateNormal];
         
-		commentCountItem.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
+		_commentCountItem.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
 		
-		[items addObject:[[UIBarButtonItem alloc] initWithCustomView:commentCountItem]];
+		[items addObject:[[UIBarButtonItem alloc] initWithCustomView:_commentCountItem]];
 		
 		[items addObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"commentBubble.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showComments:)]];
 	}
@@ -86,9 +98,9 @@
 	self.toggleButtonItem = [items lastObject];
     
 	[items addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
-	if (!moreButtonItem)
-		moreButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share:)];
-	[items addObject:moreButtonItem];
+	if (!_moreButtonItem)
+		_moreButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share:)];
+	[items addObject:_moreButtonItem];
     
 	[self setToolbarItems:items animated:NO];
 	
@@ -96,8 +108,8 @@
     
 	if ([viewControllers count] > 2 && [[viewControllers objectAtIndex:[viewControllers count] - 2] isKindOfClass:[StoryViewController class]])
 	{
-		commentCountItem.enabled = NO;
-		toggleButtonItem.enabled = NO;
+		_commentCountItem.enabled = NO;
+		_toggleButtonItem.enabled = NO;
 	}
     
 	NSArray *segmentItems = [NSArray arrayWithObjects:
@@ -107,19 +119,19 @@
 							 nil
 							 ];
 	
-	segmentedControl = [[UISegmentedControl alloc] initWithItems:segmentItems];
+	_segmentedControl = [[UISegmentedControl alloc] initWithItems:segmentItems];
 	
-	[segmentedControl setMomentary:YES];
-	[segmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
+	[_segmentedControl setMomentary:YES];
+	[_segmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
     
-	[segmentedControl setWidth:30.0 forSegmentAtIndex:0];
-	[segmentedControl setWidth:30.0 forSegmentAtIndex:1];
-	[segmentedControl setWidth:30.0 forSegmentAtIndex:2];
-	[segmentedControl addTarget:self action:@selector(segmentAction:) forControlEvents:UIControlEventValueChanged];
+	[_segmentedControl setWidth:30.0 forSegmentAtIndex:0];
+	[_segmentedControl setWidth:30.0 forSegmentAtIndex:1];
+	[_segmentedControl setWidth:30.0 forSegmentAtIndex:2];
+	[_segmentedControl addTarget:self action:@selector(segmentAction:) forControlEvents:UIControlEventValueChanged];
 	
-	segmentedControl.tintColor = self.navigationController.navigationBar.tintColor;
+	_segmentedControl.tintColor = self.navigationController.navigationBar.tintColor;
     
-	UIBarButtonItem *segmentBarItem = [[UIBarButtonItem alloc] initWithCustomView:segmentedControl];
+	UIBarButtonItem *segmentBarItem = [[UIBarButtonItem alloc] initWithCustomView:_segmentedControl];
 	self.navigationItem.rightBarButtonItem = segmentBarItem;
     
 	CGRect navBarFrame = self.navigationController.navigationBar.frame;
@@ -148,24 +160,24 @@
 	self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame] ];
 	self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	
-	webview = [[RedditWebView alloc] initWithFrame:self.view.bounds];
-	webview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-	webview.scalesPageToFit = YES;
+	_webview = [[RedditWebView alloc] initWithFrame:self.view.bounds];
+	_webview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+	_webview.scalesPageToFit = YES;
 	
-	[self.view addSubview:webview];
+	[self.view addSubview:_webview];
 	
-	webview.delegate = (id <UIWebViewDelegate>)self;
+	_webview.delegate = (id <UIWebViewDelegate>)self;
 	
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:showLoadingAlienKey])
 	{
-		loadingView = [[AlienProgressView alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.view.frame) - 111.0, CGRectGetHeight(self.view.frame) - 150.0, 101.0, 140.0)];
-		loadingView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin;
-		[loadingView setHidden:YES];
+		_loadingView = [[AlienProgressView alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.view.frame) - 111.0, CGRectGetHeight(self.view.frame) - 150.0, 101.0, 140.0)];
+		_loadingView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin;
+		[_loadingView setHidden:YES];
 		
-		[loadingView setBackgroundColor:[UIColor clearColor]];
-		[loadingView setOpaque:NO];
+		[_loadingView setBackgroundColor:[UIColor clearColor]];
+		[_loadingView setOpaque:NO];
 		
-		[self.view addSubview:loadingView];
+		[self.view addSubview:_loadingView];
 	}
 }
 
@@ -181,17 +193,17 @@
 	
 	story.visited = YES;
 	
-	[webview stopLoading];
+	[_webview stopLoading];
 	
-	if (commentCountItem)
+	if (_commentCountItem)
 		[self loadStory];
 	else
 		[self loadStoryComments];
     
-	[loadingView setHidden:NO];
-	[loadingView startAnimating];
+	[_loadingView setHidden:NO];
+	[_loadingView startAnimating];
     
-	if (commentCountItem)
+	if (_commentCountItem)
 		self.title = @"Story";
 	else
 		self.title = @"Comments";
@@ -227,12 +239,12 @@
 
 - (void)loadStory
 {
-	[webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:story.URL]]];
+	[_webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:story.URL]]];
 }
 
 - (void)loadStoryComments
 {
-	[webview loadRequest:
+	[_webview loadRequest:
 	 [NSURLRequest requestWithURL:
 	  [NSURL URLWithString:
 	   [NSString stringWithFormat:@"%@/comments/%@/%@", RedditBaseURLString, story.identifier, story.commentID]
@@ -243,21 +255,20 @@
 
 - (void)setScore:(int)score
 {
-	[scoreItem setTitle:[NSString stringWithFormat:@"%i", score] forState:UIControlStateNormal];
-	[scoreItem sizeToFit];
+	[_scoreItem setTitle:[NSString stringWithFormat:@"%i", score] forState:UIControlStateNormal];
+	[_scoreItem sizeToFit];
 	
 	if (story.likes)
-		[scoreItem setTitleColor:[UIColor colorWithRed:255.0/255.0 green:139.0/255.0 blue:96.0/255.0 alpha:1.0] forState:UIControlStateNormal];
+		[_scoreItem setTitleColor:[UIColor colorWithRed:255.0/255.0 green:139.0/255.0 blue:96.0/255.0 alpha:1.0] forState:UIControlStateNormal];
 	else if (story.dislikes)
-		[scoreItem setTitleColor:[UIColor colorWithRed:148.0/255.0 green:148.0/255.0 blue:255.0/255.0 alpha:1.0] forState:UIControlStateNormal];
+		[_scoreItem setTitleColor:[UIColor colorWithRed:148.0/255.0 green:148.0/255.0 blue:255.0/255.0 alpha:1.0] forState:UIControlStateNormal];
 	else
-		[scoreItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+		[_scoreItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 }
 
-- (void)setNumberOfComments:(unsigned)commentCount
-{
-	[commentCountItem setTitle:[NSString stringWithFormat:@"%u", commentCount] forState:UIControlStateNormal];
-	[commentCountItem sizeToFit];
+- (void)setNumberOfComments:(unsigned)commentCount {
+    [_commentCountItem setTitle:[NSString stringWithFormat:@"%u", commentCount] forState:UIControlStateNormal];
+	[_commentCountItem sizeToFit];
 }
 
 - (void)voteUp:(id)sender
@@ -347,46 +358,82 @@
 
 
 - (IBAction)share:(id)sender {
-	if (currentSheet) {
-		[currentSheet dismissWithClickedButtonIndex:currentSheet.cancelButtonIndex animated:YES];
-		currentSheet = nil;
+	if (_currentSheet) {
+		[_currentSheet dismissWithClickedButtonIndex:_currentSheet.cancelButtonIndex animated:YES];
+		_currentSheet = nil;
 	} else {
+        NSMutableArray *otherButtonTitles;
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"usePocket"] boolValue]) {
-            currentSheet = [[UIActionSheet alloc]
-                            initWithTitle:@""
-                            delegate:(id <UIActionSheetDelegate>)self
-                            cancelButtonTitle:@"Cancel"
-                            destructiveButtonTitle:nil
-                            //						otherButtonTitles:@"E-mail Link", @"Open Link in Safari", @"Hide on reddit", @"Save on reddit", @"Save on Instapaper", @"Save on Pocket", nil];
-                            otherButtonTitles:@"E-mail Link", @"Open Link in browser", @"Hide on reddit", @"Save on reddit", @"Save on Pocket", nil];
+            if (![[PocketAPI sharedAPI] isLoggedIn]) {
+                [[PocketAPI sharedAPI] loginWithHandler: ^(PocketAPI *API, NSError *error){
+                    if (error != nil)
+                    {
+                        // There was an error when authorizing the user.
+                        // The most common error is that the user denied access to your application.
+                        // The error object will contain a human readable error message that you
+                        // should display to the user. Ex: Show an UIAlertView with the message
+                        // from error.localizedDescription
+                        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:usePocket];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                        NSLog(@"%@",error.localizedDescription);
+                        GIDAAlertView *gav = [[GIDAAlertView alloc] initWithXMarkAndMessage:@"Could not log in to Pocket"];
+                        [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
+                        [gav presentAlertFor:1.08];
+                        
+                    }
+                    else
+                    {
+                        // The user logged in successfully, your app can now make requests.
+                        // [API username] will return the logged-in user’s username
+                        // and API.loggedIn will == YES
+                        
+                        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:usePocket];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                        GIDAAlertView *gav = [[GIDAAlertView alloc] initWithCheckMarkAndMessage:@"Logged in to Pocket"];
+                        [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
+                        [gav presentAlertFor:1.08];
+                    }
+                }];
+            }
+            otherButtonTitles = [NSMutableArray arrayWithObjects:@"E-mail Link", @"Open Link in browser", @"Hide on reddit", @"Save on reddit", @"Save on Pocket", nil];
 		} else {
-            currentSheet = [[UIActionSheet alloc]
-                            initWithTitle:@""
-                            delegate:(id <UIActionSheetDelegate>)self
-                            cancelButtonTitle:@"Cancel"
-                            destructiveButtonTitle:nil
-                            //						otherButtonTitles:@"E-mail Link", @"Open Link in Safari", @"Hide on reddit", @"Save on reddit", @"Save on Instapaper", @"Save on Pocket", nil];
-                            otherButtonTitles:@"E-mail Link", @"Open Link in browser", @"Hide on reddit", @"Save on reddit", nil];
+            otherButtonTitles = [NSMutableArray arrayWithObjects:@"E-mail Link", @"Open Link in browser", @"Hide on reddit", @"Save on reddit", nil];
             
         }
-		currentSheet.actionSheetStyle = UIActionSheetStyleDefault;
+       // MFMessageComposeViewController *mfmcvc = [[MFMessageComposeViewController alloc] init];
+        if ([MFMessageComposeViewController canSendText]) {
+            [otherButtonTitles addObject:@"Send SMS"];
+        }
+        _currentSheet = [[UIActionSheet alloc]
+                         initWithTitle:@""
+                         delegate:(id <UIActionSheetDelegate>)self
+                         cancelButtonTitle:nil
+                         destructiveButtonTitle:nil
+                         otherButtonTitles:nil];
+        for( NSString *title in otherButtonTitles)  {
+            [_currentSheet addButtonWithTitle:title];
+        }
+        [_currentSheet addButtonWithTitle:@"Cancel"];
+        [_currentSheet setCancelButtonIndex:[otherButtonTitles count]];
+      //  [_currentSheet addButtonWithTitle:title:cancelString];
+		_currentSheet.actionSheetStyle = UIActionSheetStyleDefault;
 		
 		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-			[currentSheet showInView:self.navigationController.view];
+			[_currentSheet showInView:self.navigationController.view];
 		} else {
-			[currentSheet showFromBarButtonItem:moreButtonItem animated:YES];
+			[_currentSheet showFromBarButtonItem:_moreButtonItem animated:YES];
 		}
 	}
 }
 
 - (void)actionSheetCancel:(id)sender
 {
-	currentSheet = nil;
+	_currentSheet = nil;
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-	currentSheet = nil;
+	_currentSheet = nil;
 	NSString *url = story.URL;
 	if (isForComments && story.commentsURL)
 		url = story.commentsURL;
@@ -421,10 +468,10 @@
             else
             {
                 [[[UIAlertView alloc] initWithTitle:@"E-mail Error"
-                                             message:@"Your device is not configured to send mail. Update your mail information in the Settings application and try again."
-                                            delegate:nil
-                                   cancelButtonTitle:@"OK"
-                                   otherButtonTitles:nil] show];
+                                            message:@"Your device is not configured to send mail. Update your mail information in the Settings application and try again."
+                                           delegate:nil
+                                  cancelButtonTitle:@"OK"
+                                  otherButtonTitles:nil] show];
             }
             break;
         case 1:
@@ -466,8 +513,14 @@
             //case 5:
             [self saveOnPocket:nil];
             break;
+        case 5:
+        {
+            MFMessageComposeViewController *message = [[MFMessageComposeViewController alloc] init];
+            [message setBody:story.URL];
+            [self presentModalViewController:message animated:YES];
+        }
         default:
-            [self actionSheetCancel:currentSheet];
+            [self actionSheetCancel:_currentSheet];
             break;
     }
 }
@@ -475,11 +528,11 @@
 static NSString * encodeByAddingPercentEscapes(NSString *input) {
     NSString *encodedValue =
     (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
-                                                        kCFAllocatorDefault,
-                                                        (CFStringRef)input,
-                                                        NULL,
-                                                        (CFStringRef)@"!*'();:@&=+$,/?%#[]",
-                                                        kCFStringEncodingUTF8));
+                                                                          kCFAllocatorDefault,
+                                                                          (CFStringRef)input,
+                                                                          NULL,
+                                                                          (CFStringRef)@"!*'();:@&=+$,/?%#[]",
+                                                                          kCFStringEncodingUTF8));
     return encodedValue;
 }
 
@@ -500,10 +553,10 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     if (!username || [username isEqual:@""])
     {
         [[[UIAlertView alloc] initWithTitle:@"Instapaper Error"
-                                     message:@"You must provide an Instapaper username to save stories with Instapaper. You can add a username in the iReddit settings."
-                                    delegate:nil
-                           cancelButtonTitle:@"OK"
-                           otherButtonTitles:nil] show];
+                                    message:@"You must provide an Instapaper username to save stories with Instapaper. You can add a username in the iReddit settings."
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil] show];
         return;
     }
     
@@ -613,22 +666,22 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     switch ([sender selectedSegmentIndex])
     {
         case 0:
-            [webview goBack];
+            [_webview goBack];
             break;
         case 1:
-            if ([webview isLoading])
+            if ([_webview isLoading])
             {
-                [webview stopLoading];
-                [self webViewDidFinishLoad:webview];
+                [_webview stopLoading];
+                [self webViewDidFinishLoad:_webview];
             }
             else
             {
-                [webview reload];
+                [_webview reload];
             }
             
             break;
         case 2:
-            [webview goForward];
+            [_webview goForward];
             break;
     }
     //[[Beacon shared] startSubBeaconWithName:@"usedSegmentNav" timeSession:NO];
@@ -638,26 +691,26 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
 {
     if(((RedditWebView *)webView).currentNavigationType != UIWebViewNavigationTypeOther)
     {
-        [loadingView setHidden:NO];
-        [loadingView startAnimating];
+        [_loadingView setHidden:NO];
+        [_loadingView startAnimating];
     }
     [(UILabel *)(self.navigationItem.titleView) setText:@"Loading..."];
-    [segmentedControl setEnabled:[webView canGoBack] forSegmentAtIndex:0];
-    [segmentedControl setEnabled:[webView canGoForward] forSegmentAtIndex:2];
-    [segmentedControl setImage:[UIImage imageNamed:@"stop.png"] forSegmentAtIndex:1];
+    [_segmentedControl setEnabled:[webView canGoBack] forSegmentAtIndex:0];
+    [_segmentedControl setEnabled:[webView canGoForward] forSegmentAtIndex:2];
+    [_segmentedControl setImage:[UIImage imageNamed:@"stop.png"] forSegmentAtIndex:1];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-    if ([loadingView isAnimating])
+    if ([_loadingView isAnimating])
     {
-        [loadingView setHidden:YES];
-        [loadingView stopAnimating];
+        [_loadingView setHidden:YES];
+        [_loadingView stopAnimating];
     }
     
-    [segmentedControl setEnabled:[webView canGoBack] forSegmentAtIndex:0];
-    [segmentedControl setEnabled:[webView canGoForward] forSegmentAtIndex:2];
-    [segmentedControl setImage:[UIImage imageNamed:@"refresh.png"] forSegmentAtIndex:1];
+    [_segmentedControl setEnabled:[webView canGoBack] forSegmentAtIndex:0];
+    [_segmentedControl setEnabled:[webView canGoForward] forSegmentAtIndex:2];
+    [_segmentedControl setImage:[UIImage imageNamed:@"refresh.png"] forSegmentAtIndex:1];
     
     [(UILabel *)(self.navigationItem.titleView) setText:[webView stringByEvaluatingJavaScriptFromString:@"document.title"]];
 }
@@ -675,23 +728,35 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     if (self.navigationController.toolbarHidden)
         [self.navigationController setToolbarHidden:NO animated:YES];
 }
-
--(void)viewDidUnload {
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.navigationController setToolbarHidden:YES animated:YES];
+    if ([self isMovingFromParentViewController]){
+        //specific stuff for being popped off stack
+        self.story = nil;
+        self.scoreItem = nil;
+        self.commentCountItem = nil;
+        self.toggleButtonItem = nil;
+        self.segmentedControl = nil;
+        self.loadingView = nil;
+        
+        [_webview stopLoading];
+        [_webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+        
+        CGRect frame = self.webview.frame;
+        frame.size.height += self.navigationController.toolbar.frame.size.height;
+        self.webview.frame = frame;
+        
+        [self.navigationController setToolbarHidden:YES animated:YES];
+        [_webview setDelegate:nil];
+        [_webview removeFromSuperview];
+        [[NSURLCache sharedURLCache] removeAllCachedResponses];
+        
+    }
+}
+-(void)backButtonDidPressed:(id)sender {
     [super viewDidUnload];
-    self.webview = nil;
-    self.story = nil;
-    self.scoreItem = nil;
-    self.commentCountItem = nil;
-    self.toggleButtonItem = nil;
-    self.segmentedControl = nil;
-    self.loadingView = nil;
-    
-    [webview stopLoading];
-    [webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-    
-    [webview setDelegate:nil];
-    [webview removeFromSuperview];
-    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+    NSLog(@"VIEWDIDUNLOAD");
 }
 
 -(BOOL)shouldAutorotate {
