@@ -14,7 +14,7 @@
 #import "AlienProgressView.h"
 
 
-@interface StoryViewController : UIViewController <UIWebViewDelegate>
+@interface StoryViewController : UIViewController <UIWebViewDelegate, MFMessageComposeViewControllerDelegate>
 @property (nonatomic,strong) Story *story;
 
 - (void)setStoryID:(NSString *)storyID commentID:(NSString *)commentID URL:(NSString *)aURL;

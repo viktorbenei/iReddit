@@ -437,6 +437,9 @@
 	NSString *url = story.URL;
 	if (isForComments && story.commentsURL)
 		url = story.commentsURL;
+    if ([actionSheet numberOfButtons] < 7 && buttonIndex > 3) {
+        buttonIndex++;
+    }
 	switch (buttonIndex) {
         case 0:
             //email link
@@ -516,6 +519,7 @@
         case 5:
         {
             MFMessageComposeViewController *message = [[MFMessageComposeViewController alloc] init];
+            message.messageComposeDelegate = self;
             [message setBody:story.URL];
             [self presentModalViewController:message animated:YES];
         }
@@ -523,6 +527,24 @@
             [self actionSheetCancel:_currentSheet];
             break;
     }
+}
+
+-(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
+    switch (result) {
+        case MessageComposeResultSent:
+            NSLog(@"Message Sent");
+            break;
+        case MessageComposeResultCancelled:
+            NSLog(@"Message Cancelled");
+            break;
+        case MessageComposeResultFailed:
+            NSLog(@"Message Failed");
+            break;
+        default:
+            NSLog(@"Message Other");
+            break;
+    }
+    [controller dismissModalViewControllerAnimated:YES];
 }
 
 static NSString * encodeByAddingPercentEscapes(NSString *input) {
