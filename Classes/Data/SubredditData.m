@@ -3,11 +3,14 @@
 //  iReddit
 //
 //  Created by Ryan Bruels on 7/21/10.
-
+//  Modified by Alejandro Paredes Alva 2013
 //
 
 #import "SubredditData.h"
 
+@interface SubredditData ()
+@property (nonatomic, strong) NSMutableSet *addresses;
+@end
 
 @implementation SubredditData
 @synthesize subreddit = _subreddit, stories = _stories;
@@ -20,6 +23,7 @@
         self.newsModeIndex = 0;
 		_subreddit = subreddit;
         _stories = [[NSMutableArray alloc] init];
+        _addresses = [NSMutableSet set];
     }
 	
 	return self;
@@ -82,13 +86,17 @@
     NSArray *results = [resultSet objectForKey:@"children"];
     
     for (NSDictionary *result in results) 
-	{     
+	{
+        
 		NSDictionary *data = [result objectForKey:@"data"];
 		
 		Story *theStory = [Story storyWithDictionary:data inReddit:self];
 		theStory.index = [_stories count];
-		
-        [_stories addObject:theStory];
+        
+        if (![_addresses containsObject:theStory.name]) {
+            [_addresses addObject:theStory.name];
+            [_stories addObject:theStory];
+        }
 	}
     
 	canLoadMore = [_stories count] > totalCount;
