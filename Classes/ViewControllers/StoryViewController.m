@@ -437,6 +437,10 @@
 	NSString *url = story.URL;
 	if (isForComments && story.commentsURL)
 		url = story.commentsURL;
+    NSString *nurl = self.webview.request.URL.absoluteString;
+    if (![nurl isEqualToString:story.URL] && ![nurl isEqualToString:story.commentsURL]) {
+        url = nurl;
+    }
     if ([actionSheet numberOfButtons] < 7 && buttonIndex > 3) {
         buttonIndex++;
     }
@@ -520,7 +524,7 @@
         {
             MFMessageComposeViewController *message = [[MFMessageComposeViewController alloc] init];
             message.messageComposeDelegate = self;
-            [message setBody:story.URL];
+            [message setBody:self.webview.request.URL.absoluteString];
             [self presentModalViewController:message animated:YES];
         }
         default:
@@ -603,7 +607,7 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults boolForKey:@"usePocket"]) {
         if ([PocketAPI sharedAPI].isLoggedIn) {
-            NSString *stringURL = story.URL;
+            NSString *stringURL = self.webview.request.URL.absoluteString;
             if (isForComments && story.commentsURL)
                 stringURL = story.commentsURL;
             NSURL *url = [NSURL URLWithString:stringURL];
