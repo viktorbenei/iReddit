@@ -525,7 +525,7 @@
             MFMessageComposeViewController *message = [[MFMessageComposeViewController alloc] init];
             message.messageComposeDelegate = self;
             [message setBody:self.webview.request.URL.absoluteString];
-            [self presentModalViewController:message animated:YES];
+            [self presentViewController:message animated:YES completion:nil];
         }
         default:
             [self actionSheetCancel:_currentSheet];
@@ -548,7 +548,8 @@
             NSLog(@"Message Other");
             break;
     }
-    [controller dismissModalViewControllerAnimated:YES];
+    [controller dismissViewControllerAnimated:YES completion:nil];
+
 }
 
 static NSString * encodeByAddingPercentEscapes(NSString *input) {
@@ -781,7 +782,7 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     }
 }
 -(void)backButtonDidPressed:(id)sender {
-    [super viewDidUnload];
+    //[super viewDidUnload];
     NSLog(@"VIEWDIDUNLOAD");
 }
 
