@@ -38,6 +38,4 @@
 	[self setTitle:[NSString stringWithFormat:@"%u", aCount] forState:UIControlStateNormal];
 }
 
-
-
 @end

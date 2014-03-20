@@ -86,7 +86,7 @@
     {
         accessory = (CommentAccessoryView *)storyCell.accessoryView;
     }
-    
+    accessory.indexPath = indexPath;
     NSUInteger commentCount = storyCell.story.totalComments;
     
     // a somewhat hacky way to determine width, *but* much faster than sizeWithFont: on every cell
@@ -104,13 +104,11 @@
     return storyCell;
 }
 - (void)accessoryViewTapped:(id)sender {
-    StoryCell *cell = (StoryCell *)[((CommentAccessoryView *)sender) superview];
-    NSIndexPath *indexPath = [_tableView indexPathForCell:cell];
+    NSIndexPath *indexPath = ((CommentAccessoryView *)sender).indexPath;
     Story *object = [_dataSource storyWithIndex:indexPath.row];
     StoryViewController *controller = [[StoryViewController alloc] initForComments];
-    [[self navigationController] pushViewController:controller animated:YES];
-    
     controller.story = object;
+    [[self navigationController] pushViewController:controller animated:YES];
 }
 
 - (void)loadView
@@ -118,10 +116,12 @@
 	[super loadView];
     
     // create the tableview
+    
+    CGFloat iosVer = [[[UIDevice currentDevice] systemVersion] floatValue];
 	CGRect applicationFrame = [[UIScreen mainScreen] applicationFrame];
     self.view = [[UIView alloc] initWithFrame:applicationFrame];
     self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
+    [self.view setBackgroundColor:[UIColor whiteColor]];
 	if (tabBar)
 	{
 		tabBar = nil;
@@ -139,7 +139,11 @@
         }
         NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:UITextAttributeFont];
         [tabBar setTitleTextAttributes:attributes forState:UIControlStateNormal];
-        [tabBar setFrame:CGRectMake(0, 0, applicationFrame.size.width, 35)];
+        if (iosVer >= 7.0) {
+            [tabBar setFrame:CGRectMake(0, 64, applicationFrame.size.width, 35)];
+        } else {
+            [tabBar setFrame:CGRectMake(0, 0, applicationFrame.size.width, 35)];
+        }
         [tabBar setSegmentedControlStyle:UISegmentedControlStyleBar];
         [tabBar setTintColor:[iRedditAppDelegate redditNavigationBarTintColor]];
         [tabBar addTarget:self action:@selector(toolBarButton:) forControlEvents:UIControlEventValueChanged];
@@ -150,6 +154,10 @@
 	aFrame.origin.y = tabBar ? CGRectGetHeight(tabBar.frame) : 0.0;
 	aFrame.size.height -= aFrame.origin.y;
 	
+    if (iosVer >= 7.0) {
+    aFrame.origin.y += 64;
+        [[UINavigationBar appearance] setTintColor:[iRedditAppDelegate redditNavigationBarTintColor]];
+    }
 	//UIView *wrapper = [[[UIView alloc] initWithFrame:aFrame] autorelease];
     //wrapper.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
@@ -217,6 +225,7 @@
     [self.view addSubview:self.updatingView];
     [self.updatingView setHidden:YES];
     [self performSelectorInBackground:@selector(loading) withObject:nil];
+    
 }
 
 - (void)refresh:(id)sender {
@@ -337,5 +346,7 @@
     // this interface is portrait only, but allow it to operate in *either* portrait
     return [[NSUserDefaults standardUserDefaults] boolForKey:allowLandscapeOrientationKey] ? YES : (interfaceOrientation == UIInterfaceOrientationPortrait) ? YES : NO ;
 }
+
+
 @end
 

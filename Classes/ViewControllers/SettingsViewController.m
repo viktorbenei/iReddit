@@ -144,7 +144,7 @@
                     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:usePocket];
                     [[NSUserDefaults standardUserDefaults] synchronize];
                     NSLog(@"%@",error.localizedDescription);
-                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithXMarkAndMessage:@"Could not log in to Pocket"];
+                    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithXMarkWith:@"Could not log in to Pocket"];
                     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
                     [gav presentAlertFor:1.08];
                     
@@ -277,6 +277,7 @@
     [[[[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]] accessoryView] resignFirstResponder];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (changed) {
+        NSLog(@"login");
         [[LoginController sharedLoginController] logOut];
         [[LoginController sharedLoginController] loginWithUsername:[defaults stringForKey:redditUsernameKey] password:[defaults stringForKey:redditPasswordKey]];
     }

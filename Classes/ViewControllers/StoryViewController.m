@@ -36,6 +36,12 @@
 
 @synthesize story;
 
+- (id)init {
+    self = [super init];
+    if (self)
+        isForComments = NO;
+    return self;
+}
 - (id)initForComments
 {
 	if (self = [super init])
@@ -47,7 +53,6 @@
 }
 -(void)viewDidLoad{
     [super viewDidLoad];
-    
     self.navigationItem.leftBarButtonItem.action = @selector(backButtonDidPressed:);
     
     self.navigationController.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
@@ -65,8 +70,15 @@
 	_scoreItem.titleLabel.font = [UIFont boldSystemFontOfSize:18.0];
 	_scoreItem.showsTouchWhenHighlighted = NO;
 	_scoreItem.adjustsImageWhenHighlighted = NO;
-	[_scoreItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-	[_scoreItem setTitleShadowColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    CGFloat iosVer = [[[UIDevice currentDevice] systemVersion] floatValue];
+    if (iosVer >= 7.0) {
+        [_scoreItem setTitleColor:[iRedditAppDelegate redditNavigationBarTintColor] forState:UIControlStateNormal];
+//        [_scoreItem setTitleShadowColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    } else {
+        [_scoreItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_scoreItem setTitleShadowColor:[UIColor blackColor] forState:UIControlStateNormal];
+    }
 	
 	_scoreItem.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
 	
@@ -77,12 +89,18 @@
     
 	if (!isForComments)
 	{
+        NSLog(@"Not for comments");
 		self.commentCountItem = [UIButton buttonWithType:UIButtonTypeCustom];
 		_commentCountItem.titleLabel.font = [UIFont boldSystemFontOfSize:18.0];
 		_commentCountItem.showsTouchWhenHighlighted = NO;
 		_commentCountItem.adjustsImageWhenHighlighted = NO;
-		[_commentCountItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-		[_commentCountItem setTitleShadowColor:[UIColor blackColor] forState:UIControlStateNormal];
+        if (iosVer >= 7.0) {
+            [_commentCountItem setTitleColor:[iRedditAppDelegate redditNavigationBarTintColor] forState:UIControlStateNormal];
+           // [_commentCountItem setTitleShadowColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        } else {
+            [_commentCountItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            [_commentCountItem setTitleShadowColor:[UIColor blackColor] forState:UIControlStateNormal];
+        }
         
 		_commentCountItem.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
 		
@@ -103,7 +121,7 @@
 	[items addObject:_moreButtonItem];
     
 	[self setToolbarItems:items animated:NO];
-	
+    
 	NSArray *viewControllers = [[self navigationController] viewControllers];
     
 	if ([viewControllers count] > 2 && [[viewControllers objectAtIndex:[viewControllers count] - 2] isKindOfClass:[StoryViewController class]])
@@ -147,9 +165,11 @@
         [titleView setMinimumScaleFactor:12.0];
     }
     
-	[titleView setTextColor:[UIColor whiteColor]];
-	[titleView setShadowColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
-	[titleView setShadowOffset:CGSizeMake(0, -1)];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0) {
+        [titleView setTextColor:[UIColor whiteColor]];
+        [titleView setShadowColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
+        [titleView setShadowOffset:CGSizeMake(0, -1)];
+    }
 	
 	[titleView setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
 	[titleView setNumberOfLines:2];
@@ -179,6 +199,14 @@
 		
 		[self.view addSubview:_loadingView];
 	}
+    if (story) {
+        if (isForComments) {
+            [self loadStoryComments];
+        } else {
+            [self loadStory];
+        }
+    }
+    
 }
 
 - (void)setStory:(Story *)aStory
@@ -195,10 +223,14 @@
 	
 	[_webview stopLoading];
 	
-	if (_commentCountItem)
+    NSLog(@"CommentCountItem: %@",_commentCountItem);
+	if (_commentCountItem) {
 		[self loadStory];
-	else
+        NSLog(@"Load Story");
+	} else {
 		[self loadStoryComments];
+        NSLog(@"Load Comments");
+    }
     
 	[_loadingView setHidden:NO];
 	[_loadingView startAnimating];
@@ -239,6 +271,7 @@
 
 - (void)loadStory
 {
+    NSLog(@"LOAD: %@",story.URL);
 	[_webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:story.URL]]];
 }
 
@@ -251,10 +284,13 @@
 	   ]
 	  ]
 	 ];
+    NSLog(@"%@",[NSString stringWithFormat:@"%@/comments/%@/%@", RedditBaseURLString, story.identifier, story.commentID]);
 }
 
 - (void)setScore:(int)score
 {
+    CGFloat iosVer = [[[UIDevice currentDevice] systemVersion] floatValue];
+    
 	[_scoreItem setTitle:[NSString stringWithFormat:@"%i", score] forState:UIControlStateNormal];
 	[_scoreItem sizeToFit];
 	
@@ -262,8 +298,13 @@
 		[_scoreItem setTitleColor:[UIColor colorWithRed:255.0/255.0 green:139.0/255.0 blue:96.0/255.0 alpha:1.0] forState:UIControlStateNormal];
 	else if (story.dislikes)
 		[_scoreItem setTitleColor:[UIColor colorWithRed:148.0/255.0 green:148.0/255.0 blue:255.0/255.0 alpha:1.0] forState:UIControlStateNormal];
-	else
-		[_scoreItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+	else {
+        if (iosVer >= 7.0) {
+            [_scoreItem setTitleColor:[iRedditAppDelegate redditNavigationBarTintColor] forState:UIControlStateNormal];
+        } else {
+            [_scoreItem setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        }
+    }
 }
 
 - (void)setNumberOfComments:(unsigned)commentCount {
@@ -376,7 +417,7 @@
                         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:usePocket];
                         [[NSUserDefaults standardUserDefaults] synchronize];
                         NSLog(@"%@",error.localizedDescription);
-                        GIDAAlertView *gav = [[GIDAAlertView alloc] initWithXMarkAndMessage:@"Could not log in to Pocket"];
+                        GIDAAlertView *gav = [[GIDAAlertView alloc] initWithXMarkWith:@"Could not log in to Pocket"];
                         [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
                         [gav presentAlertFor:1.08];
                         
@@ -750,7 +791,12 @@ static NSString * encodeByAddingPercentEscapes(NSString *input) {
     [super viewWillAppear:animated];
     [self setScore:story.score];
     
+    CGFloat iosVer = [[[UIDevice currentDevice] systemVersion] floatValue];
+    if (iosVer >= 7.0) {
+        self.navigationController.toolbar.tintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+    } else {
     self.navigationController.toolbar.tintColor = [UIColor blackColor];
+    }
     
     if (self.navigationController.toolbarHidden)
         [self.navigationController setToolbarHidden:NO animated:YES];

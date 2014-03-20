@@ -177,7 +177,8 @@
 {
 
     NSString *url = [NSString stringWithFormat:@"%@/r/%@/.json", RedditBaseURLString, redditURL];
-    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithProgressBarAndMessage:@"Loading reddit" andURL:[NSURL URLWithString:url] andProgressBarColor:[UIColor blueColor]];
+    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithProgressBarWith:@"Loading reddit" andURL:[NSURL URLWithString:url]];
+    [gav setProgressBarColor:[UIColor blueColor]];
     [gav setDelegate:self];
     [gav setColor:[iRedditAppDelegate redditNavigationBarTintColor]];
     [gav progresBarStartDownload];

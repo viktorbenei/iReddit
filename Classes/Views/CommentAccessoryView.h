@@ -18,5 +18,5 @@
 
 - (void)setCommentCount:(unsigned)aCount;
 @property (nonatomic, strong) Story *story;
-
+@property (strong, nonatomic) NSIndexPath* indexPath;
 @end

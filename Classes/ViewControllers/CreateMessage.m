@@ -64,7 +64,7 @@
     }
 }
 -(void)send:(id)sender {
-    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithImage:_captchaImage andPrompt:@"" cancelButtonTitle:@"cancel" acceptButtonTitle:@"accept"];
+    GIDAAlertView *gav = [[GIDAAlertView alloc] initWithImage:_captchaImage andMessage:@"" cancelButtonTitle:@"cancel" acceptButtonTitle:@"accept"];
     [gav setColor:[UIColor colorWithRed:60.0/255.0 green:120.0/255.0 blue:225.0/255.0 alpha:1.0]];
     [gav setDelegate:self];
     [gav show];

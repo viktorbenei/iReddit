@@ -105,11 +105,19 @@
 		BEC679C81705E0F300B4E82E /* CreateMessage.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEC679C61705E0F300B4E82E /* CreateMessage.xib */; };
 		BECC89F416F864E200CF00A4 /* GIDAAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = BECC89F316F864E200CF00A4 /* GIDAAlertView.m */; };
 		BED4D58918C61CAD00325E82 /* libDTCoreText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BED4D58018C61BCB00325E82 /* libDTCoreText.a */; };
+		BEFF433918DB43E900D1EC01 /* mainTitle-iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEFF433818DB43E900D1EC01 /* mainTitle-iOS7@2x.png */; };
 		E58C100E12B49244004D2070 /* SubredditData.m in Sources */ = {isa = PBXBuildFile; fileRef = E58C100D12B49244004D2070 /* SubredditData.m */; };
 		E58C109812B4A0DD004D2070 /* RedditWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = E58C109712B4A0DD004D2070 /* RedditWindow.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		BE287D0918C74F2C0062A943 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BED4D56F18C61BCB00325E82 /* DTCoreText.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7A476BC180010F100459DFD;
+			remoteInfo = "BundleLoader Dummy";
+		};
 		BED4D57B18C61BCB00325E82 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BED4D56F18C61BCB00325E82 /* DTCoreText.xcodeproj */;
@@ -286,9 +294,10 @@
 		BEC679C41705E0F300B4E82E /* CreateMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateMessage.h; path = ../ViewControllers/CreateMessage.h; sourceTree = "<group>"; };
 		BEC679C51705E0F300B4E82E /* CreateMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CreateMessage.m; path = ../ViewControllers/CreateMessage.m; sourceTree = "<group>"; };
 		BEC679C61705E0F300B4E82E /* CreateMessage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CreateMessage.xib; path = ViewControllers/CreateMessage.xib; sourceTree = "<group>"; };
-		BECC89F216F864E200CF00A4 /* GIDAAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GIDAAlertView.h; sourceTree = "<group>"; };
-		BECC89F316F864E200CF00A4 /* GIDAAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GIDAAlertView.m; sourceTree = "<group>"; };
+		BECC89F216F864E200CF00A4 /* GIDAAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GIDAAlertView.h; path = Externals/GIDAAlertView/GIDAAlertView.h; sourceTree = SOURCE_ROOT; };
+		BECC89F316F864E200CF00A4 /* GIDAAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GIDAAlertView.m; path = Externals/GIDAAlertView/GIDAAlertView.m; sourceTree = SOURCE_ROOT; };
 		BED4D56F18C61BCB00325E82 /* DTCoreText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DTCoreText.xcodeproj; path = Externals/DTCoreText/DTCoreText.xcodeproj; sourceTree = "<group>"; };
+		BEFF433818DB43E900D1EC01 /* mainTitle-iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mainTitle-iOS7@2x.png"; sourceTree = "<group>"; };
 		E566C63412BEF9FC00E3E04E /* iReddit-Free-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iReddit-Free-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		E58C100C12B49244004D2070 /* SubredditData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubredditData.h; sourceTree = "<group>"; };
 		E58C100D12B49244004D2070 /* SubredditData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubredditData.m; sourceTree = "<group>"; };
@@ -501,6 +510,7 @@
 				ADFB53950FEAC4010067CEC1 /* commentBubble.png */,
 				ADFB53960FEAC4010067CEC1 /* comments.png */,
 				ADFB53970FEAC4010067CEC1 /* error.png */,
+				BEFF433818DB43E900D1EC01 /* mainTitle-iOS7@2x.png */,
 				ADFB53980FEAC4010067CEC1 /* forward.png */,
 				ADFB53990FEAC4010067CEC1 /* Loading0.png */,
 				ADFB539A0FEAC4010067CEC1 /* Loading1.png */,
@@ -556,8 +566,9 @@
 			children = (
 				BE27741616F7CF59009D445C /* SDK */,
 			);
-			path = "Pocket-ObjC-SDK";
-			sourceTree = "<group>";
+			name = "Pocket-ObjC-SDK";
+			path = Externals/Pocket;
+			sourceTree = SOURCE_ROOT;
 		};
 		BE27741616F7CF59009D445C /* SDK */ = {
 			isa = PBXGroup;
@@ -586,6 +597,7 @@
 				BED4D58418C61BCB00325E82 /* MacUnitTest.octest */,
 				BED4D58618C61BCB00325E82 /* libDTCoreText_no_DTFoundation.a */,
 				BED4D58818C61BCB00325E82 /* DTCoreText.framework */,
+				BE287D0A18C74F2C0062A943 /* BundleLoaderDummy.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -616,7 +628,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iReddit" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -645,6 +657,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		BE287D0A18C74F2C0062A943 /* BundleLoaderDummy.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = BundleLoaderDummy.app;
+			remoteRef = BE287D0918C74F2C0062A943 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		BED4D57C18C61BCB00325E82 /* RTDemoApp.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
@@ -709,6 +728,7 @@
 				ADFB53B10FEAC4010067CEC1 /* error.png in Resources */,
 				ADFB53B20FEAC4010067CEC1 /* forward.png in Resources */,
 				ADFB53B30FEAC4010067CEC1 /* Loading0.png in Resources */,
+				BEFF433918DB43E900D1EC01 /* mainTitle-iOS7@2x.png in Resources */,
 				ADFB53B40FEAC4010067CEC1 /* Loading1.png in Resources */,
 				ADFB53B50FEAC4010067CEC1 /* Loading2.png in Resources */,
 				ADFB53B60FEAC4010067CEC1 /* Loading3.png in Resources */,
@@ -803,7 +823,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -824,7 +843,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -842,7 +860,6 @@
 		ADB29F820FEB03DC00405C52 /* Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -865,7 +882,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
@@ -885,7 +901,6 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -894,6 +909,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
@@ -907,7 +923,6 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;

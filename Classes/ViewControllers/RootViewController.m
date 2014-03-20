@@ -33,6 +33,14 @@
 		[center addObserver:self selector:@selector(messageCountChanged:) name:MessageCountDidChangeNotification object:nil];
 		[center addObserver:self selector:@selector(didEndLogin:) name:RedditDidFinishLoggingInNotification object:nil];
 		[center addObserver:self selector:@selector(didAddReddit:) name:RedditWasAddedNotification object:nil];
+        
+        CGFloat iosVer = [[[UIDevice currentDevice] systemVersion] floatValue];
+        if (iosVer >= 7.0) {
+            CGRect frame = self.tableView.frame;
+            frame.size.height -= 64;
+            frame.origin.y += 64;
+            self.tableView.frame = frame;
+        }
 	}
     
 	return self;
@@ -51,10 +59,19 @@
 {
 	[super loadView];
 	
-    UIImage *mainTitleImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mainTitle" ofType:@"png"]];
+    UIImage *mainTitleImage;
+    CGFloat iosVer = [[[UIDevice currentDevice] systemVersion] floatValue];
+    if (iosVer >= 7.0) {
+        mainTitleImage = [UIImage imageNamed:@"mainTitle-iOS7"];
+    } else {
+        mainTitleImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mainTitle" ofType:@"png"]];
+    }
 	self.navigationItem.titleView = [[UIImageView alloc] initWithImage:mainTitleImage];
 	
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(edit:)];
+    
+   
+
     
 }
 - (void)viewWillAppear:(BOOL)animated
@@ -73,7 +90,8 @@
                                                                                                 action:@selector(add:)];
 	else
 		self.navigationItem.leftBarButtonItem = nil;
-	
+    
+    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
 }
 
 - (void)add:(id)sender

@@ -94,7 +94,14 @@ iRedditAppDelegate *sharedAppDelegate;
 	
     randomData = [[SubredditData alloc] initWithSubreddit:@"/randomrising/"];
     [self performSelectorInBackground:@selector(loadRandomData) withObject:nil];
-
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0) {
+        [[UIApplication sharedApplication] setStatusBarHidden:NO];
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:YES];
+    } else {
+        [[UIApplication sharedApplication] setStatusBarHidden:NO];
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    }
 }
 
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
