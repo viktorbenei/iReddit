@@ -54,11 +54,10 @@
 	return self;
 }
 
-- (void)loadView
-{
-	self.navigationController.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
+- (void)loadView {
     
     [super loadView];
+	self.navigationController.navigationBar.TintColor = [iRedditAppDelegate redditNavigationBarTintColor];
     
 	self.navigationBar = [[UINavigationBar alloc] init];
 	
@@ -69,9 +68,7 @@
 	{
 		item = [[UINavigationItem alloc] initWithTitle:@"view reddit"];
 		item.prompt = @"View any reddit by entering a URL";
-	}
-	else
-	{
+	} else {
 		item = [[UINavigationItem alloc] initWithTitle:@"add reddit"];
 		item.prompt = @"Subscribe to a new reddit by entering a URL";
 	}
@@ -105,6 +102,9 @@
     [self.view addSubview:self.tableView];
     [self createModel];
     [[self tableView] reloadData];
+    
+    self.navigationController.edgesForExtendedLayout = UIRectEdgeNone;
+    self.navigationController.extendedLayoutIncludesOpaqueBars = NO;
 }
 
 -(void)createModel {
