@@ -204,15 +204,23 @@
     [self.view addSubview:_loadingView];
     
     self.updatingView = [[UIView alloc] initWithFrame:CGRectMake(0, aFrame.size.height+5, aFrame.size.width, 30)];
-    [self.updatingView setBackgroundColor:[UIColor blackColor]];
-    [self.updatingView setAlpha:0.8];
     label = [[UILabel alloc] initWithFrame:CGRectMake((_tableView.frame.size.width-100)/2, 0, 100, 30)];
+    
+    if (iosVer >= 7.0) {
+        [self.updatingView setBackgroundColor:[UIColor whiteColor]];
+        [label setTextColor:[iRedditAppDelegate redditNavigationBarTintColor]];
+        aic = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    } else {
+        [self.updatingView setBackgroundColor:[UIColor blackColor]];
+        [label setTextColor:[UIColor whiteColor]];
+        aic = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    }
+    [self.updatingView setAlpha:0.8];
     [label setText:@"Updating"];
-    [label setTextColor:[UIColor whiteColor]];
     [label setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin];
     [label setBackgroundColor:[UIColor clearColor]];
     [label setTextAlignment:NSTextAlignmentCenter];
-    aic = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    
     [aic setFrame:CGRectMake((_tableView.frame.size.width-150)/2, 0, 30, 30)];
     [aic setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin];
     [aic startAnimating];
