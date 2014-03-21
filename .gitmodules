@@ -4,6 +4,7 @@
 [submodule "Externals/DTCoreText"]
 	path = Externals/DTCoreText
 	url = https://github.com/Cocoanetics/DTCoreText.git
+	ignore = dirty
 [submodule "Externals/GIDAAlertView"]
 	path = Externals/GIDAAlertView
 	url = http://github.com/GIDAIbero/GIDAAlertView.git
