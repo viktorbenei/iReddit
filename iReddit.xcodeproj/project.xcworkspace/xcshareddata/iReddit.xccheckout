@@ -5,7 +5,7 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>BA3B81D7-07AC-4290-B344-82FE94BAC51D</string>
+	<string>A2929EAA-B117-40D9-BF8A-D31DC7A97A54</string>
 	<key>IDESourceControlProjectName</key>
 	<string>iReddit</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
@@ -14,34 +14,34 @@
 		<string>git://github.com/Pocket/Pocket-ObjC-SDK.git</string>
 		<key>0A7B8C00-CF8D-41CB-B604-BB727989FA61</key>
 		<string>https://github.com/Cocoanetics/DTFoundation.git</string>
-		<key>42B171E5-15DE-4CE8-8486-76B547DB9314</key>
-		<string>https://github.com/aparedes/iReddit.git</string>
 		<key>8AF21849-2CF1-428C-BF58-39F5B8A0616F</key>
 		<string>http://github.com/GIDAIbero/GIDAAlertView.git</string>
 		<key>C4C11C64-1961-4A75-8A73-F0A5402970AF</key>
 		<string>https://github.com/Cocoanetics/DTCoreText.git</string>
+		<key>F21CDE57-7027-4085-87D7-03A97E9C0FB8</key>
+		<string>ssh://github.com/viktorbenei/iReddit.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>iReddit.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>03C1A3E8-3212-4B27-AFFA-11BC4BE4D31E</key>
-		<string>../../Pocket-ObjC-SDK</string>
+		<string>../../Externals/Pocket</string>
 		<key>0A7B8C00-CF8D-41CB-B604-BB727989FA61</key>
-		<string>../../Externals/DTCoreText/Core/Externals/DTFoundation</string>
-		<key>42B171E5-15DE-4CE8-8486-76B547DB9314</key>
-		<string>../..</string>
+		<string>../../Externals/DTCoreText/Externals/DTFoundation</string>
 		<key>8AF21849-2CF1-428C-BF58-39F5B8A0616F</key>
 		<string>../../Externals/GIDAAlertView</string>
 		<key>C4C11C64-1961-4A75-8A73-F0A5402970AF</key>
 		<string>../../Externals/DTCoreText</string>
+		<key>F21CDE57-7027-4085-87D7-03A97E9C0FB8</key>
+		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/aparedes/iReddit.git</string>
+	<string>ssh://github.com/viktorbenei/iReddit.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>42B171E5-15DE-4CE8-8486-76B547DB9314</string>
+	<string>F21CDE57-7027-4085-87D7-03A97E9C0FB8</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -72,7 +72,7 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>42B171E5-15DE-4CE8-8486-76B547DB9314</string>
+			<string>F21CDE57-7027-4085-87D7-03A97E9C0FB8</string>
 			<key>IDESourceControlWCCName</key>
 			<string>iReddit</string>
 		</dict>
