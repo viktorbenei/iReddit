@@ -230,8 +230,22 @@
     if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"googlechrome://"]]) {
         chrome =  [NSDictionary dictionaryWithObjectsAndKeys:@"Use Chrome",@"title",[NSNumber numberWithBool:[defaults boolForKey:useChrome]],@"value",useChrome, @"key", @"switch", @"type", nil];
     }
+    
+    NSDictionary *infoDictionary = [[NSBundle mainBundle]infoDictionary];
+    NSString *build = infoDictionary[(NSString*)kCFBundleVersionKey];
+    
     _options = [NSMutableArray arrayWithObjects:
                 [NSArray arrayWithObjects:
+                 //
+                 [NSDictionary dictionaryWithObjectsAndKeys:
+                  @"Version",@"title",
+                  redditUsernameKey, @"key",
+                  @"text", @"type",
+                  [NSNumber numberWithBool:NO],@"secure",
+                  build, @"placeholder",
+                  build,@"value",
+                  nil],
+                 //
                  [NSDictionary dictionaryWithObjectsAndKeys:
                   @"Username",@"title",
                   redditUsernameKey, @"key",
